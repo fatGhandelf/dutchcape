@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <style>
+        body {
+            background-color: black;
+            color: #0A0;
+            font-family: monospace;
+            overflow: hidden;
+        }
+        .matrix-text {
+            position: absolute;
+            font-weight: bold;
+            font-size: 20px;
+            text-shadow: 0 0 5px #0A0;
+        }
+        .profile-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        input[type="text"], input[type="password"] {
+            background-color: black;
+            border: 1px solid #0A0;
+            color: #0A0;
+            padding: 5px;
+            margin: 5px;
+            font-family: monospace;
+            font-size: 18px;
+            text-shadow: 0 0 5px #0A0;
+        }
+        ::placeholder {
+            color: #0A0;
+            opacity: 0.7;
+        }
+        .home-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            text-shadow: 0 0 5px #0A0;
+            text-decoration: none;
+            color: #0A0;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-link">HOME</a>
+    <div class="profile-container">
+        <form onsubmit="return validateForm()">
+            <input type="text" placeholder="Username" id="username" required>
+            <br>
+            <input type="password" placeholder="Password" id="password" required>
+        </form>
+    </div>
+
+    <script>
+        const canvas = document.createElement('canvas');
+        document.body.appendChild(canvas);
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+
+        const letters = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[{]};:'",<.>/?\\|`;
+        const fontSize = 20;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.floor(Math.random() * canvas.height);
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0A0';
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i] += 0.8;
+            }
+        }
+
+        function validateForm() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            if (username && password) {
+                alert("Login successful!");
+                return true;
+            }
+            return false;
+        }
+
+        setInterval(draw, 41);
+    </script>
+</body>
+</html>
