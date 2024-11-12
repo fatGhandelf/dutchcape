@@ -1,371 +1,138 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dutch Cape</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/inter/3.19.3/inter.css" rel="stylesheet">
+    <title>Matrix Digital Rain</title>
     <style>
-        /* Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #FAF7F2;
-            --text-primary: #333;
-            --bg-secondary: #fff;
-            --shadow-color: rgba(0,0,0,0.1);
-            --nav-bg: rgba(255, 255, 255, 0.9);
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #1a1a1a;
-            --text-primary: #e0e0e0;
-            --bg-secondary: #2d2d2d;
-            --shadow-color: rgba(0,0,0,0.3);
-            --nav-bg: rgba(29, 29, 29, 0.95);
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            font-weight: 300;
-            transition: background-color 0.3s, color 0.3s;
+            margin: 0;
+            background: black;
+            overflow: hidden;
         }
-
-        /* Theme toggle */
-        .theme-toggle {
-            background: none;
-            border: none;
-            padding: 0.5rem;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: var(--text-primary);
-            margin-right: 1rem;
-        }
-
-        /* Navigation */
-        nav {
-            background: var(--nav-bg);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 4px var(--shadow-color);
-            padding: 1rem;
-            position: sticky;
+        canvas {
+            display: block;
+            position: fixed;
             top: 0;
-            z-index: 100;
-            transition: background-color 0.3s;
+            left: 0;
+            z-index: 1;
         }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 200;
-            color: var(--text-primary);
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: var(--text-primary);
-            text-decoration: none;
-            transition: opacity 0.3s;
-            font-weight: 300;
-        }
-
-        .nav-links a:hover {
-            opacity: 0.7;
-        }
-
-        .menu-button {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-primary);
-        }
-
-        /* Hero section */
-        .hero {
-            padding: 6rem 1rem;
+        .input-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
             text-align: center;
         }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            font-weight: 200;
-            letter-spacing: -1px;
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--text-primary);
-            opacity: 0.8;
-            margin-bottom: 2rem;
-            font-weight: 300;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: var(--text-primary);
-            color: var(--bg-primary);
-            padding: 0.8rem 2rem;
-            border-radius: 25px;
-            text-decoration: none;
-            transition: opacity 0.3s;
-            font-weight: 400;
-        }
-
-        .cta-button:hover {
-            opacity: 0.9;
-        }
-
-        /* Services section */
-        .services {
-            padding: 4rem 1rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .services h2 {
+        .matrix-input {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #0F0;
+            border-radius: 5px;
+            color: #0F0;
+            padding: 10px 15px;
+            font-family: monospace;
+            font-size: 16px;
+            width: 200px;
+            outline: none;
+            transition: all 0.3s ease;
             text-align: center;
-            margin-bottom: 2rem;
-            font-weight: 200;
-            font-size: 2.5rem;
-            letter-spacing: -0.5px;
+            text-transform: uppercase;
         }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+        .matrix-input:focus {
+            background: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 15px #0F0;
         }
-
-        .service-card {
-            background: var(--bg-secondary);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 2px 4px var(--shadow-color);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 8px var(--shadow-color);
-        }
-
-        .service-card h3 {
-            font-weight: 400;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        /* Contact section */
-        .contact {
-            padding: 4rem 1rem;
-        }
-
-        .contact-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .contact h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-weight: 200;
-            font-size: 2.5rem;
-            letter-spacing: -0.5px;
-        }
-
-        .contact form {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .contact input,
-        .contact textarea {
-            width: 100%;
-            padding: 1rem;
-            border: 1px solid var(--shadow-color);
-            border-radius: 8px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            font-weight: 300;
-        }
-
-        .contact button {
-            background-color: var(--text-primary);
-            color: var(--bg-primary);
-            padding: 1rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: opacity 0.3s;
-            font-weight: 400;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .contact button:hover {
-            opacity: 0.9;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            text-align: center;
-            padding: 2rem 1rem;
-            font-weight: 300;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .nav-links.active {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: var(--nav-bg);
-                padding: 1rem;
-                box-shadow: 0 2px 4px var(--shadow-color);
-            }
-
-            .menu-button {
-                display: block;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
+        .matrix-input::placeholder {
+            color: #0F0;
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <a href="#" class="logo">Dutch Cape</a>
-            <div style="display: flex; align-items: center;">
-                <button class="theme-toggle" aria-label="Toggle dark mode">
-                    🌓
-                </button>
-                <button class="menu-button">☰</button>
-                <div class="nav-links">
-                    <a href="#services">Services</a>
-                    <a href="#about">About</a>
-                    <a href="#contact">Contact</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <section class="hero">
-        <h1>Welcome to Dutch Cape</h1>
-        <p>Your trusted partner in business excellence</p>
-        <a href="#contact" class="cta-button">Get Started</a>
-    </section>
-
-    <section id="services" class="services">
-        <h2>Our Services</h2>
-        <div class="services-grid">
-            <div class="service-card">
-                <h3>Service 1</h3>
-                <p>Description of your first service offering. Replace this with actual content.</p>
-            </div>
-            <div class="service-card">
-                <h3>Service 2</h3>
-                <p>Description of your second service offering. Replace this with actual content.</p>
-            </div>
-            <div class="service-card">
-                <h3>Service 3</h3>
-                <p>Description of your third service offering. Replace this with actual content.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="contact">
-        <div class="contact-container">
-            <h2>Contact Us</h2>
-            <form id="contact-form">
-                <input type="text" placeholder="Name" required>
-                <input type="email" placeholder="Email" required>
-                <textarea placeholder="Message" rows="4" required></textarea>
-                <button type="submit">Send Message</button>
-            </form>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 Dutch Cape. All rights reserved.</p>
-    </footer>
-
+    <canvas id="matrix"></canvas>
+    <div class="input-container">
+        <input type="text" class="matrix-input" placeholder="Y or N?" maxlength="1">
+    </div>
     <script>
-        // Theme toggle
-        const themeToggle = document.querySelector('.theme-toggle');
-        const html = document.documentElement;
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        const input = document.querySelector('.matrix-input');
+        
+        // Current text color
+        let currentColor = '#0F0'; // Default green
 
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+        // Set canvas size to window size
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+
+        // Matrix characters
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const alphabet = katakana + latin + nums;
+
+        const fontSize = 16;
+        const columns = canvas.width/fontSize;
+
+        // Array to store current y position of each column
+        const rainDrops = Array(Math.ceil(columns)).fill(1);
+
+        // Listen for input changes
+        input.addEventListener('input', (e) => {
+            const value = e.target.value.toUpperCase();
+            
+            if (value === 'Y') {
+                currentColor = '#00F'; // Blue
+                input.style.borderColor = currentColor;
+                input.style.color = currentColor;
+            } else if (value === 'N') {
+                currentColor = '#F00'; // Red
+                input.style.borderColor = currentColor;
+                input.style.color = currentColor;
+            } else if (value === '') {
+                currentColor = '#0F0'; // Back to green if empty
+                input.style.borderColor = '#0F0';
+                input.style.color = '#0F0';
+            }
         });
 
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            html.setAttribute('data-theme', savedTheme);
+        function draw() {
+            // Black background with opacity to create fade effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Use current color for text
+            ctx.fillStyle = currentColor;
+            ctx.font = fontSize + 'px monospace';
+
+            // Loop over each column
+            rainDrops.forEach((y, i) => {
+                // Generate random character
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                
+                // Calculate x position
+                const x = i * fontSize;
+                
+                // Draw the character
+                ctx.fillText(text, x, y * fontSize);
+
+                // Reset to top of screen when bottom is reached
+                if(y * fontSize > canvas.height && Math.random() > 0.975){
+                    rainDrops[i] = 0;
+                }
+                // Move drop down
+                rainDrops[i]++;
+            });
         }
 
-        // Mobile menu toggle
-        const menuButton = document.querySelector('.menu-button');
-        const navLinks = document.querySelector('.nav-links');
+        // Update at 30fps
+        setInterval(draw, 33);
 
-        menuButton.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // Simple form handling
-        const contactForm = document.getElementById('contact-form');
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your message! We will get back to you soon.');
-            contactForm.reset();
+        // Resize canvas when window is resized
+        window.addEventListener('resize', () => {
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+            rainDrops.length = Math.ceil(canvas.width/fontSize);
+            rainDrops.fill(1);
         });
     </script>
 </body>
