@@ -3,208 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXT REALITY • UNDER CONSTRUCTION</title>
+    <title>Dutch Cape • Coming Soon</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-        
-        body {
-            font-family: 'VT323', monospace;
-            overflow: hidden;
-        }
-        
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-        
-        .overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 2;
-            pointer-events: none;
-        }
-        
-        .scanlines {
-            position: fixed;
-            inset: 0;
-            z-index: 3;
-            background: repeating-linear-gradient(
-                to bottom,
-                transparent 0px,
-                transparent 2px,
-                rgba(0, 255, 70, 0.08) 2px,
-                rgba(0, 255, 70, 0.08) 4px
-            );
-            pointer-events: none;
-            animation: scan 8s linear infinite;
-        }
-        
-        @keyframes scan {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 1000px; }
-        }
-        
-        .glitch {
-            position: relative;
-            color: #00ff46;
-            text-shadow: 
-                0 0 10px #00ff46,
-                0 0 30px #00ff46;
-            animation: glitch 2s infinite linear alternate;
-        }
-        
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-3px, 3px); }
-            40% { transform: translate(-3px, -3px); }
-            60% { transform: translate(3px, 3px); }
-            80% { transform: translate(3px, -3px); }
-            100% { transform: translate(0); }
-        }
-        
-        .flicker {
-            animation: flicker 0.15s infinite alternate;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .hero-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
         }
     </style>
 </head>
-<body class="bg-black text-[#00ff46]">
+<body class="bg-zinc-950 text-zinc-200">
 
-    <!-- MATRIX RAIN -->
-    <canvas id="matrix" class="fixed inset-0"></canvas>
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full border-b border-white/10 bg-zinc-950/90 backdrop-blur-md z-50">
+        <div class="max-w-6xl mx-auto px-5 sm:px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-amber-500 rounded-2xl flex items-center justify-center text-zinc-950 font-bold text-2xl">DC</div>
+                <span class="text-2xl font-semibold tracking-tight">Dutch Cape</span>
+            </div>
+            <div class="text-sm text-zinc-400 font-medium">Site in progress</div>
+        </div>
+    </nav>
 
-    <!-- OVERLAY CONTENT (minimal) -->
-    <div class="overlay flex flex-col items-center justify-center text-center px-6">
-        <div class="max-w-3xl">
-            <div class="text-[13vw] md:text-[110px] leading-none tracking-[-6px] font-bold glitch flicker" style="font-family: 'VT323', monospace;">
-                NEXT<br>REALITY
+    <!-- Hero -->
+    <section class="hero-bg min-h-screen flex items-center justify-center pt-16 pb-12">
+        <div class="max-w-2xl mx-auto text-center px-5 sm:px-6">
+
+            <!-- Status -->
+            <div class="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-700 px-6 py-2.5 rounded-3xl text-sm mb-10">
+                <div class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="font-medium tracking-wide">UNDER CONSTRUCTION • 68% COMPLETE</span>
             </div>
-            
-            <div class="mt-6 text-5xl md:text-7xl tracking-[8px] text-[#00cc33] opacity-90">
-                UNDER CONSTRUCTION
+
+            <!-- Main Heading -->
+            <h1 class="text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tighter leading-[1.05] mb-6 px-2">
+                We're building<br>something special
+            </h1>
+
+            <p class="text-lg sm:text-xl text-zinc-400 max-w-md mx-auto mb-12 px-4">
+                The new Dutch Cape website is currently under construction.<br class="hidden sm:block">
+                Launching very soon.
+            </p>
+
+            <!-- Progress Bar -->
+            <div class="max-w-xs mx-auto mb-12 px-4">
+                <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                    <div class="h-full w-[68%] bg-gradient-to-r from-amber-400 to-amber-500 rounded-full"></div>
+                </div>
+                <div class="flex justify-between text-xs text-zinc-500 mt-3 font-medium">
+                    <div>Progress</div>
+                    <div>68%</div>
+                </div>
             </div>
-            
-            <!-- subtle subline -->
-            <div class="mt-12 text-xl md:text-2xl tracking-widest text-[#00ff46]/70 font-light">
-                THE FUTURE IS LOADING...
+
+            <!-- Email Signup -->
+            <div class="max-w-md mx-auto px-2">
+                <p class="text-zinc-400 mb-4 text-base">Be the first to know when we launch</p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input id="email" type="email" placeholder="your@email.com"
+                           class="flex-1 bg-zinc-900 border border-zinc-700 focus:border-amber-500 rounded-3xl px-7 py-5 outline-none text-base placeholder-zinc-500">
+                    <button onclick="submitEmail()" 
+                            class="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 transition font-semibold px-10 py-5 rounded-3xl text-base whitespace-nowrap w-full sm:w-auto">
+                        Notify Me
+                    </button>
+                </div>
+            </div>
+
+            <!-- Trust line -->
+            <div class="mt-20 text-xs sm:text-sm text-zinc-500 tracking-widest flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8">
+                <div>Cape Town, South Africa</div>
+                <div class="hidden sm:block">●</div>
+                <div>Est. 2026</div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- FLOATING ENTER BUTTON -->
-    <div class="fixed bottom-12 left-1/2 -translate-x-1/2 z-50">
-        <button onclick="showModal()" 
-                class="px-16 py-6 border-2 border-[#00ff46] text-[#00ff46] text-3xl tracking-widest hover:bg-[#00ff46] hover:text-black transition-all active:scale-95">
-            ENTER THE BUILD
-        </button>
-    </div>
-
-    <!-- SIMPLE FOOTER -->
-    <div class="fixed bottom-6 right-6 text-xs text-[#00ff46]/40 tracking-widest z-50 font-mono">
-        2026 • WE’RE STILL BUILDING THIS
-    </div>
-
-    <!-- JOIN MODAL -->
-    <div id="modal" class="hidden fixed inset-0 bg-black/95 z-[999] flex items-center justify-center">
-        <div class="border border-[#00ff46]/50 bg-black/90 max-w-md w-full mx-6 p-10 text-center">
-            <div class="text-6xl mb-6">⚡</div>
-            <h3 class="text-4xl mb-4 tracking-widest">YOU’RE IN THE MATRIX NOW</h3>
-            <p class="text-[#00ff46]/70 mb-8">Drop your signal. We’ll ping you when the next reality drops.</p>
-            
-            <input id="email-input" type="email" placeholder="YOUR@SIGNAL.COM" 
-                   class="w-full bg-black border border-[#00ff46]/50 focus:border-[#00ff46] text-center text-xl py-6 outline-none placeholder-[#00ff46]/30">
-            
-            <button onclick="submitFakeForm()" 
-                    class="mt-6 w-full py-6 border border-[#00ff46] text-[#00ff46] text-xl tracking-widest hover:bg-[#00ff46] hover:text-black transition">
-                TRANSMIT
-            </button>
-            
-            <button onclick="hideModal()" class="mt-6 text-xs text-[#00ff46]/50 hover:text-[#00ff46]">ESCAPE • CLOSE</button>
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-10 bg-zinc-950">
+        <div class="max-w-6xl mx-auto px-6 text-center text-xs text-zinc-500">
+            © 2026 Dutch Cape. All rights reserved.<br>
+            This website is under active development.
         </div>
-    </div>
+    </footer>
 
     <script>
-        // === CLASSIC MATRIX DIGITAL RAIN ===
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-
-        let fontSize = 14;
-        let columns;
-        let drops = [];
-
-        const katakana = 'アィゥェォカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            columns = Math.floor(canvas.width / fontSize);
-            drops = [];
-            for (let i = 0; i < columns; i++) {
-                drops[i] = Math.random() * canvas.height / fontSize;
+        function submitEmail() {
+            const email = document.getElementById('email').value.trim();
+            if (email.length > 5 && email.includes('@')) {
+                alert("✅ Thank you! You'll be notified the moment Dutch Cape goes live.");
+                document.getElementById('email').value = '';
+            } else {
+                alert("Please enter a valid email address.");
             }
         }
 
-        function drawMatrix() {
-            // Slow fade for that deep matrix trail
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.045)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#00ff46';
-            ctx.font = `${fontSize}px monospace`;
-
-            for (let i = 0; i < drops.length; i++) {
-                // Random character
-                const text = katakana[Math.floor(Math.random() * katakana.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                // Reset drop to top randomly
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-
-        function animateMatrix() {
-            drawMatrix();
-            requestAnimationFrame(animateMatrix);
-        }
-
-        // Modal functions
-        function showModal() {
-            document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('modal').classList.add('flex');
-        }
-        function hideModal() {
-            const m = document.getElementById('modal');
-            m.classList.add('hidden');
-            m.classList.remove('flex');
-        }
-        function submitFakeForm() {
-            const email = document.getElementById('email-input').value.trim();
-            if (email.length > 5) {
-                hideModal();
-                setTimeout(() => {
-                    alert("✅ SIGNAL RECEIVED.\n\nWelcome to the next reality. You’ll be notified the moment it goes live.");
-                }, 400);
-            }
-        }
-
-        // Init
+        // Auto-focus on mobile too
         window.onload = () => {
-            resizeCanvas();
-            animateMatrix();
-
-            window.addEventListener('resize', () => {
-                resizeCanvas();
-            });
-
-            // Keyboard escape
-            document.addEventListener('keydown', e => {
-                if (e.key === "Escape") hideModal();
-            });
+            setTimeout(() => {
+                document.getElementById('email').focus();
+            }, 1500);
         };
     </script>
 </body>
