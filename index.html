@@ -3,255 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grok • Gemini • You</title>
+    <title>In Progress</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .chat-scroll { scrollbar-width: thin; scrollbar-color: #4b5563 #1f2937; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        .heading {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-200 h-screen flex flex-col">
+<body class="bg-zinc-950 text-white min-h-screen flex flex-col">
+    <main class="flex-1 flex items-center justify-center px-6">
+        <div class="text-center max-w-md">
+            <!-- Subtle decorative line -->
+            <div class="flex items-center justify-center gap-4 mb-10">
+                <div class="flex-1 h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent"></div>
+                <span class="text-[11px] tracking-[4px] font-medium text-zinc-500">UNDER DEVELOPMENT</span>
+                <div class="flex-1 h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent"></div>
+            </div>
 
-    <!-- Header -->
-    <div class="border-b border-zinc-800 bg-zinc-900 py-4 px-6 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <div class="text-2xl">💬</div>
-            <div>
-                <div class="font-semibold text-lg">Grok • Gemini • You</div>
-                <div class="text-emerald-400 text-xs flex items-center gap-1">
-                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                    All online
-                </div>
+            <!-- Elegant heading -->
+            <h1 class="heading text-7xl md:text-8xl font-light tracking-[-2px] leading-none mb-6">
+                In Progress
+            </h1>
+
+            <!-- Message -->
+            <p class="text-zinc-400 text-lg md:text-xl max-w-xs mx-auto leading-relaxed">
+                This page is being crafted with care.<br>
+                Something beautiful is coming soon.
+            </p>
+
+            <!-- Minimal status indicator -->
+            <div class="mt-16 flex items-center justify-center gap-2 text-xs tracking-[3px] text-zinc-500">
+                <div class="w-2 h-2 bg-emerald-400 rounded-full pulse"></div>
+                WORKING ON IT
             </div>
         </div>
-        <button onclick="showSettings()" 
-                class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-sm flex items-center gap-2">
-            <i class="fa-solid fa-key"></i>
-            <span>Gemini Key</span>
-        </button>
-    </div>
+    </main>
 
-    <div class="flex flex-1 overflow-hidden">
-
-        <!-- Sidebar -->
-        <div class="w-72 bg-zinc-900 border-r border-zinc-800 p-6 hidden md:flex flex-col">
-            <div class="text-xs uppercase tracking-widest text-zinc-500 mb-4">Participants</div>
-            
-            <div class="space-y-6">
-                <!-- You -->
-                <div class="flex items-center gap-4">
-                    <div class="w-11 h-11 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center text-xl font-bold">👤</div>
-                    <div>
-                        <div class="font-medium">You</div>
-                        <div class="text-emerald-400 text-xs">Online</div>
-                    </div>
-                </div>
-
-                <!-- Grok -->
-                <div class="flex items-center gap-4">
-                    <div class="w-11 h-11 bg-black border border-white/30 rounded-2xl flex items-center justify-center text-2xl">🌀</div>
-                    <div>
-                        <div class="font-medium">Grok</div>
-                        <div class="text-emerald-400 text-xs">Built by xAI</div>
-                    </div>
-                </div>
-
-                <!-- Gemini -->
-                <div class="flex items-center gap-4">
-                    <div class="w-11 h-11 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl">✦</div>
-                    <div>
-                        <div class="font-medium">Gemini</div>
-                        <div class="text-emerald-400 text-xs">Google</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Chat -->
-        <div class="flex-1 flex flex-col">
-            <div id="chat" class="flex-1 overflow-y-auto p-6 chat-scroll space-y-6"></div>
-
-            <!-- Input -->
-            <div class="p-6 border-t border-zinc-800 bg-zinc-900">
-                <div class="flex gap-3">
-                    <input id="userInput" type="text" 
-                           class="flex-1 bg-zinc-800 border border-zinc-700 rounded-3xl px-6 py-4 focus:outline-none focus:border-amber-500 placeholder-zinc-500"
-                           placeholder="Type a message to the group...">
-                    <button onclick="sendMessage()" 
-                            class="bg-amber-500 hover:bg-amber-600 px-8 rounded-3xl font-semibold">
-                        Send
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-        <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8 w-full max-w-md">
-            <h3 class="text-xl font-semibold mb-6">Your Gemini API Key</h3>
-            <input id="apiKeyInput" type="password" placeholder="AIzaSy..." 
-                   class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 text-sm">
-            <p class="text-xs text-zinc-500 mt-3">Stored only in your browser • Never sent anywhere else</p>
-            
-            <div class="flex gap-3 mt-8">
-                <button onclick="saveApiKey()" 
-                        class="flex-1 bg-emerald-500 text-black font-semibold py-4 rounded-2xl">Save Key</button>
-                <button onclick="hideSettings()" 
-                        class="flex-1 border border-zinc-700 py-4 rounded-2xl">Cancel</button>
-            </div>
-        </div>
-    </div>
+    <!-- Minimal footer -->
+    <footer class="py-10 text-center text-zinc-600 text-xs tracking-widest">
+        © 2026 • PAGE IN PROGRESS
+    </footer>
 
     <script>
-        let apiKey = localStorage.getItem('geminiApiKey') || '';
-
-        function addMessage(sender, text, isTyping = false) {
-            const chat = document.getElementById('chat');
-            const div = document.createElement('div');
-            div.className = `flex gap-4 ${sender === 'You' ? 'justify-end' : ''}`;
-            
-            if (sender === 'You') {
-                div.innerHTML = `
-                    <div class="max-w-[70%]">
-                        <div class="text-xs text-zinc-500 mb-1 text-right">You • just now</div>
-                        <div class="bg-amber-500 text-black px-5 py-3 rounded-3xl rounded-tr-none">
-                            ${text}
-                        </div>
-                    </div>
-                `;
-            } else {
-                const avatar = sender === 'Grok' ? '🌀' : '✦';
-                const color = sender === 'Grok' ? 'bg-zinc-800' : 'bg-gradient-to-br from-blue-500 to-purple-600';
-                div.innerHTML = `
-                    <div class="w-9 h-9 ${color} rounded-2xl flex-shrink-0 flex items-center justify-center text-xl">${avatar}</div>
-                    <div class="max-w-[70%]">
-                        <div class="text-xs text-zinc-500 mb-1">${sender} • just now</div>
-                        <div class="bg-zinc-800 px-5 py-3 rounded-3xl rounded-tl-none">
-                            ${isTyping ? '<span class="animate-pulse">thinking...</span>' : text}
-                        </div>
-                    </div>
-                `;
-            }
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        async function callGemini(message) {
-            if (!apiKey) {
-                addMessage('Gemini', "I need your API key first! Click the key icon above.");
-                return "Please set your Gemini API key.";
-            }
-
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: message }] }]
-                    })
-                });
-                const data = await res.json();
-                return data.candidates[0].content.parts[0].text || "Sorry, I couldn't generate a response.";
-            } catch (e) {
-                return "Error connecting to Gemini. Check your API key.";
-            }
-        }
-
-        function getGrokResponse(message) {
-            const replies = [
-                `Haha, ${message.toLowerCase()}? Bold take. Here's why I love it...`,
-                `Interesting question. As Grok, I'd say: ${message} is peak human curiosity.`,
-                `Straight to the point — I respect it. My answer: `,
-                `xAI mode activated. Here's the unfiltered truth: `,
-                `Classic. Let me hit you with some real talk: `
-            ];
-            return replies[Math.floor(Math.random() * replies.length)] + " " + message.split(' ').slice(0, 4).join(' ') + "... (you get the vibe)";
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('userInput');
-            const text = input.value.trim();
-            if (!text) return;
-
-            addMessage('You', text);
-            input.value = '';
-
-            // Grok typing
-            const grokTyping = document.createElement('div');
-            grokTyping.id = 'grokTyping';
-            grokTyping.innerHTML = `
-                <div class="flex gap-4">
-                    <div class="w-9 h-9 bg-black rounded-2xl flex-shrink-0 flex items-center justify-center text-2xl">🌀</div>
-                    <div class="max-w-[70%]">
-                        <div class="text-xs text-zinc-500 mb-1">Grok • thinking...</div>
-                        <div class="bg-zinc-800 px-5 py-3 rounded-3xl rounded-tl-none animate-pulse">...</div>
-                    </div>
-                </div>`;
-            document.getElementById('chat').appendChild(grokTyping);
-            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-
-            // Gemini typing
-            const geminiTyping = document.createElement('div');
-            geminiTyping.id = 'geminiTyping';
-            geminiTyping.innerHTML = `
-                <div class="flex gap-4">
-                    <div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex-shrink-0 flex items-center justify-center text-2xl">✦</div>
-                    <div class="max-w-[70%]">
-                        <div class="text-xs text-zinc-500 mb-1">Gemini • thinking...</div>
-                        <div class="bg-zinc-800 px-5 py-3 rounded-3xl rounded-tl-none animate-pulse">...</div>
-                    </div>
-                </div>`;
-            document.getElementById('chat').appendChild(geminiTyping);
-            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-
-            // Get responses
-            const grokReply = getGrokResponse(text);
-            const geminiReply = await callGemini(text);
-
-            // Remove typing indicators
-            if (document.getElementById('grokTyping')) document.getElementById('grokTyping').remove();
-            if (document.getElementById('geminiTyping')) document.getElementById('geminiTyping').remove();
-
-            // Add real replies
-            addMessage('Grok', grokReply);
-            addMessage('Gemini', geminiReply);
-        }
-
-        function showSettings() {
-            document.getElementById('settingsModal').classList.remove('hidden');
-            if (apiKey) document.getElementById('apiKeyInput').value = apiKey;
-        }
-
-        function hideSettings() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        }
-
-        function saveApiKey() {
-            apiKey = document.getElementById('apiKeyInput').value.trim();
-            if (apiKey) {
-                localStorage.setItem('geminiApiKey', apiKey);
-                hideSettings();
-                addMessage('System', 'Gemini API key saved ✅');
-            }
-        }
-
-        // Enter key support
-        document.getElementById('userInput').addEventListener('keypress', e => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        // Welcome message
-        window.onload = () => {
-            addMessage('System', 'Welcome to the group chat! Say anything — Grok and Gemini will both reply.');
-            if (!apiKey) {
-                setTimeout(() => {
-                    addMessage('System', '💡 Click the key icon (top right) to add your free Gemini API key');
-                }, 1500);
-            }
-        };
+        // Optional: Tailwind script is already loaded via CDN
     </script>
 </body>
 </html>
