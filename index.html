@@ -3,726 +3,1387 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VOID — Digital Studio</title>
+<title>Dutch Cape Trading Co. — Amsterdam & Cape Town</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --black: #050505;
-    --white: #f2ede6;
-    --cream: #e8e0d4;
-    --rust: #c94f2a;
-    --rust-dark: #8a3015;
-    --gold: #c9a84c;
-    --grey: #2a2a2a;
-    --mid: #555;
-  }
+:root {
+  --linen:    #f5f0e8;
+  --cream:    #ede7d9;
+  --parchment:#d9cdb8;
+  --navy:     #1a2744;
+  --navy-mid: #243560;
+  --delft:    #2e5fa3;
+  --delft-lt: #4a7fc1;
+  --brass:    #b8892a;
+  --brass-lt: #d4a94a;
+  --umber:    #5c3d1e;
+  --ink:      #1c1812;
+  --mid:      #7a6f60;
+}
 
-  html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; }
 
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'Space Mono', monospace;
-    overflow-x: hidden;
-    cursor: none;
-  }
+body {
+  background: var(--linen);
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  overflow-x: hidden;
+  cursor: none;
+}
 
-  /* ── CUSTOM CURSOR ── */
-  #cursor {
-    position: fixed;
-    width: 12px; height: 12px;
-    background: var(--rust);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%,-50%);
-    transition: transform .1s ease, width .3s ease, height .3s ease, background .3s ease;
-    mix-blend-mode: normal;
-  }
-  #cursor.big {
-    width: 60px; height: 60px;
-    background: rgba(201,79,42,.2);
-    border: 1px solid var(--rust);
-  }
+/* CURSOR */
+#cur {
+  position: fixed;
+  width: 14px; height: 14px;
+  border: 1.5px solid var(--brass);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .35s ease, height .35s ease, background .35s ease;
+}
+#cur.expand {
+  width: 52px; height: 52px;
+  background: rgba(184,137,42,.1);
+}
 
-  /* ── NOISE OVERLAY ── */
-  body::before {
-    content:'';
-    position:fixed;inset:0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-    opacity: .035;
-    pointer-events:none;
-    z-index:9998;
-  }
+/* NOISE */
+body::after {
+  content:'';
+  position:fixed;inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:.04;
+  pointer-events:none;
+  z-index:9000;
+}
 
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 1.8rem 3rem;
-    display: flex; justify-content: space-between; align-items: center;
-    mix-blend-mode: normal;
-  }
-  nav::after {
-    content:'';
-    position:absolute;inset:0;
-    background: linear-gradient(to bottom, rgba(5,5,5,.9), transparent);
-    pointer-events:none;
-  }
-  .nav-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    letter-spacing: .15em;
-    color: var(--white);
-    text-decoration: none;
-    position: relative; z-index:1;
-  }
-  .nav-links {
-    display: flex; gap: 2.5rem;
-    list-style: none;
-    position: relative; z-index:1;
-  }
-  .nav-links a {
-    font-size: .65rem;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    color: var(--cream);
-    text-decoration: none;
-    opacity: .7;
-    transition: opacity .3s;
-  }
-  .nav-links a:hover { opacity: 1; color: var(--rust); }
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 500;
+  padding: 0 4rem;
+  height: 80px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(245,240,232,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(184,137,42,.2);
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 1rem;
+  text-decoration: none;
+}
+.nav-crest {
+  width: 38px; height: 38px;
+  position: relative;
+}
+.nav-crest svg { width:100%; height:100%; }
+.brand-text { line-height:1; }
+.brand-name {
+  font-family: 'Cinzel', serif;
+  font-size: .9rem;
+  letter-spacing: .2em;
+  color: var(--navy);
+  display: block;
+}
+.brand-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: .7rem;
+  color: var(--brass);
+  letter-spacing: .1em;
+  display: block;
+}
+.nav-links {
+  display: flex; gap: 2.5rem; list-style: none;
+}
+.nav-links a {
+  font-family: 'Cinzel', serif;
+  font-size: .65rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--navy);
+  text-decoration: none;
+  opacity: .7;
+  transition: opacity .3s, color .3s;
+  position: relative;
+}
+.nav-links a::after {
+  content:'';
+  position: absolute; bottom: -4px; left: 0; right: 0;
+  height: 1px;
+  background: var(--brass);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s ease;
+}
+.nav-links a:hover { opacity: 1; }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-cta {
+  padding: .55rem 1.6rem;
+  background: var(--navy);
+  color: var(--linen) !important;
+  opacity: 1 !important;
+  transition: background .3s !important;
+}
+.nav-cta:hover { background: var(--brass) !important; color: var(--ink) !important; }
+.nav-cta::after { display: none !important; }
 
-  /* ── HERO ── */
-  #hero {
-    min-height: 100vh;
-    display: grid;
-    grid-template-rows: 1fr auto;
-    padding: 0 3rem 3rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-bg-text {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -52%);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(8rem, 22vw, 22rem);
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(242,237,230,.07);
-    letter-spacing: -.02em;
-    white-space: nowrap;
-    pointer-events: none;
-    user-select: none;
-    animation: drift 18s ease-in-out infinite alternate;
-  }
-  @keyframes drift { from { transform: translate(-50%,-52%) scale(1); } to { transform: translate(-50%,-50%) scale(1.04); } }
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 80px;
+  position: relative;
+  overflow: hidden;
+}
 
-  .hero-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding-top: 9rem;
-    position: relative;
-  }
-  .hero-eyebrow {
-    font-size: .6rem;
-    letter-spacing: .3em;
-    text-transform: uppercase;
-    color: var(--rust);
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp .8s .3s forwards ease-out;
-  }
-  .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(4.5rem, 13vw, 13rem);
-    line-height: .92;
-    letter-spacing: -.01em;
-    opacity: 0;
-    animation: fadeUp .9s .5s forwards ease-out;
-  }
-  .hero-title em {
-    font-family: 'DM Serif Display', serif;
-    font-style: italic;
-    color: var(--rust);
-  }
-  .hero-sub {
-    max-width: 38ch;
-    margin-top: 2rem;
-    line-height: 1.7;
-    font-size: .85rem;
-    color: var(--mid);
-    opacity: 0;
-    animation: fadeUp .9s .75s forwards ease-out;
-  }
-  .hero-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 3rem;
-    border-top: 1px solid rgba(242,237,230,.08);
-    opacity: 0;
-    animation: fadeUp .9s 1s forwards ease-out;
-  }
-  .scroll-hint {
-    display: flex; align-items: center; gap: .8rem;
-    font-size: .6rem; letter-spacing: .2em; text-transform: uppercase;
-    color: rgba(242,237,230,.4);
-  }
-  .scroll-line {
-    width: 50px; height: 1px;
-    background: var(--rust);
-    transform-origin: left;
-    animation: expandLine 1s 1.3s both;
-  }
-  @keyframes expandLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* Left panel */
+.hero-left {
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6rem 5rem 5rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero-left::before {
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 80%, rgba(46,95,163,.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(184,137,42,.15) 0%, transparent 55%);
+}
+/* Compass rose watermark */
+.compass-bg {
+  position:absolute;
+  right:-60px; bottom:-60px;
+  width:420px; height:420px;
+  opacity:.07;
+}
+.hero-tag {
+  font-family: 'Cinzel', serif;
+  font-size: .6rem;
+  letter-spacing: .35em;
+  color: var(--brass);
+  margin-bottom: 2rem;
+  display: flex; align-items: center; gap: 1rem;
+  position: relative; z-index:1;
+  opacity: 0; animation: fadeUp .8s .4s forwards;
+}
+.hero-tag::before {
+  content:'';
+  width: 35px; height: 1px;
+  background: var(--brass);
+}
+.hero-h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(3.2rem, 5.5vw, 5.5rem);
+  line-height: 1.08;
+  color: var(--linen);
+  position: relative; z-index:1;
+  opacity: 0; animation: fadeUp .9s .6s forwards;
+}
+.hero-h1 em {
+  font-style: italic;
+  color: var(--brass-lt);
+}
+.hero-divider {
+  width: 60px; height: 2px;
+  background: linear-gradient(to right, var(--brass), transparent);
+  margin: 2.5rem 0;
+  position: relative; z-index:1;
+  opacity: 0; animation: expandLine .8s .9s forwards;
+}
+.hero-p {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: rgba(245,240,232,.55);
+  max-width: 38ch;
+  position: relative; z-index:1;
+  opacity: 0; animation: fadeUp .9s 1s forwards;
+}
+.hero-btns {
+  display: flex; gap: 1rem; margin-top: 3rem;
+  position: relative; z-index:1;
+  opacity: 0; animation: fadeUp .8s 1.15s forwards;
+}
+.btn-primary {
+  padding: .85rem 2.5rem;
+  background: var(--brass);
+  color: var(--ink);
+  font-family: 'Cinzel', serif;
+  font-size: .65rem;
+  letter-spacing: .2em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background .3s, color .3s;
+}
+.btn-primary:hover { background: var(--brass-lt); }
+.btn-outline {
+  padding: .85rem 2.5rem;
+  border: 1px solid rgba(245,240,232,.25);
+  color: rgba(245,240,232,.7);
+  font-family: 'Cinzel', serif;
+  font-size: .65rem;
+  letter-spacing: .2em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: border-color .3s, color .3s;
+}
+.btn-outline:hover { border-color: var(--brass); color: var(--brass); }
 
-  .hero-stat-row {
-    display: flex; gap: 3rem;
-  }
-  .hero-stat { text-align: right; }
-  .hero-stat .num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.2rem;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .hero-stat .label {
-    font-size: .55rem;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    color: rgba(242,237,230,.35);
-  }
+/* Hero location pills */
+.hero-locations {
+  display: flex; gap: 1.5rem; margin-top: 4rem;
+  position: relative; z-index:1;
+  opacity: 0; animation: fadeUp .8s 1.3s forwards;
+}
+.loc-pill {
+  display: flex; align-items: center; gap: .6rem;
+  font-family: 'Cinzel', serif;
+  font-size: .55rem;
+  letter-spacing: .18em;
+  color: rgba(245,240,232,.35);
+}
+.loc-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brass); opacity: .6; }
 
-  @keyframes fadeUp {
-    from { opacity:0; transform: translateY(30px); }
-    to   { opacity:1; transform: translateY(0); }
-  }
+/* Right panel — map/visual */
+.hero-right {
+  background: var(--cream);
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-right::before {
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(26,39,68,.04), transparent 70%);
+}
 
-  /* ── MARQUEE ── */
-  .marquee-wrap {
-    background: var(--rust);
-    padding: .7rem 0;
-    overflow: hidden;
-    position: relative;
-  }
-  .marquee-track {
-    display: flex;
-    white-space: nowrap;
-    animation: marquee 22s linear infinite;
-  }
-  .marquee-track span {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: .15em;
-    color: var(--black);
-    padding: 0 2.5rem;
-  }
-  .marquee-track span.dot { color: rgba(5,5,5,.35); }
-  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+/* Decorative map SVG background */
+.map-bg {
+  position: absolute; inset: 0;
+  overflow: hidden;
+}
+.map-lines {
+  position: absolute; inset: -20%;
+  opacity: .12;
+}
+/* Product showcase card in hero */
+.hero-showcase {
+  position: relative; z-index: 2;
+  padding: 3rem;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  opacity: 0; animation: fadeUp .9s 1s forwards;
+}
+.showcase-card {
+  background: var(--linen);
+  border: 1px solid rgba(184,137,42,.2);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: transform .4s ease, box-shadow .4s ease;
+  cursor: none;
+}
+.showcase-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(26,39,68,.12);
+}
+.showcase-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+.showcase-label {
+  font-family: 'Cinzel', serif;
+  font-size: .6rem;
+  letter-spacing: .2em;
+  color: var(--brass);
+  text-transform: uppercase;
+  margin-bottom: .4rem;
+  display: block;
+}
+.showcase-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+.showcase-origin {
+  font-style: italic;
+  font-size: .85rem;
+  color: var(--mid);
+  margin-top: .3rem;
+}
+/* Year badge — big background text */
+.hero-year {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  font-family: 'Cinzel', serif;
+  font-size: 18vw;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(26,39,68,.06);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 0;
+}
 
-  /* ── SECTION COMMON ── */
-  section { padding: 7rem 3rem; }
-  .section-label {
-    font-size: .6rem;
-    letter-spacing: .3em;
-    text-transform: uppercase;
-    color: var(--rust);
-    margin-bottom: 1rem;
-  }
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(3rem, 7vw, 6rem);
-    line-height: .95;
-    margin-bottom: 3rem;
-  }
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(28px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes expandLine {
+  from { opacity:0; transform: scaleX(0); }
+  to   { opacity:1; transform: scaleX(1); }
+}
 
-  /* ── WORK GRID ── */
-  #work { background: var(--black); }
-  .work-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 1px;
-    background: rgba(242,237,230,.06);
-  }
-  .work-card {
-    position: relative;
-    overflow: hidden;
-    background: var(--black);
-    cursor: none;
-  }
-  .work-card:nth-child(1) { grid-column: span 7; }
-  .work-card:nth-child(2) { grid-column: span 5; }
-  .work-card:nth-child(3) { grid-column: span 4; }
-  .work-card:nth-child(4) { grid-column: span 8; }
+/* ── ROUTE BANNER ── */
+.route-banner {
+  background: var(--navy);
+  padding: 1.6rem 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  border-top: 1px solid rgba(184,137,42,.3);
+  border-bottom: 1px solid rgba(184,137,42,.3);
+  overflow: hidden;
+  position: relative;
+}
+.route-banner::before {
+  content:'';
+  position:absolute;inset:0;
+  background: linear-gradient(135deg, rgba(46,95,163,.2), transparent 50%, rgba(184,137,42,.1));
+}
+.route-city {
+  text-align: center;
+  position: relative; z-index:1;
+}
+.route-city .city-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  letter-spacing: .25em;
+  color: var(--linen);
+}
+.route-city .city-coords {
+  font-size: .65rem;
+  letter-spacing: .1em;
+  color: var(--brass);
+  margin-top: .2rem;
+}
+.route-line {
+  flex: 1;
+  max-width: 200px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184,137,42,.4), rgba(184,137,42,.8), rgba(184,137,42,.4));
+  position: relative;
+}
+.route-line::before, .route-line::after {
+  content:'◆';
+  position:absolute;
+  top:50%; transform:translateY(-50%);
+  font-size:.4rem;
+  color:var(--brass);
+}
+.route-line::before { left: -6px; }
+.route-line::after  { right: -6px; }
+.route-ship {
+  font-size: 1.4rem;
+  animation: sail 6s ease-in-out infinite alternate;
+}
+@keyframes sail {
+  from { transform: translateX(-8px); }
+  to   { transform: translateX(8px); }
+}
 
-  .work-card-inner {
-    padding: 3rem;
-    height: 100%;
-    min-height: 340px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    z-index: 1;
-  }
-  .work-card::before {
-    content:'';
-    position: absolute; inset: 0;
-    background: var(--rust);
-    transform: translateY(100%);
-    transition: transform .5s cubic-bezier(.76,0,.24,1);
-    z-index: 0;
-  }
-  .work-card:hover::before { transform: translateY(0); }
-  .work-card:hover .work-num,
-  .work-card:hover .work-tag,
-  .work-card:hover .work-title,
-  .work-card:hover .work-arrow { color: var(--black); }
+/* ── SECTION BASE ── */
+section { padding: 7rem 4rem; }
+.section-eyebrow {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1rem;
+}
+.eyebrow-line { width: 30px; height: 1px; background: var(--brass); }
+.eyebrow-text {
+  font-family: 'Cinzel', serif;
+  font-size: .6rem;
+  letter-spacing: .3em;
+  color: var(--brass);
+  text-transform: uppercase;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1.1;
+  color: var(--navy);
+}
+.section-title em { font-style: italic; color: var(--brass); }
 
-  .work-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 4rem;
-    color: rgba(242,237,230,.08);
-    line-height: 1;
-    transition: color .4s;
-  }
-  .work-tag {
-    font-size: .55rem;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    color: var(--mid);
-    margin-bottom: .5rem;
-    transition: color .4s;
-  }
-  .work-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(1.6rem, 3vw, 2.6rem);
-    line-height: 1.1;
-    transition: color .4s;
-  }
-  .work-arrow {
-    font-size: 1.5rem;
-    transition: color .4s, transform .4s;
-    display: inline-block;
-    color: var(--rust);
-  }
-  .work-card:hover .work-arrow { transform: translate(4px,-4px); }
+/* ── PRODUCTS ── */
+#products { background: var(--linen); }
+.products-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: end;
+  margin-bottom: 4rem;
+}
+.products-intro {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--mid);
+  max-width: 45ch;
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.product-card {
+  background: var(--cream);
+  border: 1px solid rgba(184,137,42,.15);
+  overflow: hidden;
+  transition: transform .45s cubic-bezier(.25,.46,.45,.94);
+  cursor: none;
+}
+.product-card:hover { transform: translateY(-8px); }
+.product-card:hover .product-thumb { background-position: center 45%; }
+.product-card:first-child { grid-row: span 2; }
 
-  /* ── ABOUT ── */
-  #about {
-    background: var(--grey);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: center;
-  }
-  .about-text p {
-    font-size: .9rem;
-    line-height: 1.85;
-    color: rgba(242,237,230,.65);
-    margin-bottom: 1.4rem;
-  }
-  .about-text p strong { color: var(--white); font-weight: 700; }
-  .skills-list {
-    display: flex; flex-wrap: wrap; gap: .6rem;
-    margin-top: 2rem;
-  }
-  .skill-pill {
-    padding: .4rem 1.1rem;
-    border: 1px solid rgba(242,237,230,.15);
-    font-size: .6rem;
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    color: rgba(242,237,230,.5);
-    transition: border-color .3s, color .3s;
-  }
-  .skill-pill:hover { border-color: var(--rust); color: var(--rust); }
-  .about-visual {
-    position: relative;
-    height: 500px;
-  }
-  .about-block {
-    position: absolute;
-    border: 1px solid rgba(242,237,230,.08);
-  }
-  .ab1 { inset: 0; background: rgba(201,79,42,.06); }
-  .ab2 { top: 10%; left: 10%; right: -5%; bottom: -5%; background: rgba(201,168,76,.04); border-color: rgba(201,168,76,.12); }
-  .about-quote {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    text-align: center;
-    padding: 2rem;
-    width: 80%;
-  }
-  .about-quote blockquote {
-    font-family: 'DM Serif Display', serif;
-    font-style: italic;
-    font-size: clamp(1.3rem, 2.5vw, 2rem);
-    line-height: 1.35;
-    color: var(--white);
-  }
-  .about-quote cite {
-    display: block;
-    margin-top: 1.2rem;
-    font-size: .6rem;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    color: var(--gold);
-    font-style: normal;
-  }
+.product-thumb {
+  height: 220px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 5rem;
+  position: relative;
+  transition: background-position .5s;
+}
+.product-card:first-child .product-thumb { height: 300px; font-size: 7rem; }
 
-  /* ── SERVICES ── */
-  #services { background: var(--black); }
-  .services-list {
-    border-top: 1px solid rgba(242,237,230,.08);
-  }
-  .service-row {
-    display: grid;
-    grid-template-columns: 80px 1fr auto;
-    align-items: center;
-    gap: 2rem;
-    padding: 2.2rem 0;
-    border-bottom: 1px solid rgba(242,237,230,.08);
-    transition: background .3s;
-    cursor: none;
-  }
-  .service-row:hover { background: rgba(201,79,42,.05); }
-  .service-row:hover .service-name { color: var(--rust); }
-  .service-row:hover .service-plus { color: var(--rust); transform: rotate(45deg); }
-  .service-idx {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.2rem;
-    color: rgba(242,237,230,.15);
-  }
-  .service-name {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(1.4rem, 3vw, 2.2rem);
-    transition: color .3s;
-  }
-  .service-plus {
-    font-size: 1.8rem;
-    color: rgba(242,237,230,.2);
-    transition: color .3s, transform .4s;
-    display: inline-block;
-  }
+/* Delft tile pattern bg for thumb */
+.pt-wine { background: linear-gradient(135deg, #1a3a1a 0%, #0d2a0d 100%); }
+.pt-ceramic { background: linear-gradient(135deg, #1e3a6e 0%, #0e2448 100%); }
+.pt-textile { background: linear-gradient(135deg, #4a2010 0%, #2a1008 100%); }
+.pt-spice { background: linear-gradient(135deg, #5a3500 0%, #3a2000 100%); }
+.pt-art { background: linear-gradient(135deg, #2a2a4a 0%, #1a1a32 100%); }
+.pt-furniture { background: linear-gradient(135deg, #2a1a08 0%, #1a0c04 100%); }
 
-  /* ── CONTACT / FOOTER ── */
-  #contact {
-    background: var(--rust);
-    text-align: center;
-    padding: 8rem 3rem;
-    position: relative;
-    overflow: hidden;
-  }
-  #contact::before {
-    content: 'HELLO';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28vw;
-    color: rgba(5,5,5,.1);
-    pointer-events: none;
-    white-space: nowrap;
-  }
-  #contact .section-label { color: var(--black); opacity: .5; }
-  #contact .section-title { color: var(--black); margin-bottom: 1rem; }
-  #contact p { color: rgba(5,5,5,.6); font-size: .85rem; margin-bottom: 2.5rem; }
-  .cta-btn {
-    display: inline-block;
-    padding: 1.1rem 3.5rem;
-    background: var(--black);
-    color: var(--white);
-    font-family: 'Space Mono', monospace;
-    font-size: .7rem;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    text-decoration: none;
-    position: relative;
-    z-index: 1;
-    transition: background .3s, color .3s;
-  }
-  .cta-btn:hover { background: var(--white); color: var(--black); }
+.product-body { padding: 1.8rem; }
+.product-origin {
+  font-family: 'Cinzel', serif;
+  font-size: .55rem;
+  letter-spacing: .2em;
+  color: var(--brass);
+  text-transform: uppercase;
+  margin-bottom: .5rem;
+}
+.product-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: .6rem;
+}
+.product-desc {
+  font-size: .95rem;
+  line-height: 1.65;
+  color: var(--mid);
+}
+.product-footer {
+  padding: 1rem 1.8rem 1.8rem;
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid rgba(184,137,42,.12);
+}
+.product-tag {
+  font-family: 'Cinzel', serif;
+  font-size: .55rem;
+  letter-spacing: .15em;
+  color: var(--mid);
+}
+.product-link {
+  font-family: 'Cinzel', serif;
+  font-size: .6rem;
+  letter-spacing: .15em;
+  color: var(--brass);
+  text-decoration: none;
+  transition: color .3s;
+}
+.product-link:hover { color: var(--navy); }
 
-  footer {
-    background: var(--black);
-    padding: 2rem 3rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid rgba(242,237,230,.06);
-  }
-  footer p {
-    font-size: .55rem;
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    color: rgba(242,237,230,.25);
-  }
-  .footer-links { display:flex; gap:2rem; }
-  .footer-links a {
-    font-size: .55rem;
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    color: rgba(242,237,230,.25);
-    text-decoration: none;
-    transition: color .3s;
-  }
-  .footer-links a:hover { color: var(--rust); }
+/* ── HERITAGE ── */
+#heritage {
+  background: var(--navy);
+  position: relative;
+  overflow: hidden;
+}
+#heritage::before {
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 0% 100%, rgba(46,95,163,.3), transparent 60%),
+    radial-gradient(ellipse at 100% 0%, rgba(184,137,42,.1), transparent 55%);
+}
+.heritage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+  position: relative; z-index:1;
+}
+.heritage-left .section-title { color: var(--linen); }
+.heritage-left .section-title em { color: var(--brass-lt); }
+.heritage-left .section-eyebrow .eyebrow-text { color: var(--brass-lt); }
+.heritage-text {
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: rgba(245,240,232,.6);
+  margin-top: 2rem;
+}
+.heritage-text strong { color: var(--linen); }
+.timeline {
+  margin-top: 3rem;
+  border-left: 1px solid rgba(184,137,42,.3);
+  padding-left: 2rem;
+}
+.timeline-item {
+  margin-bottom: 2.2rem;
+  position: relative;
+}
+.timeline-item::before {
+  content:'';
+  position:absolute;
+  left:-2.45rem; top:.35rem;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--brass);
+  background: var(--navy);
+}
+.timeline-year {
+  font-family: 'Cinzel', serif;
+  font-size: .6rem;
+  letter-spacing: .2em;
+  color: var(--brass);
+  margin-bottom: .3rem;
+}
+.timeline-event {
+  font-size: 1rem;
+  color: rgba(245,240,232,.7);
+  line-height: 1.5;
+}
 
-  /* ── SCROLL REVEAL ── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity .8s ease, transform .8s ease;
-  }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
+/* Big number display */
+.heritage-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(184,137,42,.2);
+}
+.hstat {
+  background: rgba(26,39,68,.6);
+  padding: 3rem 2.5rem;
+  text-align: center;
+  border: 1px solid rgba(184,137,42,.1);
+  transition: background .35s;
+}
+.hstat:hover { background: rgba(46,95,163,.3); }
+.hstat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem;
+  font-weight: 300;
+  color: var(--brass-lt);
+  line-height: 1;
+  display: block;
+}
+.hstat-label {
+  font-family: 'Cinzel', serif;
+  font-size: .55rem;
+  letter-spacing: .2em;
+  color: rgba(245,240,232,.4);
+  text-transform: uppercase;
+  margin-top: .8rem;
+  display: block;
+}
+.hstat-desc {
+  font-style: italic;
+  font-size: .9rem;
+  color: rgba(245,240,232,.35);
+  margin-top: .5rem;
+  line-height: 1.4;
+}
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    nav { padding: 1.5rem; }
-    .nav-links { display: none; }
-    section { padding: 5rem 1.5rem; }
-    #hero { padding: 0 1.5rem 2rem; }
-    .work-card:nth-child(1),
-    .work-card:nth-child(2),
-    .work-card:nth-child(3),
-    .work-card:nth-child(4) { grid-column: span 12; }
-    #about { grid-template-columns: 1fr; }
-    .about-visual { height: 300px; }
-    .service-row { grid-template-columns: 50px 1fr auto; gap: 1rem; }
-    .hero-stat-row { gap: 1.5rem; }
-  }
+/* ── PROCESS ── */
+#process { background: var(--cream); }
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 4rem;
+  border: 1px solid rgba(184,137,42,.2);
+}
+.process-step {
+  padding: 3rem 2.5rem;
+  border-right: 1px solid rgba(184,137,42,.2);
+  position: relative;
+  transition: background .35s;
+}
+.process-step:last-child { border-right: none; }
+.process-step:hover { background: rgba(184,137,42,.05); }
+.step-num {
+  font-family: 'Cinzel', serif;
+  font-size: 2.5rem;
+  color: rgba(184,137,42,.2);
+  line-height: 1;
+  margin-bottom: 1.5rem;
+}
+.step-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+.step-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: .8rem;
+}
+.step-desc {
+  font-size: .95rem;
+  line-height: 1.7;
+  color: var(--mid);
+}
+.step-arrow {
+  position: absolute;
+  top: 50%; right: -14px;
+  transform: translateY(-50%);
+  font-size: .8rem;
+  color: var(--brass);
+  z-index: 1;
+}
+.process-step:last-child .step-arrow { display: none; }
+
+/* ── TESTIMONIAL ── */
+#testimonial {
+  background: var(--parchment);
+  text-align: center;
+  padding: 6rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+#testimonial::before {
+  content: '"';
+  position: absolute;
+  top: -2rem; left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30vw;
+  color: rgba(184,137,42,.07);
+  line-height: 1;
+  pointer-events: none;
+}
+.testi-quote {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--navy);
+  max-width: 55ch;
+  margin: 0 auto 2.5rem;
+  position: relative; z-index:1;
+}
+.testi-divider {
+  width: 40px; height: 2px;
+  background: var(--brass);
+  margin: 0 auto 1.5rem;
+}
+.testi-author {
+  font-family: 'Cinzel', serif;
+  font-size: .65rem;
+  letter-spacing: .25em;
+  color: var(--brass);
+  text-transform: uppercase;
+}
+.testi-role {
+  font-style: italic;
+  font-size: .9rem;
+  color: var(--mid);
+  margin-top: .3rem;
+}
+
+/* ── CONTACT ── */
+#contact {
+  background: var(--linen);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+.contact-left {}
+.contact-left .section-title { margin-bottom: 1.5rem; }
+.contact-p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--mid);
+  margin-bottom: 2.5rem;
+}
+.contact-details {
+  border-top: 1px solid rgba(184,137,42,.2);
+  padding-top: 2rem;
+  display: grid;
+  gap: 1.5rem;
+}
+.contact-item {}
+.contact-item-label {
+  font-family: 'Cinzel', serif;
+  font-size: .55rem;
+  letter-spacing: .2em;
+  color: var(--brass);
+  text-transform: uppercase;
+  margin-bottom: .3rem;
+}
+.contact-item-val {
+  font-size: 1rem;
+  color: var(--navy);
+}
+
+/* Form */
+.contact-form {
+  background: var(--cream);
+  border: 1px solid rgba(184,137,42,.2);
+  padding: 3rem;
+}
+.form-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  color: var(--navy);
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+.form-group { margin-bottom: 1.5rem; }
+.form-label {
+  font-family: 'Cinzel', serif;
+  font-size: .55rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--mid);
+  display: block;
+  margin-bottom: .5rem;
+}
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: .85rem 1.1rem;
+  background: var(--linen);
+  border: 1px solid rgba(184,137,42,.2);
+  color: var(--navy);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  transition: border-color .3s;
+  outline: none;
+  appearance: none;
+  cursor: none;
+}
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus { border-color: var(--brass); }
+.form-textarea { height: 130px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-btn {
+  width: 100%;
+  padding: 1rem;
+  background: var(--navy);
+  color: var(--linen);
+  font-family: 'Cinzel', serif;
+  font-size: .7rem;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  border: none;
+  cursor: none;
+  transition: background .35s;
+  margin-top: .5rem;
+}
+.form-btn:hover { background: var(--brass); color: var(--ink); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--navy);
+  padding: 4rem 4rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+footer::before {
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--brass), transparent);
+}
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(184,137,42,.15);
+}
+.footer-brand-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  letter-spacing: .25em;
+  color: var(--linen);
+  display: block;
+  margin-bottom: .4rem;
+}
+.footer-brand-tag {
+  font-style: italic;
+  font-size: .95rem;
+  color: var(--brass);
+  margin-bottom: 1.2rem;
+  display: block;
+}
+.footer-about {
+  font-size: .9rem;
+  line-height: 1.7;
+  color: rgba(245,240,232,.4);
+}
+.footer-col-title {
+  font-family: 'Cinzel', serif;
+  font-size: .6rem;
+  letter-spacing: .2em;
+  color: var(--brass);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+}
+.footer-links-list { list-style: none; }
+.footer-links-list li { margin-bottom: .7rem; }
+.footer-links-list a {
+  font-size: .9rem;
+  color: rgba(245,240,232,.45);
+  text-decoration: none;
+  transition: color .3s;
+}
+.footer-links-list a:hover { color: var(--brass); }
+.footer-bottom {
+  padding-top: 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-copy {
+  font-size: .65rem;
+  letter-spacing: .1em;
+  color: rgba(245,240,232,.25);
+}
+.footer-emblem {
+  font-size: .65rem;
+  letter-spacing: .15em;
+  color: rgba(184,137,42,.4);
+  font-family: 'Cinzel', serif;
+}
+
+/* ── REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(35px);
+  transition: opacity .9s ease, transform .9s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  #hero { grid-template-columns: 1fr; }
+  .hero-left { padding: 4rem 2rem 3rem; min-height: 70vh; }
+  .hero-right { display: none; }
+  nav { padding: 0 1.5rem; }
+  .nav-links { display: none; }
+  section { padding: 5rem 1.5rem; }
+  .products-header { grid-template-columns: 1fr; }
+  .products-grid { grid-template-columns: 1fr 1fr; }
+  .product-card:first-child { grid-column: span 2; }
+  .heritage-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .heritage-stats { grid-template-columns: 1fr 1fr; }
+  .process-steps { grid-template-columns: 1fr 1fr; }
+  .process-step { border-right: none; border-bottom: 1px solid rgba(184,137,42,.2); }
+  .step-arrow { display: none; }
+  #contact { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .route-banner { flex-direction: column; gap: 1rem; }
+  .form-row { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
-<div id="cursor"></div>
+<div id="cur"></div>
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">VOID</a>
+  <a href="#" class="nav-brand">
+    <div class="nav-crest">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="18" stroke="#b8892a" stroke-width="1"/>
+        <circle cx="20" cy="20" r="13" stroke="#b8892a" stroke-width=".5" opacity=".5"/>
+        <!-- compass lines -->
+        <line x1="20" y1="4" x2="20" y2="36" stroke="#b8892a" stroke-width=".7" opacity=".6"/>
+        <line x1="4" y1="20" x2="36" y2="20" stroke="#b8892a" stroke-width=".7" opacity=".6"/>
+        <line x1="8.7" y1="8.7" x2="31.3" y2="31.3" stroke="#b8892a" stroke-width=".4" opacity=".3"/>
+        <line x1="31.3" y1="8.7" x2="8.7" y2="31.3" stroke="#b8892a" stroke-width=".4" opacity=".3"/>
+        <!-- N pointer -->
+        <polygon points="20,5 18,15 20,13 22,15" fill="#b8892a"/>
+        <polygon points="20,35 18,25 20,27 22,25" fill="#b8892a" opacity=".4"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">Dutch Cape</span>
+      <span class="brand-sub">Trading Company</span>
+    </div>
+  </a>
   <ul class="nav-links">
-    <li><a href="#work">Work</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#products">Collection</a></li>
+    <li><a href="#heritage">Heritage</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact" class="nav-cta">Enquire</a></li>
   </ul>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-bg-text">DESIGN</div>
-  <div class="hero-content">
-    <p class="hero-eyebrow">— Digital Studio est. 2024</p>
-    <h1 class="hero-title">We craft<br><em>bold</em><br>futures.</h1>
-    <p class="hero-sub">A digital studio obsessed with the intersection of concept, craft, and code. We build things that make people stop scrolling.</p>
-  </div>
-  <div class="hero-bottom">
-    <div class="scroll-hint">
-      <div class="scroll-line"></div>
-      Scroll to explore
+  <div class="hero-left">
+    <!-- compass rose bg -->
+    <svg class="compass-bg" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="200" cy="200" r="190" stroke="white" stroke-width="1"/>
+      <circle cx="200" cy="200" r="150" stroke="white" stroke-width=".5"/>
+      <circle cx="200" cy="200" r="100" stroke="white" stroke-width=".5"/>
+      <line x1="200" y1="10" x2="200" y2="390" stroke="white" stroke-width="1"/>
+      <line x1="10" y1="200" x2="390" y2="200" stroke="white" stroke-width="1"/>
+      <line x1="55" y1="55" x2="345" y2="345" stroke="white" stroke-width=".5"/>
+      <line x1="345" y1="55" x2="55" y2="345" stroke="white" stroke-width=".5"/>
+      <polygon points="200,10 193,80 200,60 207,80" fill="white"/>
+      <polygon points="200,390 193,320 200,340 207,320" fill="white" opacity=".4"/>
+      <polygon points="10,200 80,193 60,200 80,207" fill="white" opacity=".4"/>
+      <polygon points="390,200 320,193 340,200 320,207" fill="white"/>
+      <text x="200" y="32" text-anchor="middle" fill="white" font-size="14" font-family="serif">N</text>
+      <text x="200" y="385" text-anchor="middle" fill="white" font-size="14" font-family="serif" opacity=".5">S</text>
+      <text x="378" y="205" text-anchor="middle" fill="white" font-size="14" font-family="serif">E</text>
+      <text x="22" y="205" text-anchor="middle" fill="white" font-size="14" font-family="serif" opacity=".5">W</text>
+    </svg>
+
+    <p class="hero-tag">Est. 1998 — Amsterdam & Cape Town</p>
+    <h1 class="hero-h1">Where two<br>worlds <em>trade</em><br>in beauty.</h1>
+    <div class="hero-divider"></div>
+    <p class="hero-p">Curated goods flowing between the Dutch lowlands and the Cape of Good Hope. Fine wines, artisan ceramics, handwoven textiles — things made with patience, sold with purpose.</p>
+    <div class="hero-btns">
+      <a href="#products" class="btn-primary">View Collection</a>
+      <a href="#heritage" class="btn-outline">Our Story</a>
     </div>
-    <div class="hero-stat-row">
-      <div class="hero-stat">
-        <div class="num">48+</div>
-        <div class="label">Projects</div>
+    <div class="hero-locations">
+      <div class="loc-pill"><span class="loc-dot"></span>Amsterdam, NL — 52°N</div>
+      <div class="loc-pill"><span class="loc-dot"></span>Cape Town, ZA — 33°S</div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-year">1652</div>
+    <div class="hero-showcase">
+      <div class="showcase-card">
+        <span class="showcase-icon">🍷</span>
+        <span class="showcase-label">Cape Winelands</span>
+        <div class="showcase-name">Reserve Shiraz</div>
+        <div class="showcase-origin">Stellenbosch, ZA</div>
       </div>
-      <div class="hero-stat">
-        <div class="num">12</div>
-        <div class="label">Awards</div>
+      <div class="showcase-card">
+        <span class="showcase-icon">🏺</span>
+        <span class="showcase-label">Delft Atelier</span>
+        <div class="showcase-name">Handpainted Ware</div>
+        <div class="showcase-origin">Delft, NL</div>
       </div>
-      <div class="hero-stat">
-        <div class="num">6yr</div>
-        <div class="label">Experience</div>
+      <div class="showcase-card">
+        <span class="showcase-icon">🧵</span>
+        <span class="showcase-label">Cape Artisan</span>
+        <div class="showcase-name">Mohair Textiles</div>
+        <div class="showcase-origin">Karoo, ZA</div>
+      </div>
+      <div class="showcase-card">
+        <span class="showcase-icon">🌿</span>
+        <span class="showcase-label">Rooibos & Spice</span>
+        <div class="showcase-name">Botanical Blends</div>
+        <div class="showcase-origin">Cederberg, ZA</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- MARQUEE -->
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <span>Brand Identity</span><span class="dot">✦</span>
-    <span>Web Design</span><span class="dot">✦</span>
-    <span>Motion</span><span class="dot">✦</span>
-    <span>UI/UX</span><span class="dot">✦</span>
-    <span>Creative Direction</span><span class="dot">✦</span>
-    <span>Development</span><span class="dot">✦</span>
-    <span>Brand Identity</span><span class="dot">✦</span>
-    <span>Web Design</span><span class="dot">✦</span>
-    <span>Motion</span><span class="dot">✦</span>
-    <span>UI/UX</span><span class="dot">✦</span>
-    <span>Creative Direction</span><span class="dot">✦</span>
-    <span>Development</span><span class="dot">✦</span>
+<!-- ROUTE BANNER -->
+<div class="route-banner">
+  <div class="route-city">
+    <div class="city-name">Amsterdam</div>
+    <div class="city-coords">52°22′N, 4°54′E</div>
+  </div>
+  <div class="route-line"></div>
+  <div class="route-ship">⛵</div>
+  <div class="route-line"></div>
+  <div class="route-city">
+    <div class="city-name">Cape Town</div>
+    <div class="city-coords">33°55′S, 18°25′E</div>
   </div>
 </div>
 
-<!-- WORK -->
-<section id="work">
-  <div class="reveal">
-    <p class="section-label">— Selected Work</p>
-    <h2 class="section-title">What we've<br>been up to.</h2>
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="products-header reveal">
+    <div>
+      <div class="section-eyebrow">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">The Collection</span>
+      </div>
+      <h2 class="section-title">Goods of<br><em>distinction.</em></h2>
+    </div>
+    <p class="products-intro">Every item in our collection is sourced directly from makers — no middlemen, no mass production. We work with family estates, independent potters, and cooperatives whose craft spans generations.</p>
   </div>
-  <div class="work-grid reveal">
-    <div class="work-card">
-      <div class="work-card-inner">
-        <div class="work-num">01</div>
-        <div>
-          <p class="work-tag">Brand Identity / Strategy</p>
-          <h3 class="work-title">Meridian Financial Rebrand</h3>
-        </div>
-        <span class="work-arrow">↗</span>
+
+  <div class="products-grid reveal">
+    <div class="product-card">
+      <div class="product-thumb pt-wine">🍷</div>
+      <div class="product-body">
+        <div class="product-origin">Stellenbosch · South Africa</div>
+        <div class="product-name">Cape Winelands Collection</div>
+        <div class="product-desc">Estate wines from the oldest vineyards in the Southern Hemisphere. Bold reds, crisp whites, and exceptional méthode cap classique — imported in small-lot allocations.</div>
+      </div>
+      <div class="product-footer">
+        <span class="product-tag">Fine Wine · Spirits</span>
+        <a href="#contact" class="product-link">Enquire →</a>
       </div>
     </div>
-    <div class="work-card">
-      <div class="work-card-inner">
-        <div class="work-num">02</div>
-        <div>
-          <p class="work-tag">Web Design / Development</p>
-          <h3 class="work-title">Solace Health Platform</h3>
-        </div>
-        <span class="work-arrow">↗</span>
+
+    <div class="product-card">
+      <div class="product-thumb pt-ceramic">🏺</div>
+      <div class="product-body">
+        <div class="product-origin">Delft · Netherlands</div>
+        <div class="product-name">Royal Delftware</div>
+        <div class="product-desc">Hand-painted tin-glazed earthenware from independent Delft studios. Each piece a canvas, each motif a story.</div>
+      </div>
+      <div class="product-footer">
+        <span class="product-tag">Ceramics · Homewares</span>
+        <a href="#contact" class="product-link">Enquire →</a>
       </div>
     </div>
-    <div class="work-card">
-      <div class="work-card-inner">
-        <div class="work-num">03</div>
-        <div>
-          <p class="work-tag">Motion / Campaign</p>
-          <h3 class="work-title">Nōma x Oatly</h3>
-        </div>
-        <span class="work-arrow">↗</span>
+
+    <div class="product-card">
+      <div class="product-thumb pt-textile">🧵</div>
+      <div class="product-body">
+        <div class="product-origin">Karoo · South Africa</div>
+        <div class="product-name">Mohair & Merino Textiles</div>
+        <div class="product-desc">Woven by cooperative artisans in the Great Karoo. Throws, blankets, and table runners in natural, undyed fibres.</div>
+      </div>
+      <div class="product-footer">
+        <span class="product-tag">Textiles · Interiors</span>
+        <a href="#contact" class="product-link">Enquire →</a>
       </div>
     </div>
-    <div class="work-card">
-      <div class="work-card-inner">
-        <div class="work-num">04</div>
-        <div>
-          <p class="work-tag">Creative Direction</p>
-          <h3 class="work-title">Arca Music Visual Identity</h3>
-        </div>
-        <span class="work-arrow">↗</span>
+
+    <div class="product-card">
+      <div class="product-thumb pt-spice">🌿</div>
+      <div class="product-body">
+        <div class="product-origin">Cederberg · South Africa</div>
+        <div class="product-name">Rooibos & Botanicals</div>
+        <div class="product-desc">Wild-harvested rooibos, fynbos teas, and botanical apothecary blends. Organic certified, single-origin, extraordinary.</div>
+      </div>
+      <div class="product-footer">
+        <span class="product-tag">Food · Wellness</span>
+        <a href="#contact" class="product-link">Enquire →</a>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-thumb pt-furniture">🪑</div>
+      <div class="product-body">
+        <div class="product-origin">Amsterdam · Netherlands</div>
+        <div class="product-name">Dutch Design Objects</div>
+        <div class="product-desc">Furniture and lighting from emerging Amsterdam ateliers. Functional, minimal, lasting — the Dutch design tradition in contemporary form.</div>
+      </div>
+      <div class="product-footer">
+        <span class="product-tag">Design · Furniture</span>
+        <a href="#contact" class="product-link">Enquire →</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ABOUT -->
-<section id="about">
-  <div class="about-text reveal">
-    <p class="section-label">— About the Studio</p>
-    <h2 class="section-title">We don't<br>do average.</h2>
-    <p>VOID is a small, fiercely independent studio built on the belief that <strong>constraints breed creativity</strong> and that every pixel is a decision worth making deliberately.</p>
-    <p>We partner with brands, founders, and teams who want work that lasts—visually, structurally, culturally. We're not here to make templates. We're here to make statements.</p>
-    <div class="skills-list">
-      <span class="skill-pill">Figma</span>
-      <span class="skill-pill">After Effects</span>
-      <span class="skill-pill">React</span>
-      <span class="skill-pill">Three.js</span>
-      <span class="skill-pill">Framer</span>
-      <span class="skill-pill">Blender</span>
-      <span class="skill-pill">Brand Strategy</span>
-      <span class="skill-pill">GSAP</span>
+<!-- HERITAGE -->
+<section id="heritage">
+  <div class="heritage-grid">
+    <div class="heritage-left reveal">
+      <div class="section-eyebrow">
+        <div class="eyebrow-line" style="background:var(--brass-lt)"></div>
+        <span class="eyebrow-text">Our Heritage</span>
+      </div>
+      <h2 class="section-title">A route<br>centuries<br>in the <em>making.</em></h2>
+      <p class="heritage-text">The Dutch and the Cape have been intertwined since Jan van Riebeeck anchored in Table Bay in 1652. <strong>Dutch Cape Trading Co.</strong> is a modern chapter in that long story — rooted in respect for craft, culture, and the remarkable things people make when left to their work.</p>
+      <p class="heritage-text">We believe commerce, when done right, is an act of <strong>cultural preservation</strong>. Every purchase keeps a maker in business and a tradition alive.</p>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-year">1652</div>
+          <div class="timeline-event">Dutch East India Company establishes the Cape of Good Hope as a refreshment station, planting the first vines.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">1994</div>
+          <div class="timeline-event">South Africa's democratic transition opens new opportunity for artisan trade across the globe.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">1998</div>
+          <div class="timeline-event">Dutch Cape Trading Company founded in Amsterdam, first container of Cape wine arrives in Rotterdam.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2024</div>
+          <div class="timeline-event">Celebrating 26 years — 48 maker partnerships, two continents, one purpose.</div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="about-visual reveal">
-    <div class="about-block ab1"></div>
-    <div class="about-block ab2"></div>
-    <div class="about-quote">
-      <blockquote>"Design is the silent ambassador of your brand. Make sure it speaks volumes."</blockquote>
-      <cite>— Studio Manifesto</cite>
+    <div class="reveal">
+      <div class="heritage-stats">
+        <div class="hstat">
+          <span class="hstat-num">26</span>
+          <span class="hstat-label">Years Trading</span>
+          <span class="hstat-desc">Est. Amsterdam, 1998</span>
+        </div>
+        <div class="hstat">
+          <span class="hstat-num">48</span>
+          <span class="hstat-label">Maker Partners</span>
+          <span class="hstat-desc">On two continents</span>
+        </div>
+        <div class="hstat">
+          <span class="hstat-num">12</span>
+          <span class="hstat-label">Countries</span>
+          <span class="hstat-desc">Distribution reach</span>
+        </div>
+        <div class="hstat">
+          <span class="hstat-num">100<span style="font-size:2rem">%</span></span>
+          <span class="hstat-label">Direct Trade</span>
+          <span class="hstat-desc">Zero middlemen, always</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- SERVICES -->
-<section id="services">
-  <div class="reveal">
-    <p class="section-label">— What we do</p>
-    <h2 class="section-title">Our craft.</h2>
+<!-- PROCESS -->
+<section id="process">
+  <div class="reveal" style="text-align:center; margin-bottom:1rem;">
+    <div class="section-eyebrow" style="justify-content:center;">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">How It Works</span>
+      <div class="eyebrow-line"></div>
+    </div>
+    <h2 class="section-title">From hand<br>to <em>home.</em></h2>
   </div>
-  <div class="services-list reveal">
-    <div class="service-row">
-      <span class="service-idx">01</span>
-      <span class="service-name">Brand Identity & Strategy</span>
-      <span class="service-plus">+</span>
+  <div class="process-steps reveal">
+    <div class="process-step">
+      <div class="step-num">01</div>
+      <span class="step-icon">🔍</span>
+      <div class="step-title">We Source</div>
+      <div class="step-desc">Our team travels to estates, studios, and cooperatives. We taste, touch, and discuss directly with makers before any agreement is made.</div>
+      <span class="step-arrow">→</span>
     </div>
-    <div class="service-row">
-      <span class="service-idx">02</span>
-      <span class="service-name">Web Design & Development</span>
-      <span class="service-plus">+</span>
+    <div class="process-step">
+      <div class="step-num">02</div>
+      <span class="step-icon">🤝</span>
+      <div class="step-title">We Partner</div>
+      <div class="step-desc">Fair, long-term contracts. Makers know what they'll receive and when. No fluctuating spot prices. No exploitation. Just honest trade.</div>
+      <span class="step-arrow">→</span>
     </div>
-    <div class="service-row">
-      <span class="service-idx">03</span>
-      <span class="service-name">Motion Design & Animation</span>
-      <span class="service-plus">+</span>
+    <div class="process-step">
+      <div class="step-num">03</div>
+      <span class="step-icon">⚓</span>
+      <div class="step-title">We Ship</div>
+      <div class="step-desc">Consolidated sea freight, climate-controlled where needed. We offset every tonne of CO₂ through verified reforestation in the Western Cape.</div>
+      <span class="step-arrow">→</span>
     </div>
-    <div class="service-row">
-      <span class="service-idx">04</span>
-      <span class="service-name">Art Direction & Campaigns</span>
-      <span class="service-plus">+</span>
+    <div class="process-step">
+      <div class="step-num">04</div>
+      <span class="step-icon">🎁</span>
+      <div class="step-title">We Deliver</div>
+      <div class="step-desc">To boutiques, hotels, restaurants, and private collectors across Europe. Every order packed by hand. Every package includes the maker's story.</div>
     </div>
-    <div class="service-row">
-      <span class="service-idx">05</span>
-      <span class="service-name">Creative Consultancy</span>
-      <span class="service-plus">+</span>
-    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section id="testimonial">
+  <div class="reveal">
+    <blockquote class="testi-quote">
+      "Dutch Cape doesn't sell products. They carry stories — and when you open a bottle or unfold a textile, you feel the hands that made it."
+    </blockquote>
+    <div class="testi-divider"></div>
+    <div class="testi-author">Marieke van den Berg</div>
+    <div class="testi-role">Owner, Prinsengracht Concept Store — Amsterdam</div>
   </div>
 </section>
 
 <!-- CONTACT -->
 <section id="contact">
-  <p class="section-label">— Let's talk</p>
-  <h2 class="section-title">Start something<br>new.</h2>
-  <p>Got a project? A half-baked idea? A problem nobody's solved elegantly yet?<br>We'd love to hear it.</p>
-  <a href="mailto:hello@void.studio" class="cta-btn">Get in touch →</a>
+  <div class="contact-left reveal">
+    <div class="section-eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Get In Touch</span>
+    </div>
+    <h2 class="section-title">Let's open<br>a <em>dialogue.</em></h2>
+    <p class="contact-p">Whether you're a retailer seeking exclusive stock, a hospitality buyer, or simply a lover of beautiful things — we'd love to hear from you.</p>
+    <div class="contact-details">
+      <div class="contact-item">
+        <div class="contact-item-label">Amsterdam Office</div>
+        <div class="contact-item-val">Keizersgracht 412, 1016 GC Amsterdam, Netherlands</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-label">Cape Town Office</div>
+        <div class="contact-item-val">47 Bree Street, De Waterkant, Cape Town, 8001</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-label">Email</div>
+        <div class="contact-item-val">trade@dutchcape.com</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-label">Trade Hours</div>
+        <div class="contact-item-val">Mon–Fri, 09:00–17:00 CET / SAST</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-form reveal">
+    <div class="form-title">Send an Enquiry</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input class="form-input" type="text" placeholder="Jan">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input class="form-input" type="text" placeholder="de Vries">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="form-input" type="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">I Am A</label>
+      <select class="form-select">
+        <option>— Select —</option>
+        <option>Retailer / Boutique</option>
+        <option>Restaurant / Hotel</option>
+        <option>Private Collector</option>
+        <option>Event Planner</option>
+        <option>Press / Media</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Your Message</label>
+      <textarea class="form-textarea" placeholder="Tell us what you're looking for, or just say hello..."></textarea>
+    </div>
+    <button class="form-btn">Send Enquiry ↗</button>
+  </div>
 </section>
 
+<!-- FOOTER -->
 <footer>
-  <p>© 2025 VOID Studio — All rights reserved</p>
-  <div class="footer-links">
-    <a href="#">Instagram</a>
-    <a href="#">Twitter</a>
-    <a href="#">LinkedIn</a>
-    <a href="#">Dribbble</a>
+  <div class="footer-top">
+    <div>
+      <span class="footer-brand-name">Dutch Cape Trading Co.</span>
+      <span class="footer-brand-tag">Amsterdam · Cape Town · Est. 1998</span>
+      <p class="footer-about">Connecting the craftspeople of two great trading nations. Everything we carry is made by hand, sourced with care, and shipped with purpose.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Collection</div>
+      <ul class="footer-links-list">
+        <li><a href="#">Cape Wines</a></li>
+        <li><a href="#">Delftware</a></li>
+        <li><a href="#">Textiles</a></li>
+        <li><a href="#">Botanicals</a></li>
+        <li><a href="#">Design Objects</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links-list">
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">Maker Partners</a></li>
+        <li><a href="#">Sustainability</a></li>
+        <li><a href="#">Trade Programme</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <ul class="footer-links-list">
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">LinkedIn</a></li>
+        <li><a href="#">Newsletter</a></li>
+        <li><a href="#">trade@dutchcape.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Dutch Cape Trading Company — All rights reserved — KvK 12345678</span>
+    <span class="footer-emblem">◆ Amsterdam & Cape Town ◆</span>
   </div>
 </footer>
 
 <script>
-  // Custom cursor
-  const cur = document.getElementById('cursor');
-  document.addEventListener('mousemove', e => {
-    cur.style.left = e.clientX + 'px';
-    cur.style.top  = e.clientY + 'px';
-  });
-  document.querySelectorAll('a, .work-card, .service-row, .cta-btn').forEach(el => {
-    el.addEventListener('mouseenter', () => cur.classList.add('big'));
-    el.addEventListener('mouseleave', () => cur.classList.remove('big'));
-  });
+// Cursor
+const cur = document.getElementById('cur');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, .product-card, .showcase-card, .hstat, .process-step, .service-row').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('expand'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('expand'));
+});
 
-  // Scroll reveal
-  const observer = new IntersectionObserver((entries) => {
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Stagger reveal children
+document.querySelectorAll('.products-grid.reveal, .heritage-stats.reveal').forEach(parent => {
+  const obs2 = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
+        [...e.target.children].forEach((child, i) => {
+          setTimeout(() => child.style.animation = `fadeUp .6s forwards ease-out`, i * 100);
+        });
       }
     });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  }, { threshold: 0.1 });
+  obs2.observe(parent);
+});
 
-  // Parallax bg text
-  const bgText = document.querySelector('.hero-bg-text');
-  document.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    if (bgText) bgText.style.transform = `translate(-50%, calc(-52% + ${y * 0.3}px))`;
-  });
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  document.querySelector('nav').style.boxShadow =
+    window.scrollY > 50 ? '0 4px 30px rgba(26,39,68,.12)' : 'none';
+});
+
+// Form submit
+document.querySelector('.form-btn').addEventListener('click', function() {
+  this.textContent = 'Message Sent ✓';
+  this.style.background = '#2e5fa3';
+  this.style.color = '#f5f0e8';
+  setTimeout(() => {
+    this.textContent = 'Send Enquiry ↗';
+    this.style.background = '';
+    this.style.color = '';
+  }, 3000);
+});
 </script>
 </body>
 </html>
