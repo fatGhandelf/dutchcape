@@ -1,485 +1,728 @@
 <!DOCTYPE html>
-<html lang="af">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volkstaat Visie | Afrikaner Selfbeskikking in die Noord-Kaap</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
-        
-        :root {
-            --primary: #f59e0b;
-        }
-        .tail-container {
-            font-family: 'Inter', system_ui, sans-serif;
-        }
-        .hero-bg {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat fixed;
-        }
-        .nav-link {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .nav-link:hover {
-            color: #f59e0b;
-            transform: translateY(-2px);
-        }
-        .timeline-dot {
-            width: 32px;
-            height: 32px;
-            background: #f59e0b;
-            box-shadow: 0 0 0 10px rgba(245, 158, 11, 0.3);
-        }
-        .section-header:after {
-            content: '';
-            position: absolute;
-            width: 90px;
-            height: 4px;
-            background: linear-gradient(to right, #f59e0b, #10b981);
-            bottom: -10px;
-            left: 0;
-        }
-        .card-hover {
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .card-hover:hover {
-            transform: translateY(-20px) scale(1.04);
-            box-shadow: 0 30px 60px -15px rgb(0 0 0 / 0.5);
-        }
-        .lang-btn {
-            transition: all 0.3s ease;
-        }
-        .lang-btn.active {
-            background-color: #f59e0b;
-            color: black;
-            box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.5);
-        }
-        .hamburger {
-            transition: all 0.3s ease;
-        }
-        .mobile-menu {
-            animation: slideDown 0.4s ease forwards;
-        }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOID — Digital Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #050505;
+    --white: #f2ede6;
+    --cream: #e8e0d4;
+    --rust: #c94f2a;
+    --rust-dark: #8a3015;
+    --gold: #c9a84c;
+    --grey: #2a2a2a;
+    --mid: #555;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  #cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--rust);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform .1s ease, width .3s ease, height .3s ease, background .3s ease;
+    mix-blend-mode: normal;
+  }
+  #cursor.big {
+    width: 60px; height: 60px;
+    background: rgba(201,79,42,.2);
+    border: 1px solid var(--rust);
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content:'';
+    position:fixed;inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: .035;
+    pointer-events:none;
+    z-index:9998;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.8rem 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+    mix-blend-mode: normal;
+  }
+  nav::after {
+    content:'';
+    position:absolute;inset:0;
+    background: linear-gradient(to bottom, rgba(5,5,5,.9), transparent);
+    pointer-events:none;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: .15em;
+    color: var(--white);
+    text-decoration: none;
+    position: relative; z-index:1;
+  }
+  .nav-links {
+    display: flex; gap: 2.5rem;
+    list-style: none;
+    position: relative; z-index:1;
+  }
+  .nav-links a {
+    font-size: .65rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--cream);
+    text-decoration: none;
+    opacity: .7;
+    transition: opacity .3s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--rust); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: 0 3rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -52%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(8rem, 22vw, 22rem);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(242,237,230,.07);
+    letter-spacing: -.02em;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  @keyframes drift { from { transform: translate(-50%,-52%) scale(1); } to { transform: translate(-50%,-50%) scale(1.04); } }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-top: 9rem;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-size: .6rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp .8s .3s forwards ease-out;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4.5rem, 13vw, 13rem);
+    line-height: .92;
+    letter-spacing: -.01em;
+    opacity: 0;
+    animation: fadeUp .9s .5s forwards ease-out;
+  }
+  .hero-title em {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    color: var(--rust);
+  }
+  .hero-sub {
+    max-width: 38ch;
+    margin-top: 2rem;
+    line-height: 1.7;
+    font-size: .85rem;
+    color: var(--mid);
+    opacity: 0;
+    animation: fadeUp .9s .75s forwards ease-out;
+  }
+  .hero-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(242,237,230,.08);
+    opacity: 0;
+    animation: fadeUp .9s 1s forwards ease-out;
+  }
+  .scroll-hint {
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .6rem; letter-spacing: .2em; text-transform: uppercase;
+    color: rgba(242,237,230,.4);
+  }
+  .scroll-line {
+    width: 50px; height: 1px;
+    background: var(--rust);
+    transform-origin: left;
+    animation: expandLine 1s 1.3s both;
+  }
+  @keyframes expandLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  .hero-stat-row {
+    display: flex; gap: 3rem;
+  }
+  .hero-stat { text-align: right; }
+  .hero-stat .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .hero-stat .label {
+    font-size: .55rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: rgba(242,237,230,.35);
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(30px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-wrap {
+    background: var(--rust);
+    padding: .7rem 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .marquee-track {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 22s linear infinite;
+  }
+  .marquee-track span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: .15em;
+    color: var(--black);
+    padding: 0 2.5rem;
+  }
+  .marquee-track span.dot { color: rgba(5,5,5,.35); }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 7rem 3rem; }
+  .section-label {
+    font-size: .6rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: .95;
+    margin-bottom: 3rem;
+  }
+
+  /* ── WORK GRID ── */
+  #work { background: var(--black); }
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1px;
+    background: rgba(242,237,230,.06);
+  }
+  .work-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--black);
+    cursor: none;
+  }
+  .work-card:nth-child(1) { grid-column: span 7; }
+  .work-card:nth-child(2) { grid-column: span 5; }
+  .work-card:nth-child(3) { grid-column: span 4; }
+  .work-card:nth-child(4) { grid-column: span 8; }
+
+  .work-card-inner {
+    padding: 3rem;
+    height: 100%;
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+  .work-card::before {
+    content:'';
+    position: absolute; inset: 0;
+    background: var(--rust);
+    transform: translateY(100%);
+    transition: transform .5s cubic-bezier(.76,0,.24,1);
+    z-index: 0;
+  }
+  .work-card:hover::before { transform: translateY(0); }
+  .work-card:hover .work-num,
+  .work-card:hover .work-tag,
+  .work-card:hover .work-title,
+  .work-card:hover .work-arrow { color: var(--black); }
+
+  .work-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: rgba(242,237,230,.08);
+    line-height: 1;
+    transition: color .4s;
+  }
+  .work-tag {
+    font-size: .55rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: .5rem;
+    transition: color .4s;
+  }
+  .work-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.6rem);
+    line-height: 1.1;
+    transition: color .4s;
+  }
+  .work-arrow {
+    font-size: 1.5rem;
+    transition: color .4s, transform .4s;
+    display: inline-block;
+    color: var(--rust);
+  }
+  .work-card:hover .work-arrow { transform: translate(4px,-4px); }
+
+  /* ── ABOUT ── */
+  #about {
+    background: var(--grey);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+  .about-text p {
+    font-size: .9rem;
+    line-height: 1.85;
+    color: rgba(242,237,230,.65);
+    margin-bottom: 1.4rem;
+  }
+  .about-text p strong { color: var(--white); font-weight: 700; }
+  .skills-list {
+    display: flex; flex-wrap: wrap; gap: .6rem;
+    margin-top: 2rem;
+  }
+  .skill-pill {
+    padding: .4rem 1.1rem;
+    border: 1px solid rgba(242,237,230,.15);
+    font-size: .6rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: rgba(242,237,230,.5);
+    transition: border-color .3s, color .3s;
+  }
+  .skill-pill:hover { border-color: var(--rust); color: var(--rust); }
+  .about-visual {
+    position: relative;
+    height: 500px;
+  }
+  .about-block {
+    position: absolute;
+    border: 1px solid rgba(242,237,230,.08);
+  }
+  .ab1 { inset: 0; background: rgba(201,79,42,.06); }
+  .ab2 { top: 10%; left: 10%; right: -5%; bottom: -5%; background: rgba(201,168,76,.04); border-color: rgba(201,168,76,.12); }
+  .about-quote {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    padding: 2rem;
+    width: 80%;
+  }
+  .about-quote blockquote {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(1.3rem, 2.5vw, 2rem);
+    line-height: 1.35;
+    color: var(--white);
+  }
+  .about-quote cite {
+    display: block;
+    margin-top: 1.2rem;
+    font-size: .6rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-style: normal;
+  }
+
+  /* ── SERVICES ── */
+  #services { background: var(--black); }
+  .services-list {
+    border-top: 1px solid rgba(242,237,230,.08);
+  }
+  .service-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    align-items: center;
+    gap: 2rem;
+    padding: 2.2rem 0;
+    border-bottom: 1px solid rgba(242,237,230,.08);
+    transition: background .3s;
+    cursor: none;
+  }
+  .service-row:hover { background: rgba(201,79,42,.05); }
+  .service-row:hover .service-name { color: var(--rust); }
+  .service-row:hover .service-plus { color: var(--rust); transform: rotate(45deg); }
+  .service-idx {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: rgba(242,237,230,.15);
+  }
+  .service-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    transition: color .3s;
+  }
+  .service-plus {
+    font-size: 1.8rem;
+    color: rgba(242,237,230,.2);
+    transition: color .3s, transform .4s;
+    display: inline-block;
+  }
+
+  /* ── CONTACT / FOOTER ── */
+  #contact {
+    background: var(--rust);
+    text-align: center;
+    padding: 8rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  #contact::before {
+    content: 'HELLO';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28vw;
+    color: rgba(5,5,5,.1);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  #contact .section-label { color: var(--black); opacity: .5; }
+  #contact .section-title { color: var(--black); margin-bottom: 1rem; }
+  #contact p { color: rgba(5,5,5,.6); font-size: .85rem; margin-bottom: 2.5rem; }
+  .cta-btn {
+    display: inline-block;
+    padding: 1.1rem 3.5rem;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+    transition: background .3s, color .3s;
+  }
+  .cta-btn:hover { background: var(--white); color: var(--black); }
+
+  footer {
+    background: var(--black);
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(242,237,230,.06);
+  }
+  footer p {
+    font-size: .55rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: rgba(242,237,230,.25);
+  }
+  .footer-links { display:flex; gap:2rem; }
+  .footer-links a {
+    font-size: .55rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: rgba(242,237,230,.25);
+    text-decoration: none;
+    transition: color .3s;
+  }
+  .footer-links a:hover { color: var(--rust); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    #hero { padding: 0 1.5rem 2rem; }
+    .work-card:nth-child(1),
+    .work-card:nth-child(2),
+    .work-card:nth-child(3),
+    .work-card:nth-child(4) { grid-column: span 12; }
+    #about { grid-template-columns: 1fr; }
+    .about-visual { height: 300px; }
+    .service-row { grid-template-columns: 50px 1fr auto; gap: 1rem; }
+    .hero-stat-row { gap: 1.5rem; }
+  }
+</style>
 </head>
-<body class="tail-container bg-zinc-950 text-zinc-200 overflow-x-hidden">
+<body>
 
-    <!-- NAVBAR -->
-    <nav class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-landmark text-4xl text-amber-500"></i>
-                <div class="flex flex-col">
-                    <span class="text-3xl font-black tracking-tighter text-white">VOLKSTAAT</span>
-                    <span class="text-[10px] text-amber-400 -mt-1 tracking-[3px]">VISIE 2026</span>
-                </div>
-            </div>
+<div id="cursor"></div>
 
-            <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center gap-9 text-sm font-medium">
-                <a href="#inleiding" onclick="smoothScroll('inleiding')" class="nav-link">Inleiding</a>
-                <a href="#roete" onclick="smoothScroll('roete')" class="nav-link">Die Roete</a>
-                <a href="#projekte" onclick="smoothScroll('projekte')" class="nav-link">Sleutel Projekte</a>
-                <a href="#impak" onclick="smoothScroll('impak')" class="nav-link">Ekonomiese Impak</a>
-                <a href="#uitdagings" onclick="smoothScroll('uitdagings')" class="nav-link">Uitdagings</a>
-                <a href="#visie" onclick="smoothScroll('visie')" class="nav-link">Visie</a>
-            </div>
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">VOID</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
 
-            <div class="flex items-center gap-4">
-                <!-- Language -->
-                <button onclick="switchLanguage('af')" id="btn-af" 
-                        class="lang-btn active px-6 py-2 text-xs font-bold rounded-full border border-amber-500">AFRIKAANS</button>
-                <button onclick="switchLanguage('en')" id="btn-en" 
-                        class="lang-btn px-6 py-2 text-xs font-bold rounded-full border border-zinc-700">ENGLISH</button>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-text">DESIGN</div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">— Digital Studio est. 2024</p>
+    <h1 class="hero-title">We craft<br><em>bold</em><br>futures.</h1>
+    <p class="hero-sub">A digital studio obsessed with the intersection of concept, craft, and code. We build things that make people stop scrolling.</p>
+  </div>
+  <div class="hero-bottom">
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      Scroll to explore
+    </div>
+    <div class="hero-stat-row">
+      <div class="hero-stat">
+        <div class="num">48+</div>
+        <div class="label">Projects</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">12</div>
+        <div class="label">Awards</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">6yr</div>
+        <div class="label">Experience</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-                <!-- Hamburger -->
-                <button id="hamburger" onclick="toggleMobileMenu()" 
-                        class="md:hidden text-2xl text-white hamburger">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-            </div>
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>Brand Identity</span><span class="dot">✦</span>
+    <span>Web Design</span><span class="dot">✦</span>
+    <span>Motion</span><span class="dot">✦</span>
+    <span>UI/UX</span><span class="dot">✦</span>
+    <span>Creative Direction</span><span class="dot">✦</span>
+    <span>Development</span><span class="dot">✦</span>
+    <span>Brand Identity</span><span class="dot">✦</span>
+    <span>Web Design</span><span class="dot">✦</span>
+    <span>Motion</span><span class="dot">✦</span>
+    <span>UI/UX</span><span class="dot">✦</span>
+    <span>Creative Direction</span><span class="dot">✦</span>
+    <span>Development</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<!-- WORK -->
+<section id="work">
+  <div class="reveal">
+    <p class="section-label">— Selected Work</p>
+    <h2 class="section-title">What we've<br>been up to.</h2>
+  </div>
+  <div class="work-grid reveal">
+    <div class="work-card">
+      <div class="work-card-inner">
+        <div class="work-num">01</div>
+        <div>
+          <p class="work-tag">Brand Identity / Strategy</p>
+          <h3 class="work-title">Meridian Financial Rebrand</h3>
         </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-zinc-900 border-t border-zinc-800 mobile-menu">
-            <div class="flex flex-col px-6 py-8 text-lg font-medium gap-6">
-                <a href="#inleiding" onclick="toggleMobileMenu(); smoothScroll('inleiding')" class="nav-link">Inleiding</a>
-                <a href="#roete" onclick="toggleMobileMenu(); smoothScroll('roete')" class="nav-link">Die Roete</a>
-                <a href="#projekte" onclick="toggleMobileMenu(); smoothScroll('projekte')" class="nav-link">Sleutel Projekte</a>
-                <a href="#impak" onclick="toggleMobileMenu(); smoothScroll('impak')" class="nav-link">Ekonomiese Impak</a>
-                <a href="#uitdagings" onclick="toggleMobileMenu(); smoothScroll('uitdagings')" class="nav-link">Uitdagings &amp; Oplossings</a>
-                <a href="#visie" onclick="toggleMobileMenu(); smoothScroll('visie')" class="nav-link">Ons Visie</a>
-            </div>
+        <span class="work-arrow">↗</span>
+      </div>
+    </div>
+    <div class="work-card">
+      <div class="work-card-inner">
+        <div class="work-num">02</div>
+        <div>
+          <p class="work-tag">Web Design / Development</p>
+          <h3 class="work-title">Solace Health Platform</h3>
         </div>
-    </nav>
-
-    <!-- HERO -->
-    <header class="hero-bg h-screen flex items-center relative">
-        <div class="max-w-6xl mx-auto px-6 text-center text-white">
-            <div class="inline-flex items-center gap-3 bg-black/60 backdrop-blur-lg px-8 py-3 rounded-3xl mb-10 border border-amber-500/40">
-                <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span class="trans text-sm font-bold tracking-[4px]" 
-                      data-af="NOORD-KAAP • SOEWEREIN • AFRIKAANS" 
-                      data-en="NORTHERN CAPE • SOVEREIGN • AFRIKAANS">NOORD-KAAP • SOEWEREIN • AFRIKAANS</span>
-            </div>
-            
-            <h1 class="trans text-6xl md:text-7xl font-black leading-none tracking-tighter mb-8" 
-                data-af="Die Volkstaat Visie<br><span class='text-amber-500'>Vir 'n Vrye Afrikaner-Heimland</span>"
-                data-en="The Volkstaat Vision<br><span class='text-amber-500'>For a Free Afrikaner Homeland</span>">
-                Die Volkstaat Visie<br><span class="text-amber-500">Vir 'n Vrye Afrikaner-Heimland</span>
-            </h1>
-            
-            <p class="trans max-w-2xl mx-auto text-2xl text-zinc-300 mb-12 leading-tight" 
-               data-af="'n Volledige, praktiese bloudruk om selfbeskikking te bereik deur strategiese alliansies met die Weste, hernubare energie, KI-tegnologie en mariene hulpbronne in die Noord-Kaap."
-               data-en="A complete, practical blueprint to achieve self-determination through strategic alliances with the West, renewable energy, AI technology and marine resources in the Northern Cape.">
-                'n Volledige, praktiese bloudruk om selfbeskikking te bereik deur strategiese alliansies met die Weste, hernubare energie, KI-tegnologie en mariene hulpbronne in die Noord-Kaap.
-            </p>
-            
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <a href="#roete" onclick="smoothScroll('roete')" 
-                   class="trans px-12 py-6 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xl rounded-3xl inline-flex items-center gap-4 transition-all shadow-xl">
-                    <span>BEGIN DIE ROETE</span>
-                    <i class="fa-solid fa-arrow-down"></i>
-                </a>
-                <button onclick="smoothScroll('visie')" 
-                        class="trans px-12 py-6 border-2 border-white/70 hover:bg-white/10 text-white font-semibold text-xl rounded-3xl inline-flex items-center gap-4 transition-all">
-                    LEES DIE VOLLE VISIE
-                </button>
-            </div>
-            
-            <div class="absolute bottom-12 left-1/2 text-xs tracking-widest flex flex-col items-center">
-                <div class="animate-bounce text-2xl mb-1">↓</div>
-                <span class="trans" data-af="SKROL AF OM TE BEGIN" data-en="SCROLL TO BEGIN">SKROL AF OM TE BEGIN</span>
-            </div>
+        <span class="work-arrow">↗</span>
+      </div>
+    </div>
+    <div class="work-card">
+      <div class="work-card-inner">
+        <div class="work-num">03</div>
+        <div>
+          <p class="work-tag">Motion / Campaign</p>
+          <h3 class="work-title">Nōma x Oatly</h3>
         </div>
-    </header>
-
-    <!-- INLEIDING -->
-    <section id="inleiding" class="py-28 bg-zinc-900">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="grid md:grid-cols-12 gap-16 items-center">
-                <div class="md:col-span-7">
-                    <span class="trans inline-block bg-amber-500 text-black px-8 py-3 rounded-3xl text-xs font-bold tracking-widest mb-6">NOORD-KAAP MODEL</span>
-                    <h2 class="trans text-5xl md:text-6xl font-bold leading-none mb-10" 
-                        data-af="Waarom die Noord-Kaap die Ideale Tuiste vir 'n Volkstaat is"
-                        data-en="Why the Northern Cape is the Ideal Home for a Volkstaat">
-                        Waarom die Noord-Kaap die Ideale Tuiste vir 'n Volkstaat is
-                    </h2>
-                    <div class="prose prose-invert max-w-none text-lg">
-                        <p class="trans" data-af="Die Noord-Kaap is Suid-Afrika se grootste en dunbevolkste provinsie. Met sy uitgestrekte vlaktes, wêreldklas sonskyn (die hoogste in die wêreld), strategiese kuslyn en minimale stedelike ontwikkeling, bied dit die perfekte ruimte vir 'n selfonderhoudende, soewereine Afrikaner-gemeenskap."
-                           data-en="The Northern Cape is South Africa’s largest and most sparsely populated province. With its vast plains, world-class sunshine (the highest in the world), strategic coastline and minimal urban development, it offers the perfect space for a self-sustaining, sovereign Afrikaner community."></p>
-                        <p class="trans mt-8" data-af="Deur die natuurlike guns wat Afrikaners by die Verenigde State en Israel geniet, kan ons diplomatiese erkenning bekom om hierdie gebied as 'n onafhanklike Volkstaat te vestig – 'n veilige tuiste waar ons taal, kultuur en toekoms beskerm word."
-                           data-en="By leveraging the natural goodwill Afrikaners enjoy with the United States and Israel, we can secure diplomatic recognition to establish this area as an independent Volkstaat – a safe home where our language, culture and future are protected."></p>
-                    </div>
-                </div>
-                <div class="md:col-span-5">
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="bg-zinc-800 rounded-3xl p-8 text-center card-hover">
-                            <i class="fa-solid fa-sun text-6xl text-amber-500 mb-6"></i>
-                            <p class="trans font-semibold text-lg" data-af="Hoogste sonskyn ure ter wêreld" data-en="Highest sunshine hours in the world">Hoogste sonskyn ure ter wêreld</p>
-                        </div>
-                        <div class="bg-zinc-800 rounded-3xl p-8 text-center card-hover">
-                            <i class="fa-solid fa-water text-6xl text-sky-500 mb-6"></i>
-                            <p class="trans font-semibold text-lg" data-af="Toegang tot Atlantiese Oseaan" data-en="Direct access to the Atlantic Ocean">Toegang tot Atlantiese Oseaan</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <span class="work-arrow">↗</span>
+      </div>
+    </div>
+    <div class="work-card">
+      <div class="work-card-inner">
+        <div class="work-num">04</div>
+        <div>
+          <p class="work-tag">Creative Direction</p>
+          <h3 class="work-title">Arca Music Visual Identity</h3>
         </div>
-    </section>
+        <span class="work-arrow">↗</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- DIE ROETE -->
-    <section id="roete" class="py-28 bg-black">
-        <div class="max-w-6xl mx-auto px-6">
-            <h2 class="trans section-header text-5xl font-bold mb-20" 
-                data-af="Die 5-Stap Roete na Volkstaat Selfbeskikking"
-                data-en="The 5-Step Roadmap to Volkstaat Self-Determination">
-                Die 5-Stap Roete na Volkstaat Selfbeskikking
-            </h2>
-            
-            <div class="space-y-28 relative before:absolute before:left-1/2 before:top-12 before:bottom-12 before:w-px before:bg-gradient-to-b before:from-transparent before:via-amber-500/40 before:to-transparent md:before:block hidden">
-                
-                <!-- Step 1 -->
-                <div class="grid md:grid-cols-12 gap-12 items-center">
-                    <div class="md:col-span-5 md:text-right">
-                        <div class="inline-flex items-center gap-5 bg-zinc-900 border border-amber-500/30 px-8 py-5 rounded-3xl">
-                            <span class="text-6xl font-black text-amber-500">01</span>
-                            <div>
-                                <p class="trans text-xs font-bold tracking-widest text-amber-400" data-af="FASE 1" data-en="PHASE 1">FASE 1</p>
-                                <p class="trans text-3xl font-semibold" data-af="Diplomatieke Erkenning" data-en="Diplomatic Recognition">Diplomatieke Erkenning</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 flex justify-center">
-                        <div class="timeline-dot rounded-full flex items-center justify-center text-black font-black text-2xl">1</div>
-                    </div>
-                    <div class="md:col-span-5">
-                        <div class="card-hover bg-zinc-900 border border-zinc-800 rounded-3xl p-10">
-                            <p class="trans text-xl leading-relaxed" data-af="Gebruik bestaande verhoudings met die VSA en Israel om internasionale erkenning as 'n soewereine Afrikaner-gebied te verkry. Hierdie stap verskaf die wettige basis vir alle verdere ontwikkeling."
-                               data-en="Use existing relationships with the USA and Israel to obtain international recognition as a sovereign Afrikaner territory. This step provides the legal foundation for all further development."></p>
-                        </div>
-                    </div>
-                </div>
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-text reveal">
+    <p class="section-label">— About the Studio</p>
+    <h2 class="section-title">We don't<br>do average.</h2>
+    <p>VOID is a small, fiercely independent studio built on the belief that <strong>constraints breed creativity</strong> and that every pixel is a decision worth making deliberately.</p>
+    <p>We partner with brands, founders, and teams who want work that lasts—visually, structurally, culturally. We're not here to make templates. We're here to make statements.</p>
+    <div class="skills-list">
+      <span class="skill-pill">Figma</span>
+      <span class="skill-pill">After Effects</span>
+      <span class="skill-pill">React</span>
+      <span class="skill-pill">Three.js</span>
+      <span class="skill-pill">Framer</span>
+      <span class="skill-pill">Blender</span>
+      <span class="skill-pill">Brand Strategy</span>
+      <span class="skill-pill">GSAP</span>
+    </div>
+  </div>
+  <div class="about-visual reveal">
+    <div class="about-block ab1"></div>
+    <div class="about-block ab2"></div>
+    <div class="about-quote">
+      <blockquote>"Design is the silent ambassador of your brand. Make sure it speaks volumes."</blockquote>
+      <cite>— Studio Manifesto</cite>
+    </div>
+  </div>
+</section>
 
-                <!-- Step 2 -->
-                <div class="grid md:grid-cols-12 gap-12 items-center">
-                    <div class="md:col-span-5">
-                        <div class="inline-flex items-center gap-5 bg-zinc-900 border border-emerald-500/30 px-8 py-5 rounded-3xl">
-                            <span class="text-6xl font-black text-emerald-500">02</span>
-                            <div>
-                                <p class="trans text-xs font-bold tracking-widest text-emerald-400" data-af="FASE 2" data-en="PHASE 2">FASE 2</p>
-                                <p class="trans text-3xl font-semibold" data-af="Energie Onafhanklikheid" data-en="Energy Independence">Energie Onafhanklikheid</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 flex justify-center">
-                        <div class="timeline-dot rounded-full flex items-center justify-center text-black font-black text-2xl">2</div>
-                    </div>
-                    <div class="md:col-span-5">
-                        <div class="card-hover bg-zinc-900 border border-zinc-800 rounded-3xl p-10">
-                            <p class="trans text-xl leading-relaxed" data-af="Bou reuse sonplase en bergingsfasiliteite wat die Noord-Kaap se natuurlike sonkragpotensiaal benut. Dit word die kragbron vir alle ander projekte en maak die Volkstaat energie-eksporterend."
-                               data-en="Build massive solar farms and storage facilities harnessing the Northern Cape’s natural solar potential. This becomes the power source for all other projects and makes the Volkstaat an energy exporter."></p>
-                        </div>
-                    </div>
-                </div>
+<!-- SERVICES -->
+<section id="services">
+  <div class="reveal">
+    <p class="section-label">— What we do</p>
+    <h2 class="section-title">Our craft.</h2>
+  </div>
+  <div class="services-list reveal">
+    <div class="service-row">
+      <span class="service-idx">01</span>
+      <span class="service-name">Brand Identity & Strategy</span>
+      <span class="service-plus">+</span>
+    </div>
+    <div class="service-row">
+      <span class="service-idx">02</span>
+      <span class="service-name">Web Design & Development</span>
+      <span class="service-plus">+</span>
+    </div>
+    <div class="service-row">
+      <span class="service-idx">03</span>
+      <span class="service-name">Motion Design & Animation</span>
+      <span class="service-plus">+</span>
+    </div>
+    <div class="service-row">
+      <span class="service-idx">04</span>
+      <span class="service-name">Art Direction & Campaigns</span>
+      <span class="service-plus">+</span>
+    </div>
+    <div class="service-row">
+      <span class="service-idx">05</span>
+      <span class="service-name">Creative Consultancy</span>
+      <span class="service-plus">+</span>
+    </div>
+  </div>
+</section>
 
-                <!-- Step 3 -->
-                <div class="grid md:grid-cols-12 gap-12 items-center">
-                    <div class="md:col-span-5 md:text-right">
-                        <div class="inline-flex items-center gap-5 bg-zinc-900 border border-sky-500/30 px-8 py-5 rounded-3xl">
-                            <span class="text-6xl font-black text-sky-500">03</span>
-                            <div>
-                                <p class="trans text-xs font-bold tracking-widest text-sky-400" data-af="FASE 3" data-en="PHASE 3">FASE 3</p>
-                                <p class="trans text-3xl font-semibold" data-af="KI &amp; Datategnologie" data-en="AI &amp; Data Technology">KI &amp; Datategnologie</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 flex justify-center">
-                        <div class="timeline-dot rounded-full flex items-center justify-center text-black font-black text-2xl">3</div>
-                    </div>
-                    <div class="md:col-span-5">
-                        <div class="card-hover bg-zinc-900 border border-zinc-800 rounded-3xl p-10">
-                            <p class="trans text-xl leading-relaxed" data-af="Vestig hoëprestasie KI-datasentrums aangedryf deur 100% hernubare energie. Verbind via ondersee-kabels aan die wêreld vir globale kliënte en skep duisende hoëbetaalde werksgeleenthede."
-                               data-en="Establish high-performance AI data centers powered by 100% renewable energy. Connect via submarine cables to the world for global clients and create thousands of high-paying jobs."></p>
-                        </div>
-                    </div>
-                </div>
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label">— Let's talk</p>
+  <h2 class="section-title">Start something<br>new.</h2>
+  <p>Got a project? A half-baked idea? A problem nobody's solved elegantly yet?<br>We'd love to hear it.</p>
+  <a href="mailto:hello@void.studio" class="cta-btn">Get in touch →</a>
+</section>
 
-                <!-- Step 4 -->
-                <div class="grid md:grid-cols-12 gap-12 items-center">
-                    <div class="md:col-span-5">
-                        <div class="inline-flex items-center gap-5 bg-zinc-900 border border-violet-500/30 px-8 py-5 rounded-3xl">
-                            <span class="text-6xl font-black text-violet-500">04</span>
-                            <div>
-                                <p class="trans text-xs font-bold tracking-widest text-violet-400" data-af="FASE 4" data-en="PHASE 4">FASE 4</p>
-                                <p class="trans text-3xl font-semibold" data-af="Mariene Hulpbronne" data-en="Marine Resources">Mariene Hulpbronne</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 flex justify-center">
-                        <div class="timeline-dot rounded-full flex items-center justify-center text-black font-black text-2xl">4</div>
-                    </div>
-                    <div class="md:col-span-5">
-                        <div class="card-hover bg-zinc-900 border border-zinc-800 rounded-3xl p-10">
-                            <p class="trans text-xl leading-relaxed" data-af="Vennoot met Amerikaanse olie- en gasmaatskappye om die eksklusiewe ekonomiese sone te ontwikkel. Ontgin en verfy hulpbronne op ons kuslyn en verkoop aan die wêreld en die res van Suid-Afrika."
-                               data-en="Partner with American oil and gas companies to develop the exclusive economic zone. Extract and refine resources on our coastline and sell to the world and the rest of South Africa."></p>
-                        </div>
-                    </div>
-                </div>
+<footer>
+  <p>© 2025 VOID Studio — All rights reserved</p>
+  <div class="footer-links">
+    <a href="#">Instagram</a>
+    <a href="#">Twitter</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Dribbble</a>
+  </div>
+</footer>
 
-                <!-- Step 5 -->
-                <div class="grid md:grid-cols-12 gap-12 items-center">
-                    <div class="md:col-span-5 md:text-right">
-                        <div class="inline-flex items-center gap-5 bg-zinc-900 border border-rose-500/30 px-8 py-5 rounded-3xl">
-                            <span class="text-6xl font-black text-rose-500">05</span>
-                            <div>
-                                <p class="trans text-xs font-bold tracking-widest text-rose-400" data-af="FASE 5" data-en="PHASE 5">FASE 5</p>
-                                <p class="trans text-3xl font-semibold" data-af="Volledige Selfbeskikking" data-en="Full Self-Determination">Volledige Selfbeskikking</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 flex justify-center">
-                        <div class="timeline-dot rounded-full flex items-center justify-center text-black font-black text-2xl">5</div>
-                    </div>
-                    <div class="md:col-span-5">
-                        <div class="card-hover bg-zinc-900 border border-zinc-800 rounded-3xl p-10">
-                            <p class="trans text-xl leading-relaxed" data-af="Integreer alle elemente in 'n ekonomies onafhanklike, kultureel behoue Afrikaner-nasie met eie onderwys, verdediging en landboustelsels vir geslagte lank."
-                               data-en="Integrate all elements into an economically independent, culturally preserved Afrikaner nation with its own education, defence and agricultural systems for generations to come."></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<script>
+  // Custom cursor
+  const cur = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, .work-card, .service-row, .cta-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => cur.classList.add('big'));
+    el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+  });
 
-    <!-- SLEUTEL PROJEKTE -->
-    <section id="projekte" class="py-28 bg-zinc-900">
-        <div class="max-w-6xl mx-auto px-6">
-            <h2 class="trans text-5xl font-bold text-center mb-16" 
-                data-af="Sleutel Projekte wat die Volkstaat sal Bou"
-                data-en="Key Projects that will Build the Volkstaat">
-                Sleutel Projekte wat die Volkstaat sal Bou
-            </h2>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Solar -->
-                <div class="card-hover bg-zinc-800 rounded-3xl p-10">
-                    <i class="fa-solid fa-solar-panel text-7xl text-amber-500 mb-8"></i>
-                    <h3 class="trans text-3xl font-bold mb-4" data-af="Vast Sonplase" data-en="Vast Solar Farms">Vast Sonplase</h3>
-                    <p class="trans text-zinc-400 leading-relaxed" data-af="Meer as 500 GW potensiaal. Israeliese tegnologie + VSA-finansiering sal die Noord-Kaap in die grootste sonkrag-hub in Afrika omskep – krag vir datasentrums en uitvoer."
-                       data-en="Over 500 GW potential. Israeli technology + US funding will turn the Northern Cape into Africa’s largest solar hub – power for data centers and export."></p>
-                </div>
-                
-                <!-- AI -->
-                <div class="card-hover bg-zinc-800 rounded-3xl p-10">
-                    <i class="fa-solid fa-microchip text-7xl text-sky-500 mb-8"></i>
-                    <h3 class="trans text-3xl font-bold mb-4" data-af="KI Datasentrums" data-en="AI Data Centers">KI Datasentrums</h3>
-                    <p class="trans text-zinc-400 leading-relaxed" data-af="Groen, goedkoop energie + ondersee-kabels = wêreldklas KI-infrastruktuur. Duizende werksgeleenthede en miljard-rand inkomste jaarliks."
-                       data-en="Green, cheap energy + submarine cables = world-class AI infrastructure. Thousands of jobs and billions in annual revenue."></p>
-                </div>
-                
-                <!-- Offshore -->
-                <div class="card-hover bg-zinc-800 rounded-3xl p-10">
-                    <i class="fa-solid fa-oil-well text-7xl text-emerald-500 mb-8"></i>
-                    <h3 class="trans text-3xl font-bold mb-4" data-af="Offshore Ontginning" data-en="Offshore Extraction">Offshore Ontginning</h3>
-                    <p class="trans text-zinc-400 leading-relaxed" data-af="Vennootskap met VSA-olie-maatskappye en maritieme beskerming om die Oranje-bekken se olie en gas te ontgin en te verfy op ons kuslyn."
-                       data-en="Partnership with US oil companies and maritime protection to extract and refine the Orange Basin’s oil and gas on our coastline."></p>
-                </div>
-            </div>
-        </div>
-    </section>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    <!-- EKONOMIESE IMPAK -->
-    <section id="impak" class="py-28 bg-black">
-        <div class="max-w-6xl mx-auto px-6 text-center">
-            <h2 class="trans text-5xl font-bold mb-12" 
-                data-af="Ekonomiese Impak &amp; Vooruitsigte"
-                data-en="Economic Impact &amp; Prospects">
-                Ekonomiese Impak &amp; Vooruitsigte
-            </h2>
-            <div class="grid md:grid-cols-4 gap-8 max-w-5xl mx-auto">
-                <div class="bg-zinc-900 rounded-3xl p-10">
-                    <p class="text-6xl font-black text-amber-500">R500B+</p>
-                    <p class="trans text-sm mt-4" data-af="Potensiële jaarlikse inkomste binne 10 jaar" data-en="Potential annual revenue within 10 years">Potensiële jaarlikse inkomste binne 10 jaar</p>
-                </div>
-                <div class="bg-zinc-900 rounded-3xl p-10">
-                    <p class="text-6xl font-black text-emerald-500">15,000+</p>
-                    <p class="trans text-sm mt-4" data-af="Nuwe werksgeleenthede vir Afrikaners" data-en="New jobs for Afrikaners">Nuwe werksgeleenthede vir Afrikaners</p>
-                </div>
-                <div class="bg-zinc-900 rounded-3xl p-10">
-                    <p class="text-6xl font-black text-sky-500">100%</p>
-                    <p class="trans text-sm mt-4" data-af="Hernubare energie-onafhanklikheid" data-en="100% renewable energy independence">Hernubare energie-onafhanklikheid</p>
-                </div>
-                <div class="bg-zinc-900 rounded-3xl p-10">
-                    <p class="text-6xl font-black text-violet-500">5</p>
-                    <p class="trans text-sm mt-4" data-af="Nuwe internasionale vennootskappe" data-en="New international partnerships">Nuwe internasionale vennootskappe</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- UITDAGINGS -->
-    <section id="uitdagings" class="py-28 bg-zinc-900">
-        <div class="max-w-6xl mx-auto px-6">
-            <h2 class="trans text-5xl font-bold text-center mb-16" 
-                data-af="Uitdagings &amp; Hoe Ons Dit Oorkom"
-                data-en="Challenges &amp; How We Overcome Them">
-                Uitdagings &amp; Hoe Ons Dit Oorkom
-            </h2>
-            <div class="space-y-10">
-                <div class="flex flex-col md:flex-row gap-8 bg-zinc-800 rounded-3xl p-8">
-                    <div class="md:w-1/3 font-bold text-xl">Uitdaging</div>
-                    <div class="md:w-2/3">Internasionale druk en Suid-Afrikaanse weerstand</div>
-                    <div class="md:w-1/3 font-semibold text-amber-400">Oplossing</div>
-                    <div class="md:w-2/3">Sterk VSA- en Israel-ondersteuning + diplomatieke alliansies verseker erkenning.</div>
-                </div>
-                <div class="flex flex-col md:flex-row gap-8 bg-zinc-800 rounded-3xl p-8">
-                    <div class="md:w-1/3 font-bold text-xl">Uitdaging</div>
-                    <div class="md:w-2/3">Infrastruktuur en netwerkverbinding</div>
-                    <div class="md:w-1/3 font-semibold text-amber-400">Oplossing</div>
-                    <div class="md:w-2/3">VSA- en Israeliese tegnologie vir ondersee-kabels en moderne kragnetwerke.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- VISIE -->
-    <section id="visie" class="py-32 bg-black relative">
-        <div class="max-w-4xl mx-auto px-6 text-center">
-            <h2 class="trans text-6xl font-black leading-none mb-10" 
-                data-af="Ons Visie<br>Vir die Afrikaner Volk"
-                data-en="Our Vision<br>For the Afrikaner People">
-                Ons Visie<br>Vir die Afrikaner Volk
-            </h2>
-            <p class="trans max-w-2xl mx-auto text-2xl text-zinc-400" 
-               data-af="Hierdie is nie net 'n droom nie – dit is 'n uitvoerbare, stap-vir-stap plan vir 'n vreedsame, ekonomies sterk en kultureel behoue Afrikaner-nasie in die Noord-Kaap. Saam kan ons dit verwesenlik."
-               data-en="This is not just a dream – it is an actionable, step-by-step plan for a peaceful, economically strong and culturally preserved Afrikaner nation in the Northern Cape. Together we can make it reality."></p>
-            
-            <button onclick="alert('Dankie! Kontak jou plaaslike Vryheidsfront Plus-tak of Orania-verteenwoordiger om betrokke te raak. Die toekoms begin vandag.')" 
-                    class="trans mt-16 px-16 py-8 bg-gradient-to-r from-amber-500 via-yellow-500 to-emerald-500 text-black font-black text-2xl rounded-3xl hover:scale-105 transition-all shadow-2xl">
-                SLUIT AAN BY DIE BEWEGING
-            </button>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="bg-zinc-950 py-16 border-t border-zinc-800">
-        <div class="max-w-6xl mx-auto px-6 text-center">
-            <p class="trans text-sm max-w-md mx-auto mb-8" 
-               data-af="Hierdie webwerf is 'n ideële voorstel vir VREDELIKE selfbeskikking. Dit moedig geen geweld of onwettige aksies aan nie. Dit is 'n visioen vir die Afrikaner volk se toekoms."
-               data-en="This website is an ideological proposal for PEACEFUL self-determination. It encourages no violence or illegal actions. It is a vision for the future of the Afrikaner people."></p>
-            <p class="text-xs text-zinc-500">© 2026 Volkstaat Visie • Vir die Afrikaner Volk en sy nageslag</p>
-        </div>
-    </footer>
-
-    <script>
-        // Tailwind ready
-        function init() {
-            console.log('%c✅ Volkstaat Visie Webwerf volledig gelaai. Alle skakels werk.', 'color:#f59e0b; font-family:monospace; font-size:12px');
-        }
-
-        // Language Switch
-        let currentLang = 'af';
-        function switchLanguage(lang) {
-            currentLang = lang;
-            document.getElementById('btn-af').classList.toggle('active', lang === 'af');
-            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-            
-            document.querySelectorAll('.trans').forEach(el => {
-                if (el.dataset[lang]) el.innerHTML = el.dataset[lang];
-            });
-            document.documentElement.lang = lang;
-        }
-
-        // Smooth Scroll
-        function smoothScroll(sectionId) {
-            const el = document.getElementById(sectionId);
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
-
-        // Mobile Menu
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
-
-        // Keyboard shortcut: Ctrl/Cmd + K to switch language
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                switchLanguage(currentLang === 'af' ? 'en' : 'af');
-            }
-        });
-
-        // Initialize
-        window.onload = init;
-    </script>
+  // Parallax bg text
+  const bgText = document.querySelector('.hero-bg-text');
+  document.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (bgText) bgText.style.transform = `translate(-50%, calc(-52% + ${y * 0.3}px))`;
+  });
+</script>
 </body>
 </html>
