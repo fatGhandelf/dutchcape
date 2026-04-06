@@ -1,141 +1,546 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CapeCompanion AI | Your Intelligent Guide to the Western Cape</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
-        .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-        .card-hover:hover { transform: translateY(-5px); transition: all 0.3s ease; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Nipple Pact</title>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Bebas+Neue&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a0a00;
+    --skin: #f5c9a0;
+    --skin-dark: #d4956a;
+    --red: #c0392b;
+    --navy: #1b3a5c;
+    --cream: #fef9f0;
+    --aged: #e8d5b0;
+    --shadow: rgba(0,0,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Special Elite', serif;
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: 
+      url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  /* Paper texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(180,140,80,0.07) 28px,
+      rgba(180,140,80,0.07) 29px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .header::before, .header::after {
+    content: '⚓';
+    font-size: 28px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.3;
+  }
+  .header::before { left: 0; }
+  .header::after { right: 0; }
+
+  .title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 10vw, 96px);
+    letter-spacing: 4px;
+    color: var(--ink);
+    line-height: 0.9;
+    text-shadow: 4px 4px 0 var(--skin-dark);
+  }
+
+  .subtitle {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(16px, 3vw, 22px);
+    color: var(--red);
+    margin-top: 10px;
+    transform: rotate(-1.5deg);
+    display: inline-block;
+  }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 30px 0;
+    opacity: 0.4;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--ink);
+  }
+  .divider span { font-size: 20px; }
+
+  /* TATTOO IMAGE */
+  .tattoo-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  .tattoo-frame {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tattoo-frame::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border: 3px solid var(--ink);
+    border-radius: 4px;
+    transform: rotate(1.5deg);
+    background: var(--aged);
+    z-index: -1;
+  }
+
+  .tattoo-frame::after {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border: 2px dashed var(--skin-dark);
+    border-radius: 4px;
+    transform: rotate(-0.8deg);
+    z-index: -2;
+  }
+
+  .tattoo-img {
+    display: block;
+    width: 260px;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 2px;
+    filter: contrast(1.05) saturate(0.95);
+  }
+
+  .tattoo-caption {
+    text-align: center;
+    margin-top: 18px;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 15px;
+    color: var(--ink);
+    opacity: 0.6;
+    transform: rotate(-0.5deg);
+  }
+
+  /* COUNTDOWNS */
+  .countdowns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 580px) {
+    .countdowns { grid-template-columns: 1fr; }
+  }
+
+  .countdown-card {
+    background: var(--aged);
+    border: 3px solid var(--ink);
+    border-radius: 4px;
+    padding: 24px 20px;
+    position: relative;
+    box-shadow: 5px 5px 0 var(--ink);
+    text-align: center;
+  }
+
+  .countdown-card::before {
+    content: attr(data-corner);
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 28px;
+    opacity: 0.15;
+  }
+
+  .person-name {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 28px;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .turns-50 {
+    font-size: 13px;
+    color: var(--ink);
+    opacity: 0.6;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .timer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .timer-unit {
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 3px;
+    padding: 10px 4px 6px;
+  }
+
+  .timer-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 5vw, 40px);
+    line-height: 1;
+    display: block;
+    letter-spacing: 1px;
+  }
+
+  .timer-label {
+    font-family: 'Special Elite', serif;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .target-date {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 13px;
+    color: var(--red);
+    margin-top: 10px;
+  }
+
+  .done-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--red);
+    letter-spacing: 3px;
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  /* CONTRACT */
+  .contract {
+    background: var(--aged);
+    border: 3px double var(--ink);
+    border-radius: 4px;
+    padding: 36px 40px;
+    position: relative;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.2);
+  }
+
+  .contract::before {
+    content: '';
+    position: absolute;
+    top: 12px; left: 12px; right: 12px; bottom: 12px;
+    border: 1px solid rgba(0,0,0,0.15);
+    pointer-events: none;
+  }
+
+  .contract-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    text-align: center;
+    letter-spacing: 6px;
+    margin-bottom: 6px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .contract-subtitle {
+    text-align: center;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    opacity: 0.5;
+    margin-bottom: 24px;
+  }
+
+  .contract-body {
+    line-height: 2;
+    font-size: 15px;
+    text-indent: 30px;
+  }
+
+  .contract-body p {
+    margin-bottom: 16px;
+  }
+
+  .contract-body strong {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 17px;
+  }
+
+  .signatures {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 40px;
+  }
+
+  .sig-line {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 8px;
+    margin-bottom: 6px;
+    min-height: 50px;
+    position: relative;
+  }
+
+  .sig-name-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.5;
+  }
+
+  .sig-name {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 20px;
+    color: var(--navy);
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    transform: rotate(-2deg);
+  }
+
+  .stamp {
+    position: absolute;
+    bottom: 30px;
+    right: 40px;
+    width: 90px;
+    height: 90px;
+    border: 4px solid var(--red);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--red);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-align: center;
+    transform: rotate(-12deg);
+    opacity: 0.5;
+    line-height: 1.3;
+  }
+
+  .stamp::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 2px solid var(--red);
+    border-radius: 50%;
+  }
+
+  /* Worn edges */
+  .contract::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 0% 0%, rgba(0,0,0,0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.07) 0%, transparent 50%);
+    pointer-events: none;
+    border-radius: 4px;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 12px;
+    opacity: 0.3;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Animations */
+  .countdown-card, .contract, .tattoo-frame {
+    animation: fadeUp 0.6s ease both;
+  }
+  .countdown-card:nth-child(1) { animation-delay: 0.1s; }
+  .countdown-card:nth-child(2) { animation-delay: 0.2s; }
+  .contract { animation-delay: 0.3s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
 </head>
-<body class="text-slate-900">
+<body>
+<div class="page">
 
-    <nav class="fixed w-full z-50 glass border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold text-blue-600 tracking-tight">
-                Cape<span class="text-slate-800">Companion</span> <span class="text-xs bg-blue-100 px-2 py-1 rounded text-blue-600">AI</span>
-            </div>
-            <div class="hidden md:flex space-x-8 font-medium text-slate-600">
-                <a href="#features" class="hover:text-blue-600">Features</a>
-                <a href="#safety" class="hover:text-blue-600">Safety</a>
-                <a href="#download" class="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition">Download App</a>
-            </div>
+  <div class="header">
+    <div class="title">THE NIPPLE<br>PACT</div>
+    <div class="subtitle">A Sacred & Binding Agreement Between Two Idiots</div>
+  </div>
+
+  <div class="divider"><span>⚓</span></div>
+
+  <!-- TATTOO IMAGE -->
+  <div class="tattoo-section">
+    <div>
+      <div class="tattoo-frame">
+        <img class="tattoo-img" src="/mnt/user-data/uploads/Screenshot_2026-04-06_214034.png" alt="The Tattoo" 
+          onerror="this.style.display='none'; document.getElementById('tattoo-fallback').style.display='flex'">
+        <div id="tattoo-fallback" style="display:none; width:260px; height:260px; background:#d4b896; align-items:center; justify-content:center; font-family:'Permanent Marker',cursive; font-size:16px; text-align:center; padding:20px; color:#1a0a00;">⚓<br><br>The Legendary<br>Popeye Tattoo</div>
+      </div>
+      <div class="tattoo-caption">The sacred design. Going right on the nip. 🫡</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>⚓</span></div>
+
+  <!-- COUNTDOWNS -->
+  <div class="countdowns">
+    <div class="countdown-card" data-corner="⚓" id="card1">
+      <div class="person-name">Person 1</div>
+      <div class="turns-50">Born 4 August 1989</div>
+      <div id="countdown1-display"></div>
+      <div class="target-date" id="target1"></div>
+    </div>
+
+    <div class="countdown-card" data-corner="🪡" id="card2">
+      <div class="person-name">Person 2</div>
+      <div class="turns-50">Born 4 May 1990</div>
+      <div id="countdown2-display"></div>
+      <div class="target-date" id="target2"></div>
+    </div>
+  </div>
+
+  <div class="divider"><span>⚓</span></div>
+
+  <!-- CONTRACT -->
+  <div class="contract">
+    <div class="contract-title">Official Contract</div>
+    <div class="contract-subtitle">Entered into on this day, with full sound mind (debatable)</div>
+
+    <div class="contract-body">
+      <p>
+        We, the undersigned, hereby solemnly and irrevocably commit that upon reaching the age of <strong>fifty (50) years</strong>, each party shall — without hesitation, negotiation, or cowardice — submit their nipple area to the needle and receive the tattoo depicted above (hereinafter referred to as <strong>"The Popeye"</strong>).
+      </p>
+      <p>
+        The Popeye shall be placed <strong>directly over the nipple</strong>, centred, visible, and executed in full colour as agreed. No substitutions. No relocations. No "I changed my mind." The anchor goes on the anchor spot.
+      </p>
+      <p>
+        Any party who refuses to fulfil their obligation upon reaching the age of fifty shall be considered a <strong>coward of the highest order</strong>, and their honour shall be forfeit. The other party reserves the right to show this contract to everyone, forever.
+      </p>
+      <p>
+        This agreement is binding across all timelines, alternate universes, and regardless of whether either party has "grown up" in the intervening years.
+      </p>
+      <p>
+        We said what we said. <strong>DEAL.</strong>
+      </p>
+    </div>
+
+    <div class="signatures">
+      <div>
+        <div class="sig-line">
+          <span class="sig-name">Person 1</span>
         </div>
-    </nav>
-
-    <header class="pt-32 pb-20 hero-gradient text-white overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-            <div>
-                <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">
-                    Navigate the Cape like a <span class="text-blue-400">Protective Local.</span>
-                </h1>
-                <p class="text-lg text-slate-300 mb-8 leading-relaxed">
-                    The only AI-powered travel guide that integrates real-time safety routing, loadshedding schedules, and "wind-wise" planning for the Western Cape.
-                </p>
-                <div class="flex space-x-4">
-                    <button class="bg-white text-slate-900 px-8 py-4 rounded-xl font-bold flex items-center hover:bg-slate-100 transition">
-                        <i class="fab fa-apple mr-2 text-xl"></i> App Store
-                    </button>
-                    <button class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold flex items-center hover:bg-blue-700 transition">
-                        <i class="fab fa-google-play mr-2 text-xl"></i> Play Store
-                    </button>
-                </div>
-            </div>
-            <div class="relative">
-                <div class="bg-blue-500/20 rounded-3xl p-4 border border-white/10">
-                    <div class="bg-slate-800 rounded-2xl h-[500px] w-full flex items-center justify-center border border-white/20 relative overflow-hidden">
-                        <div class="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1580619305218-8423a7ef79b4?auto=format&fit=crop&w=800&q=80')] bg-cover"></div>
-                        <div class="relative z-10 text-center px-6">
-                            <div class="bg-green-500 text-xs font-bold uppercase tracking-widest p-1 mb-4 rounded">AI Route Active</div>
-                            <div class="text-3xl font-bold">Safe-Path Enabled</div>
-                            <p class="text-slate-300 text-sm mt-2 italic">"Avoiding congestion and unvetted areas..."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="sig-name-label">Signature — Nipple 1</div>
+      </div>
+      <div>
+        <div class="sig-line">
+          <span class="sig-name">Person 2</span>
         </div>
-    </header>
+        <div class="sig-name-label">Signature — Nipple 2</div>
+      </div>
+    </div>
 
-    <section id="features" class="py-24 max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold text-slate-900">Built for the South African Context</h2>
-            <p class="text-slate-500 mt-4">Standard GPS is great, but it doesn't know the Cape's unique challenges.</p>
-        </div>
+    <div class="stamp">BINDING<br>CONTRACT<br>⚓</div>
+  </div>
 
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="p-8 bg-white border border-slate-100 rounded-3xl shadow-sm card-hover">
-                <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-6 text-xl">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-3">Safety-First Routing</h3>
-                <p class="text-slate-600">Our AI avoids high-risk zones in real-time using community watch data, ensuring you stay on vetted tourist routes.</p>
-            </div>
+  <div class="footer">⚓ &nbsp; No backsies &nbsp; ⚓</div>
 
-            <div class="p-8 bg-white border border-slate-100 rounded-3xl shadow-sm card-hover">
-                <div class="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 mb-6 text-xl">
-                    <i class="fas fa-bolt"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-3">Loadshedding Logic</h3>
-                <p class="text-slate-600">Automatically alerts you if your dinner reservation or activity is affected by power outages and suggests alternatives.</p>
-            </div>
+</div>
 
-            <div class="p-8 bg-white border border-slate-100 rounded-3xl shadow-sm card-hover">
-                <div class="w-12 h-12 bg-teal-100 rounded-2xl flex items-center justify-center text-teal-600 mb-6 text-xl">
-                    <i class="fas fa-wind"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-3">Wind-Wise Planning</h3>
-                <p class="text-slate-600">Cape Town wind can ruin a beach day. We predict the "South Easter" to help you choose the right side of the mountain.</p>
-            </div>
-        </div>
-    </section>
+<script>
+  // Person 1: born 4 Aug 1989 → turns 50 on 4 Aug 2039
+  // Person 2: born 4 May 1990 → turns 50 on 4 May 2040
 
-    <section id="safety" class="bg-slate-100 py-20">
-        <div class="max-w-5xl mx-auto px-6">
-            <div class="bg-white rounded-[3rem] p-12 shadow-xl border border-blue-100 flex flex-col md:flex-row items-center gap-12">
-                <div class="md:w-1/2">
-                    <h2 class="text-3xl font-bold mb-6">Peace of Mind is <br><span class="text-blue-600">Just One Tap Away.</span></h2>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <span class="text-slate-700"><strong>Instant SOS:</strong> Direct link to private security and tourist police.</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <span class="text-slate-700"><strong>Vetted Stops:</strong> Every "Gem" suggested is verified for safety and quality.</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <span class="text-slate-700"><strong>Live Updates:</strong> Real-time alerts for road closures or protests.</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="md:w-1/2 bg-blue-600 rounded-3xl p-8 text-white">
-                    <blockquote class="text-lg italic mb-6">
-                        "As a first-time visitor from New York, I was nervous about driving. CapeCompanion AI's 'Safe Route' gave me the confidence to explore Muizenberg and beyond without worry."
-                    </blockquote>
-                    <p class="font-bold">— Sarah J., Traveler</p>
-                </div>
-            </div>
-        </div>
-    </section>
+  const targets = [
+    { id: 'countdown1-display', targetId: 'target1', date: new Date('2039-08-04T00:00:00') },
+    { id: 'countdown2-display', targetId: 'target2', date: new Date('2040-05-04T00:00:00') },
+  ];
 
-    <footer class="py-12 border-t border-slate-200">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <div class="text-xl font-bold text-slate-800 mb-4">CapeCompanion AI</div>
-            <p class="text-slate-500 text-sm">© 2026 CapeCompanion AI. Designed for the adventurous and the cautious.</p>
-            <div class="flex justify-center space-x-6 mt-6 text-slate-400">
-                <a href="#"><i class="fab fa-instagram hover:text-blue-600 cursor-pointer"></i></a>
-                <a href="#"><i class="fab fa-twitter hover:text-blue-600 cursor-pointer"></i></a>
-                <a href="#"><i class="fab fa-facebook hover:text-blue-600 cursor-pointer"></i></a>
-            </div>
-        </div>
-    </footer>
+  function pad(n) { return String(n).padStart(2, '0'); }
 
+  function renderCountdown(el, targetEl, targetDate) {
+    const now = new Date();
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+      el.innerHTML = `<div class="done-badge">IT'S TIME! 🪡</div>`;
+      targetEl.textContent = 'No more excuses. Needle up.';
+      return;
+    }
+
+    const days    = Math.floor(diff / (1000*60*60*24));
+    const hours   = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const seconds = Math.floor((diff % (1000*60)) / 1000);
+
+    el.innerHTML = `
+      <div class="timer-grid">
+        <div class="timer-unit"><span class="timer-number">${days}</span><span class="timer-label">Days</span></div>
+        <div class="timer-unit"><span class="timer-number">${pad(hours)}</span><span class="timer-label">Hours</span></div>
+        <div class="timer-unit"><span class="timer-number">${pad(minutes)}</span><span class="timer-label">Mins</span></div>
+        <div class="timer-unit"><span class="timer-number">${pad(seconds)}</span><span class="timer-label">Secs</span></div>
+      </div>
+    `;
+
+    targetEl.textContent = '🪡 ' + targetDate.toLocaleDateString('en-ZA', { day:'numeric', month:'long', year:'numeric' });
+  }
+
+  function tick() {
+    targets.forEach(t => {
+      renderCountdown(
+        document.getElementById(t.id),
+        document.getElementById(t.targetId),
+        t.date
+      );
+    });
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
 </body>
 </html>
