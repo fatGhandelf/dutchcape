@@ -3,544 +3,487 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Nipple Pact</title>
-<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Bebas+Neue&family=Special+Elite&display=swap" rel="stylesheet">
+<title>Fixtures // Arsenal &amp; Springboks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #1a0a00;
-    --skin: #f5c9a0;
-    --skin-dark: #d4956a;
-    --red: #c0392b;
-    --navy: #1b3a5c;
-    --cream: #fef9f0;
-    --aged: #e8d5b0;
-    --shadow: rgba(0,0,0,0.4);
+    --red: #ff1a2e;
+    --red-dim: rgba(255,26,46,0.12);
+    --red-glow: 0 0 18px rgba(255,26,46,0.5), 0 0 40px rgba(255,26,46,0.2);
+    --green: #00ff6a;
+    --green-dim: rgba(0,255,106,0.10);
+    --green-glow: 0 0 18px rgba(0,255,106,0.5), 0 0 40px rgba(0,255,106,0.2);
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #161616;
+    --border: #222222;
+    --text: #e8e8e8;
+    --muted: #555555;
+    --faint: #1e1e1e;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
 
   body {
-    background: var(--cream);
-    font-family: 'Special Elite', serif;
-    color: var(--ink);
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
     min-height: 100vh;
     overflow-x: hidden;
-    background-image: 
-      url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   }
 
-  /* Paper texture overlay */
+  /* NOISE OVERLAY */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 28px,
-      rgba(180,140,80,0.07) 28px,
-      rgba(180,140,80,0.07) 29px
-    );
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 0;
   }
 
-  .page {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 40px 20px 60px;
-    position: relative;
-    z-index: 1;
+  /* GRID BACKGROUND */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
   }
+
+  .wrapper { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 1.5rem 4rem; }
 
   /* HEADER */
-  .header {
-    text-align: center;
-    margin-bottom: 40px;
+  header {
+    padding: 3rem 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
     position: relative;
   }
 
-  .header::before, .header::after {
-    content: '⚓';
-    font-size: 28px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.3;
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
   }
-  .header::before { left: 0; }
-  .header::after { right: 0; }
 
-  .title {
+  .site-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(52px, 10vw, 96px);
-    letter-spacing: 4px;
-    color: var(--ink);
+    letter-spacing: 0.04em;
     line-height: 0.9;
-    text-shadow: 4px 4px 0 var(--skin-dark);
+    color: var(--text);
   }
 
-  .subtitle {
-    font-family: 'Permanent Marker', cursive;
-    font-size: clamp(16px, 3vw, 22px);
-    color: var(--red);
-    margin-top: 10px;
-    transform: rotate(-1.5deg);
-    display: inline-block;
+  .site-title .ars { color: var(--red); text-shadow: var(--red-glow); }
+  .site-title .boks { color: var(--green); text-shadow: var(--green-glow); }
+
+  .header-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 1.25rem;
   }
 
-  /* DIVIDER */
-  .divider {
+  .tagline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .live-dot {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin: 30px 0;
-    opacity: 0.4;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
   }
-  .divider::before, .divider::after {
+
+  .live-dot::before {
     content: '';
-    flex: 1;
-    height: 2px;
-    background: var(--ink);
-  }
-  .divider span { font-size: 20px; }
-
-  /* TATTOO IMAGE */
-  .tattoo-section {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 40px;
-  }
-
-  .tattoo-frame {
-    position: relative;
-    display: inline-block;
-  }
-
-  .tattoo-frame::before {
-    content: '';
-    position: absolute;
-    inset: -8px;
-    border: 3px solid var(--ink);
-    border-radius: 4px;
-    transform: rotate(1.5deg);
-    background: var(--aged);
-    z-index: -1;
-  }
-
-  .tattoo-frame::after {
-    content: '';
-    position: absolute;
-    inset: -14px;
-    border: 2px dashed var(--skin-dark);
-    border-radius: 4px;
-    transform: rotate(-0.8deg);
-    z-index: -2;
-  }
-
-  .tattoo-img {
-    display: block;
-    width: 260px;
-    height: 260px;
-    object-fit: cover;
-    border-radius: 2px;
-    filter: contrast(1.05) saturate(0.95);
-  }
-
-  .tattoo-caption {
-    text-align: center;
-    margin-top: 18px;
-    font-family: 'Permanent Marker', cursive;
-    font-size: 15px;
-    color: var(--ink);
-    opacity: 0.6;
-    transform: rotate(-0.5deg);
-  }
-
-  /* COUNTDOWNS */
-  .countdowns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 40px;
-  }
-
-  @media (max-width: 580px) {
-    .countdowns { grid-template-columns: 1fr; }
-  }
-
-  .countdown-card {
-    background: var(--aged);
-    border: 3px solid var(--ink);
-    border-radius: 4px;
-    padding: 24px 20px;
-    position: relative;
-    box-shadow: 5px 5px 0 var(--ink);
-    text-align: center;
-  }
-
-  .countdown-card::before {
-    content: attr(data-corner);
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    font-size: 28px;
-    opacity: 0.15;
-  }
-
-  .person-name {
-    font-family: 'Permanent Marker', cursive;
-    font-size: 28px;
-    color: var(--navy);
-    margin-bottom: 6px;
-  }
-
-  .turns-50 {
-    font-size: 13px;
-    color: var(--ink);
-    opacity: 0.6;
-    margin-bottom: 18px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .timer-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-
-  .timer-unit {
-    background: var(--ink);
-    color: var(--cream);
-    border-radius: 3px;
-    padding: 10px 4px 6px;
-  }
-
-  .timer-number {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(28px, 5vw, 40px);
-    line-height: 1;
-    display: block;
-    letter-spacing: 1px;
-  }
-
-  .timer-label {
-    font-family: 'Special Elite', serif;
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    opacity: 0.6;
-    display: block;
-    margin-top: 2px;
-  }
-
-  .target-date {
-    font-family: 'Permanent Marker', cursive;
-    font-size: 13px;
-    color: var(--red);
-    margin-top: 10px;
-  }
-
-  .done-badge {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px;
-    color: var(--red);
-    letter-spacing: 3px;
-    animation: pulse 1s ease-in-out infinite;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #33ff33;
+    box-shadow: 0 0 6px #33ff33;
+    animation: pulse 2s ease-in-out infinite;
   }
 
   @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
   }
 
-  /* CONTRACT */
-  .contract {
-    background: var(--aged);
-    border: 3px double var(--ink);
+  /* TAB SWITCHER */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
     border-radius: 4px;
-    padding: 36px 40px;
-    position: relative;
-    box-shadow: 6px 6px 0 rgba(0,0,0,0.2);
+    overflow: hidden;
+    width: fit-content;
   }
 
-  .contract::before {
-    content: '';
-    position: absolute;
-    top: 12px; left: 12px; right: 12px; bottom: 12px;
-    border: 1px solid rgba(0,0,0,0.15);
-    pointer-events: none;
-  }
-
-  .contract-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 36px;
-    text-align: center;
-    letter-spacing: 6px;
-    margin-bottom: 6px;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-
-  .contract-subtitle {
-    text-align: center;
-    font-size: 11px;
+  .tab-btn {
+    background: transparent;
+    border: none;
+    padding: 10px 28px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 3px;
-    opacity: 0.5;
-    margin-bottom: 24px;
-  }
-
-  .contract-body {
-    line-height: 2;
-    font-size: 15px;
-    text-indent: 30px;
-  }
-
-  .contract-body p {
-    margin-bottom: 16px;
-  }
-
-  .contract-body strong {
-    font-family: 'Permanent Marker', cursive;
-    font-size: 17px;
-  }
-
-  .signatures {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    margin-top: 40px;
-  }
-
-  .sig-line {
-    border-bottom: 2px solid var(--ink);
-    padding-bottom: 8px;
-    margin-bottom: 6px;
-    min-height: 50px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.2s;
     position: relative;
   }
 
-  .sig-name-label {
-    font-size: 11px;
+  .tab-btn:first-child { border-right: 1px solid var(--border); }
+
+  .tab-btn.active-ars {
+    color: var(--red);
+    background: var(--red-dim);
+    text-shadow: 0 0 10px rgba(255,26,46,0.6);
+  }
+
+  .tab-btn.active-boks {
+    color: var(--green);
+    background: var(--green-dim);
+    text-shadow: 0 0 10px rgba(0,255,106,0.6);
+  }
+
+  .tab-btn:not(.active-ars):not(.active-boks):hover {
+    background: var(--faint);
+    color: var(--text);
+  }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* MONTH GROUP */
+  .month-group { margin-bottom: 2rem; }
+
+  .month-header {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    opacity: 0.5;
-  }
-
-  .sig-name {
-    font-family: 'Permanent Marker', cursive;
-    font-size: 20px;
-    color: var(--navy);
-    position: absolute;
-    bottom: 10px;
-    left: 0;
-    transform: rotate(-2deg);
-  }
-
-  .stamp {
-    position: absolute;
-    bottom: 30px;
-    right: 40px;
-    width: 90px;
-    height: 90px;
-    border: 4px solid var(--red);
-    border-radius: 50%;
+    color: var(--muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: var(--red);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-align: center;
-    transform: rotate(-12deg);
-    opacity: 0.5;
-    line-height: 1.3;
+    gap: 10px;
   }
 
-  .stamp::before {
+  .month-header::after {
     content: '';
-    position: absolute;
-    inset: 5px;
-    border: 2px solid var(--red);
-    border-radius: 50%;
+    flex: 1;
+    height: 1px;
+    background: var(--border);
   }
 
-  /* Worn edges */
-  .contract::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 0% 0%, rgba(0,0,0,0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.07) 0%, transparent 50%);
-    pointer-events: none;
+  /* FIXTURE ROW */
+  .fixture {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
     border-radius: 4px;
+    margin-bottom: 6px;
+    transition: all 0.2s;
+    animation: fadeIn 0.3s ease both;
   }
 
-  .footer {
-    text-align: center;
-    margin-top: 40px;
-    font-size: 12px;
-    opacity: 0.3;
-    letter-spacing: 2px;
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fixture:hover { background: var(--surface2); }
+
+  .fixture.ars-fixture { border-left-color: var(--red); }
+  .fixture.ars-fixture:hover { box-shadow: -2px 0 20px rgba(255,26,46,0.15); }
+
+  .fixture.boks-fixture { border-left-color: var(--green); }
+  .fixture.boks-fixture:hover { box-shadow: -2px 0 20px rgba(0,255,106,0.15); }
+
+  .fixture-date-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+    padding-right: 16px;
+  }
+
+  .fix-day {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .fix-month {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
     text-transform: uppercase;
   }
 
-  /* Animations */
-  .countdown-card, .contract, .tattoo-frame {
-    animation: fadeUp 0.6s ease both;
-  }
-  .countdown-card:nth-child(1) { animation-delay: 0.1s; }
-  .countdown-card:nth-child(2) { animation-delay: 0.2s; }
-  .contract { animation-delay: 0.3s; }
+  .fixture-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
+  .fix-teams {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fix-teams .highlight-ars { color: var(--red); }
+  .fix-teams .highlight-boks { color: var(--green); }
+
+  .fix-venue {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fix-comp {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    opacity: 0.7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fixture-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+
+  .badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-upcoming-ars { border: 1px solid rgba(255,26,46,0.4); color: var(--red); background: var(--red-dim); }
+  .badge-upcoming-boks { border: 1px solid rgba(0,255,106,0.4); color: var(--green); background: var(--green-dim); }
+  .badge-soon { border: 1px solid rgba(255,190,0,0.4); color: #ffbe00; background: rgba(255,190,0,0.08); }
+  .badge-result { border: 1px solid var(--border); color: var(--muted); }
+
+  .fix-kickoff {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-logos { display: flex; gap: 16px; align-items: center; }
+  .foot-dot-ars { width: 8px; height: 8px; border-radius: 50%; background: var(--red); box-shadow: 0 0 8px var(--red); }
+  .foot-dot-boks { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+
+  @media (max-width: 540px) {
+    .fixture { grid-template-columns: 48px 1fr auto; gap: 10px; padding: 12px 12px; }
+    .fix-day { font-size: 22px; }
+    .fix-teams { font-size: 13px; }
+    .header-meta { flex-direction: column; align-items: flex-start; gap: 6px; }
   }
 </style>
 </head>
 <body>
-<div class="page">
+<div class="wrapper">
 
-  <div class="header">
-    <div class="title">THE NIPPLE<br>PACT</div>
-    <div class="subtitle">A Sacred & Binding Agreement Between Two Idiots</div>
+  <header>
+    <div class="eyebrow">Live Fixture Tracker</div>
+    <div class="site-title">
+      <span class="ars">ARS</span><span style="color:var(--border)"> / </span><span class="boks">BOKS</span>
+    </div>
+    <div class="header-meta">
+      <div class="tagline">Arsenal FC &amp; Springboks · 2026 season</div>
+      <div class="live-dot" id="updated-label">updated today</div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active-ars" id="tab-ars" onclick="switchTab('ars')">⚽ Arsenal</button>
+    <button class="tab-btn" id="tab-boks" onclick="switchTab('boks')">🏉 Springboks</button>
   </div>
 
-  <div class="divider"><span>⚓</span></div>
+  <div id="panel-ars" class="panel active"></div>
+  <div id="panel-boks" class="panel"></div>
 
-  <!-- TATTOO IMAGE -->
-  <div class="tattoo-section">
-    <div>
-      <div class="tattoo-frame">
-        <img class="tattoo-img" src="/mnt/user-data/uploads/Screenshot_2026-04-06_214034.png" alt="The Tattoo" 
-          onerror="this.style.display='none'; document.getElementById('tattoo-fallback').style.display='flex'">
-        <div id="tattoo-fallback" style="display:none; width:260px; height:260px; background:#d4b896; align-items:center; justify-content:center; font-family:'Permanent Marker',cursive; font-size:16px; text-align:center; padding:20px; color:#1a0a00;">⚓<br><br>The Legendary<br>Popeye Tattoo</div>
-      </div>
-      <div class="tattoo-caption">The sacred design. Going right on the nip. 🫡</div>
+  <footer>
+    <div class="footer-logos">
+      <div class="foot-dot-ars"></div>
+      <span>Arsenal FC</span>
+      <div class="foot-dot-boks"></div>
+      <span>Springboks</span>
     </div>
-  </div>
-
-  <div class="divider"><span>⚓</span></div>
-
-  <!-- COUNTDOWNS -->
-  <div class="countdowns">
-    <div class="countdown-card" data-corner="⚓" id="card1">
-      <div class="person-name">Person 1</div>
-      <div class="turns-50">Born 4 August 1989</div>
-      <div id="countdown1-display"></div>
-      <div class="target-date" id="target1"></div>
-    </div>
-
-    <div class="countdown-card" data-corner="🪡" id="card2">
-      <div class="person-name">Person 2</div>
-      <div class="turns-50">Born 4 May 1990</div>
-      <div id="countdown2-display"></div>
-      <div class="target-date" id="target2"></div>
-    </div>
-  </div>
-
-  <div class="divider"><span>⚓</span></div>
-
-  <!-- CONTRACT -->
-  <div class="contract">
-    <div class="contract-title">Official Contract</div>
-    <div class="contract-subtitle">Entered into on this day, with full sound mind (debatable)</div>
-
-    <div class="contract-body">
-      <p>
-        We, the undersigned, hereby solemnly and irrevocably commit that upon reaching the age of <strong>fifty (50) years</strong>, each party shall — without hesitation, negotiation, or cowardice — submit their nipple area to the needle and receive the tattoo depicted above (hereinafter referred to as <strong>"The Popeye"</strong>).
-      </p>
-      <p>
-        The Popeye shall be placed <strong>directly over the nipple</strong>, centred, visible, and executed in full colour as agreed. No substitutions. No relocations. No "I changed my mind." The anchor goes on the anchor spot.
-      </p>
-      <p>
-        Any party who refuses to fulfil their obligation upon reaching the age of fifty shall be considered a <strong>coward of the highest order</strong>, and their honour shall be forfeit. The other party reserves the right to show this contract to everyone, forever.
-      </p>
-      <p>
-        This agreement is binding across all timelines, alternate universes, and regardless of whether either party has "grown up" in the intervening years.
-      </p>
-      <p>
-        We said what we said. <strong>DEAL.</strong>
-      </p>
-    </div>
-
-    <div class="signatures">
-      <div>
-        <div class="sig-line">
-          <span class="sig-name">Person 1</span>
-        </div>
-        <div class="sig-name-label">Signature — Nipple 1</div>
-      </div>
-      <div>
-        <div class="sig-line">
-          <span class="sig-name">Person 2</span>
-        </div>
-        <div class="sig-name-label">Signature — Nipple 2</div>
-      </div>
-    </div>
-
-    <div class="stamp">BINDING<br>CONTRACT<br>⚓</div>
-  </div>
-
-  <div class="footer">⚓ &nbsp; No backsies &nbsp; ⚓</div>
+    <span id="footer-date"></span>
+  </footer>
 
 </div>
 
 <script>
-  // Person 1: born 4 Aug 1989 → turns 50 on 4 Aug 2039
-  // Person 2: born 4 May 1990 → turns 50 on 4 May 2040
+const TODAY = new Date();
 
-  const targets = [
-    { id: 'countdown1-display', targetId: 'target1', date: new Date('2039-08-04T00:00:00') },
-    { id: 'countdown2-display', targetId: 'target2', date: new Date('2040-05-04T00:00:00') },
-  ];
+function daysUntil(dateStr) {
+  return Math.round((new Date(dateStr) - TODAY) / 86400000);
+}
 
-  function pad(n) { return String(n).padStart(2, '0'); }
+function badge(dateStr, team) {
+  const d = daysUntil(dateStr);
+  const cls = team === 'ars' ? 'badge-upcoming-ars' : 'badge-upcoming-boks';
+  if (d < 0) return `<span class="badge badge-result">result</span>`;
+  if (d === 0) return `<span class="badge badge-soon">today</span>`;
+  if (d <= 7) return `<span class="badge badge-soon">in ${d}d</span>`;
+  return `<span class="badge ${cls}">upcoming</span>`;
+}
 
-  function renderCountdown(el, targetEl, targetDate) {
-    const now = new Date();
-    const diff = targetDate - now;
+function fmt(dateStr, part) {
+  const d = new Date(dateStr);
+  if (part === 'day') return d.getDate();
+  if (part === 'mon') return d.toLocaleDateString('en-ZA', { month: 'short' }).toUpperCase();
+  if (part === 'month') return d.toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' });
+  if (part === 'dow') return d.toLocaleDateString('en-ZA', { weekday: 'short' }).toUpperCase();
+}
 
-    if (diff <= 0) {
-      el.innerHTML = `<div class="done-badge">IT'S TIME! 🪡</div>`;
-      targetEl.textContent = 'No more excuses. Needle up.';
-      return;
-    }
+function teamLabel(home, away, team) {
+  const hcls = team === 'ars' ? 'highlight-ars' : 'highlight-boks';
+  const isArsenal = t => t === 'Arsenal';
+  const isBoks = t => t === 'South Africa';
+  const check = team === 'ars' ? isArsenal : isBoks;
+  const hl = t => check(t) ? `<span class="${hcls}">${t}</span>` : t;
+  return `${hl(home)} <span style="color:var(--muted);font-weight:300">vs</span> ${hl(away)}`;
+}
 
-    const days    = Math.floor(diff / (1000*60*60*24));
-    const hours   = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-    const minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
-    const seconds = Math.floor((diff % (1000*60)) / 1000);
+const ARSENAL = [
+  { date: '2026-04-15', home: 'Arsenal', away: 'Sporting CP', venue: 'Emirates Stadium, London', comp: 'Champions League · QF Leg 2 (Agg: 1–0)', time: '21:00 SAST' },
+  { date: '2026-04-19', home: 'Man City', away: 'Arsenal', venue: 'Etihad Stadium, Manchester', comp: 'Premier League', time: '17:30 SAST' },
+  { date: '2026-04-25', home: 'Arsenal', away: 'Newcastle Utd', venue: 'Emirates Stadium, London', comp: 'Premier League', time: '18:30 SAST' },
+  { date: '2026-04-29', home: 'UCL Semi-Final', away: 'TBD', venue: 'TBD', comp: 'Champions League · SF Leg 1 (if through)', time: 'TBC' },
+  { date: '2026-05-02', home: 'Arsenal', away: 'Fulham', venue: 'Emirates Stadium, London', comp: 'Premier League', time: '18:30 SAST' },
+  { date: '2026-05-06', home: 'UCL Semi-Final', away: 'TBD', venue: 'Emirates Stadium, London', comp: 'Champions League · SF Leg 2 (if through)', time: 'TBC' },
+  { date: '2026-05-10', home: 'West Ham', away: 'Arsenal', venue: 'London Stadium', comp: 'Premier League', time: '17:30 SAST' },
+  { date: '2026-05-17', home: 'Arsenal', away: 'Burnley', venue: 'Emirates Stadium, London', comp: 'Premier League', time: '16:00 SAST' },
+  { date: '2026-05-24', home: 'Crystal Palace', away: 'Arsenal', venue: 'Selhurst Park, London', comp: 'Premier League · Final Day', time: '17:00 SAST' },
+  { date: '2026-05-28', home: 'UCL Final', away: 'TBD', venue: 'Allianz Arena, Munich', comp: 'Champions League Final (if through)', time: 'TBC' },
+];
 
-    el.innerHTML = `
-      <div class="timer-grid">
-        <div class="timer-unit"><span class="timer-number">${days}</span><span class="timer-label">Days</span></div>
-        <div class="timer-unit"><span class="timer-number">${pad(hours)}</span><span class="timer-label">Hours</span></div>
-        <div class="timer-unit"><span class="timer-number">${pad(minutes)}</span><span class="timer-label">Mins</span></div>
-        <div class="timer-unit"><span class="timer-number">${pad(seconds)}</span><span class="timer-label">Secs</span></div>
-      </div>
-    `;
+const BOKS = [
+  { date: '2026-06-20', home: 'South Africa', away: 'Barbarians', venue: 'Nelson Mandela Bay Stadium, Gqeberha', comp: 'Friendly (non-cap)', time: '17:00 SAST' },
+  { date: '2026-07-04', home: 'South Africa', away: 'England', venue: 'Ellis Park, Johannesburg', comp: 'Nations Championship', time: '17:40 SAST' },
+  { date: '2026-07-11', home: 'South Africa', away: 'Scotland', venue: 'Loftus Versfeld, Pretoria', comp: 'Nations Championship', time: '17:40 SAST' },
+  { date: '2026-07-18', home: 'South Africa', away: 'Wales', venue: 'Kings Park, Durban', comp: 'Nations Championship', time: '17:40 SAST' },
+  { date: '2026-08-08', home: 'Argentina', away: 'South Africa', venue: 'Estadio J. Amalfitani, Buenos Aires', comp: 'Nations Championship', time: 'TBC' },
+  { date: '2026-08-22', home: 'South Africa', away: 'New Zealand', venue: 'Ellis Park, Johannesburg', comp: "Rugby's Greatest Rivalry · Test 1", time: '17:00 SAST' },
+  { date: '2026-08-29', home: 'South Africa', away: 'New Zealand', venue: 'Cape Town Stadium', comp: "Rugby's Greatest Rivalry · Test 2", time: 'TBC' },
+  { date: '2026-09-05', home: 'South Africa', away: 'New Zealand', venue: 'FNB Stadium, Soweto', comp: "Rugby's Greatest Rivalry · Test 3", time: 'TBC' },
+  { date: '2026-09-12', home: 'South Africa', away: 'New Zealand', venue: 'M&T Bank Stadium, Baltimore', comp: "Rugby's Greatest Rivalry · Test 4", time: 'TBC' },
+  { date: '2026-11-07', home: 'Italy', away: 'South Africa', venue: 'TBC', comp: 'Nations Championship', time: 'TBC' },
+  { date: '2026-11-14', home: 'France', away: 'South Africa', venue: 'TBC', comp: 'Nations Championship', time: 'TBC' },
+  { date: '2026-11-21', home: 'Ireland', away: 'South Africa', venue: 'TBC', comp: 'Nations Championship', time: 'TBC' },
+  { date: '2026-11-28', home: 'Finals Weekend', away: 'Top 4 Nations', venue: 'Allianz Stadium, Twickenham', comp: 'Nations Championship Finals', time: 'TBC' },
+];
 
-    targetEl.textContent = '🪡 ' + targetDate.toLocaleDateString('en-ZA', { day:'numeric', month:'long', year:'numeric' });
-  }
+function buildPanel(fixtures, team) {
+  const groups = {};
+  fixtures.forEach(f => {
+    const k = fmt(f.date, 'month');
+    if (!groups[k]) groups[k] = [];
+    groups[k].push(f);
+  });
 
-  function tick() {
-    targets.forEach(t => {
-      renderCountdown(
-        document.getElementById(t.id),
-        document.getElementById(t.targetId),
-        t.date
-      );
+  let html = '';
+  let delay = 0;
+  for (const [month, list] of Object.entries(groups)) {
+    html += `<div class="month-group"><div class="month-header">${month}</div>`;
+    list.forEach(f => {
+      const cls = team === 'ars' ? 'ars-fixture' : 'boks-fixture';
+      html += `
+      <div class="fixture ${cls}" style="animation-delay:${delay * 40}ms">
+        <div class="fixture-date-block">
+          <div class="fix-day">${fmt(f.date,'day')}</div>
+          <div class="fix-month">${fmt(f.date,'mon')}</div>
+        </div>
+        <div class="fixture-info">
+          <div class="fix-teams">${teamLabel(f.home, f.away, team)}</div>
+          <div class="fix-venue">${f.venue}</div>
+          <div class="fix-comp">${f.comp}</div>
+        </div>
+        <div class="fixture-right">
+          ${badge(f.date, team)}
+          <div class="fix-kickoff">${f.time}</div>
+        </div>
+      </div>`;
+      delay++;
     });
+    html += `</div>`;
   }
+  return html;
+}
 
-  tick();
-  setInterval(tick, 1000);
+document.getElementById('panel-ars').innerHTML = buildPanel(ARSENAL, 'ars');
+document.getElementById('panel-boks').innerHTML = buildPanel(BOKS, 'boks');
+
+const now = new Date();
+document.getElementById('updated-label').textContent = 'updated ' + now.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' });
+document.getElementById('footer-date').textContent = now.getFullYear() + ' · all times SAST';
+
+function switchTab(t) {
+  document.getElementById('panel-ars').classList.toggle('active', t === 'ars');
+  document.getElementById('panel-boks').classList.toggle('active', t === 'boks');
+  const a = document.getElementById('tab-ars');
+  const b = document.getElementById('tab-boks');
+  a.className = 'tab-btn' + (t === 'ars' ? ' active-ars' : '');
+  b.className = 'tab-btn' + (t === 'boks' ? ' active-boks' : '');
+}
 </script>
 </body>
 </html>
