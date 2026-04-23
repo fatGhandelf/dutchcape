@@ -1,924 +1,526 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-<title>Cosmic Sandbox</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0a" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Dutch Cape</title>
+<meta name="description" content="Dutch Cape — in the workshop. Cape Town, South Africa." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200..900;1,9..144,200..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --ink: #e8ecff;
-    --dim: #8892b9;
-    --accent: #7cc9ff;
-    --warm: #ffb878;
-    --violet: #b69cff;
-    --panel: rgba(12, 14, 28, 0.55);
-    --panel-border: rgba(140, 160, 220, 0.18);
+    --bg: #0a0a0a;
+    --ink: #f2efe9;
+    --ink-rgb: 242, 239, 233;
+    --ink-dim: rgba(242, 239, 233, 0.5);
+    --line: rgba(242, 239, 233, 0.12);
+    --accent: #ff6b3d;
+  }
+  :root[data-theme='light'] {
+    --bg: #f2efe9;
+    --ink: #0a0a0a;
+    --ink-rgb: 10, 10, 10;
+    --ink-dim: rgba(10, 10, 10, 0.45);
+    --line: rgba(10, 10, 10, 0.1);
+    --accent: #ff4d1f;
   }
 
-  * { box-sizing: border-box; }
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    color: var(--ink);
     overflow: hidden;
-    background: #04050b;
-    color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
-      Helvetica, Arial, sans-serif;
-    letter-spacing: 0.01em;
-    user-select: none;
-    -webkit-user-select: none;
+    cursor: none;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.6s ease, color 0.6s ease;
   }
 
-  #stage { position: fixed; inset: 0; display: block; cursor: crosshair; }
-
-  /* Soft vignette */
-  #vignette {
-    position: fixed; inset: 0; pointer-events: none;
-    background:
-      radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
-    mix-blend-mode: multiply;
+  /* Interactive dot field */
+  #canvas {
+    position: fixed; inset: 0; z-index: 0;
   }
 
-  .panel {
-    position: fixed;
-    background: var(--panel);
-    border: 1px solid var(--panel-border);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    border-radius: 14px;
-    padding: 12px 14px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.45);
-  }
-
-  /* ---- Top title ---- */
-  #title {
-    top: 16px; left: 16px;
-    padding: 10px 14px;
-    display: flex; align-items: center; gap: 10px;
+  /* Custom cursor */
+  .cursor {
+    position: fixed; top: 0; left: 0; z-index: 100;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #fff;
+    mix-blend-mode: difference;
     pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: width 0.25s ease, height 0.25s ease, background 0.25s ease;
   }
-  #title .dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #fff, #ffb878 45%, #ff6a3d 75%, #4a1a0a 100%);
-    box-shadow: 0 0 12px rgba(255,170,100,0.8);
-  }
-  #title h1 {
-    margin: 0;
-    font-size: 14px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: #e8ecff;
-  }
-  #title h1 span { color: #8892b9; font-weight: 400; }
-
-  /* ---- Left toolbox ---- */
-  #tools {
-    top: 70px; left: 16px;
-    width: 220px;
-    display: flex; flex-direction: column; gap: 14px;
-  }
-  .section-label {
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--dim);
-    margin: 2px 2px 6px 2px;
+  .cursor.hover {
+    width: 60px; height: 60px;
+    background: var(--accent);
   }
 
-  .body-grid {
+  /* Theme toggle */
+  .header-right {
+    display: flex; align-items: flex-start; gap: 20px;
+  }
+  .theme-toggle {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: transparent; border: 1px solid var(--line);
+    cursor: none; display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.3s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .theme-toggle:hover {
+    border-color: var(--accent);
+    transform: rotate(45deg);
+  }
+  .theme-toggle svg {
+    width: 16px; height: 16px;
+    color: var(--ink);
+    transition: color 0.3s ease;
+  }
+  .theme-toggle .sun { display: block; }
+  .theme-toggle .moon { display: none; }
+  :root[data-theme='light'] .theme-toggle .sun { display: none; }
+  :root[data-theme='light'] .theme-toggle .moon { display: block; }
+
+  /* Layout */
+  .shell {
+    position: relative; z-index: 2;
+    height: 100vh; width: 100vw;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    grid-template-rows: auto 1fr auto;
+    padding: 32px 40px;
   }
-  .body-btn {
-    position: relative;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 10px;
-    padding: 10px 8px;
+
+  /* Top bar */
+  header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .mark {
+    font-family: 'Fraunces', serif;
+    font-size: 14px; letter-spacing: -0.01em;
+    color: var(--ink); text-transform: none;
+    font-weight: 500;
+  }
+  .meta { text-align: right; line-height: 1.8; }
+  .meta .live {
+    display: inline-flex; align-items: center; gap: 6px;
     color: var(--ink);
-    font-size: 11px;
-    cursor: pointer;
-    transition: transform 0.08s ease, border-color 0.15s ease, background 0.15s ease;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
   }
-  .body-btn:hover { border-color: rgba(180,200,255,0.3); transform: translateY(-1px); }
-  .body-btn.active {
-    border-color: rgba(180,200,255,0.55);
-    background: rgba(140,170,255,0.09);
-    box-shadow: inset 0 0 0 1px rgba(180,200,255,0.15);
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    animation: blink 2s ease-in-out infinite;
   }
-  .body-btn .swatch {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #fff, #5a9dff 55%, #0a1a44 100%);
-    box-shadow: 0 0 10px rgba(130,180,255,0.55);
-  }
-  .body-btn[data-type="asteroid"] .swatch {
-    background: radial-gradient(circle at 35% 35%, #fff, #bfc2c8 45%, #2a2d3a 100%);
-    box-shadow: 0 0 6px rgba(200,210,230,0.4);
-  }
-  .body-btn[data-type="planet"] .swatch {
-    background: radial-gradient(circle at 35% 35%, #fff, #5fb0ff 45%, #0a1a44 100%);
-    box-shadow: 0 0 10px rgba(120,180,255,0.55);
-  }
-  .body-btn[data-type="star"] .swatch {
-    background: radial-gradient(circle at 35% 35%, #fff, #ffd27a 38%, #ff6a3d 75%, #4a1a0a 100%);
-    box-shadow: 0 0 14px rgba(255,170,100,0.9);
-  }
-  .body-btn[data-type="blackhole"] .swatch {
-    background: radial-gradient(circle at 50% 50%, #000 55%, #b69cff 62%, transparent 80%);
-    box-shadow: 0 0 14px rgba(180,150,255,0.6), inset 0 0 6px rgba(0,0,0,0.9);
-  }
-  .body-btn .name { font-size: 11px; color: var(--ink); letter-spacing: 0.06em; }
-
-  .slider-row { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
-  .slider-row label {
-    display: flex; justify-content: space-between;
-    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--dim);
-  }
-  .slider-row label span { color: var(--ink); }
-  input[type="range"] {
-    -webkit-appearance: none; appearance: none;
-    width: 100%; height: 4px; border-radius: 4px;
-    background: rgba(255,255,255,0.08);
-    outline: none;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: 14px; height: 14px; border-radius: 50%;
-    background: #dfe6ff; cursor: pointer;
-    box-shadow: 0 0 8px rgba(180,200,255,0.6);
-  }
-  input[type="range"]::-moz-range-thumb {
-    width: 14px; height: 14px; border-radius: 50%;
-    background: #dfe6ff; cursor: pointer; border: none;
-    box-shadow: 0 0 8px rgba(180,200,255,0.6);
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
   }
 
-  .toggle-row {
-    display: flex; flex-wrap: wrap; gap: 6px;
-  }
-  .mini-btn {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: var(--ink);
-    font-size: 11px;
-    padding: 6px 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.12s ease;
-    letter-spacing: 0.04em;
-  }
-  .mini-btn:hover { border-color: rgba(180,200,255,0.35); background: rgba(140,170,255,0.08); }
-  .mini-btn.active {
-    border-color: rgba(180,200,255,0.55);
-    background: rgba(140,170,255,0.14);
-    color: #fff;
+  /* Center */
+  .center {
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: flex-start;
+    max-width: 1200px; margin: 0 auto; width: 100%;
   }
 
-  /* ---- Bottom presets ---- */
-  #presets {
-    bottom: 16px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 6px;
-    padding: 8px;
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(72px, 14vw, 220px);
+    line-height: 0.88;
+    letter-spacing: -0.04em;
+    font-weight: 300;
+    user-select: none;
   }
-  .preset-btn {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: var(--ink);
-    font-size: 11px;
-    padding: 8px 14px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.12s ease;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .preset-btn:hover { border-color: rgba(180,200,255,0.45); background: rgba(140,170,255,0.09); transform: translateY(-1px); }
-
-  /* ---- Right status ---- */
-  #status {
-    top: 16px; right: 16px;
-    font-size: 11px;
-    color: var(--dim);
-    letter-spacing: 0.1em;
-    text-align: right;
-    padding: 10px 14px;
-  }
-  #status .val { color: var(--ink); font-variant-numeric: tabular-nums; }
-  #status .row { display: flex; justify-content: space-between; gap: 14px; }
-  #status .row + .row { margin-top: 4px; }
-
-  /* ---- Hint ---- */
-  #hint {
-    bottom: 16px; right: 16px;
-    font-size: 11px;
-    color: var(--dim);
-    letter-spacing: 0.08em;
-    padding: 10px 12px;
-    max-width: 240px;
-    line-height: 1.5;
-  }
-  #hint kbd {
+  h1 .word {
     display: inline-block;
-    padding: 1px 5px;
-    border-radius: 4px;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    font-family: inherit;
-    font-size: 10px;
-    color: var(--ink);
-    margin: 0 1px;
+  }
+  h1 .char {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+    will-change: transform;
+  }
+  h1 em {
+    font-style: italic; font-weight: 400;
+    color: var(--accent);
   }
 
-  @media (max-width: 720px) {
-    #tools { width: 180px; }
-    #hint { display: none; }
+  .tagline {
+    margin-top: 32px;
+    display: flex; align-items: center; gap: 14px;
+    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .tagline .rule {
+    width: 48px; height: 1px; background: var(--ink-dim);
+  }
+
+  /* Bottom bar */
+  footer {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    align-items: end;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  footer .col h4 {
+    font-weight: 400; color: var(--ink-dim);
+    margin-bottom: 8px; font-size: 10px;
+  }
+  footer .col p, footer .col a {
+    color: var(--ink); text-decoration: none;
+    font-size: 12px; letter-spacing: 0.04em; text-transform: none;
+    font-family: 'Fraunces', serif;
+    display: block; line-height: 1.5;
+    position: relative;
+  }
+  footer a { cursor: none; }
+  footer a::after {
+    content: ''; position: absolute; left: 0; bottom: -2px;
+    width: 0; height: 1px; background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  footer a:hover::after { width: 100%; }
+  footer a:hover { color: var(--accent); }
+  .center-col { text-align: center; }
+  .right-col { text-align: right; }
+
+  /* Reveal animation */
+  .rise { opacity: 0; transform: translateY(20px); animation: rise 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  .rise-2 { animation-delay: 0.15s; }
+  .rise-3 { animation-delay: 0.3s; }
+  .rise-4 { animation-delay: 0.45s; }
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+  /* Corner crosshairs */
+  .crosshair {
+    position: fixed; width: 12px; height: 12px; z-index: 5;
+    pointer-events: none; opacity: 0.3;
+  }
+  .crosshair::before, .crosshair::after {
+    content: ''; position: absolute; background: var(--ink);
+  }
+  .crosshair::before { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-0.5px); }
+  .crosshair::after { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-0.5px); }
+  .crosshair.tl { top: 20px; left: 20px; }
+  .crosshair.tr { top: 20px; right: 20px; }
+  .crosshair.bl { bottom: 20px; left: 20px; }
+  .crosshair.br { bottom: 20px; right: 20px; }
+
+  @media (max-width: 760px) {
+    body { cursor: auto; overflow-y: auto; }
+    html, body { height: auto; min-height: 100%; }
+    .cursor { display: none; }
+    .shell {
+      padding: 20px 22px;
+      min-height: 100vh;
+      min-height: 100svh;
+      grid-template-rows: auto 1fr auto;
+      gap: 40px;
+    }
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    .header-right {
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .meta { text-align: left; font-size: 10px; }
+    .theme-toggle { width: 46px; height: 46px; }
+    .theme-toggle svg { width: 18px; height: 18px; }
+    h1 { font-size: clamp(64px, 18vw, 140px); line-height: 0.9; }
+    .tagline { margin-top: 24px; font-size: 10px; letter-spacing: 0.14em; }
+    .tagline .rule { width: 28px; }
+    footer {
+      grid-template-columns: 1fr 1fr;
+      gap: 24px 16px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+    }
+    footer .col:last-child {
+      grid-column: 1 / -1;
+    }
+    .center-col { text-align: left; }
+    .right-col { text-align: left; }
+    footer .col h4 { font-size: 9px; letter-spacing: 0.14em; }
+    footer .col p, footer .col a { font-size: 14px; }
+    .crosshair { display: none; }
+  }
+
+  @media (max-width: 420px) {
+    h1 { font-size: clamp(56px, 20vw, 120px); }
+    .mark { font-size: 13px; }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 </style>
 </head>
 <body>
-<canvas id="stage"></canvas>
-<div id="vignette"></div>
+  <canvas id="canvas"></canvas>
+  <div class="cursor"></div>
 
-<div id="title" class="panel">
-  <div class="dot"></div>
-  <h1>Cosmic Sandbox <span>· gravity playground</span></h1>
-</div>
+  <div class="crosshair tl"></div>
+  <div class="crosshair tr"></div>
+  <div class="crosshair bl"></div>
+  <div class="crosshair br"></div>
 
-<div id="tools" class="panel">
-  <div>
-    <div class="section-label">Body</div>
-    <div class="body-grid" id="bodyGrid">
-      <button class="body-btn" data-type="asteroid"><div class="swatch"></div><div class="name">Asteroid</div></button>
-      <button class="body-btn active" data-type="planet"><div class="swatch"></div><div class="name">Planet</div></button>
-      <button class="body-btn" data-type="star"><div class="swatch"></div><div class="name">Star</div></button>
-      <button class="body-btn" data-type="blackhole"><div class="swatch"></div><div class="name">Black Hole</div></button>
+  <div class="shell">
+    <header>
+      <div class="mark rise">Dutch Cape</div>
+      <div class="header-right rise rise-2">
+        <div class="meta">
+          <div class="live"><span class="dot"></span> In the workshop</div>
+          <div>33.9°S · 18.4°E</div>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" data-hover>
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="center">
+      <h1 class="rise rise-3" id="headline">
+        <span class="word" data-word="Dutch">
+          <span class="char">D</span><span class="char">u</span><span class="char">t</span><span class="char">c</span><span class="char">h</span>
+        </span>
+        <br/>
+        <em class="word" data-word="Cape">
+          <span class="char">C</span><span class="char">a</span><span class="char">p</span><span class="char">e</span>
+        </em>
+      </h1>
+      <div class="tagline rise rise-4">
+        <span class="rule"></span>
+        <span>Something new from the south</span>
+      </div>
     </div>
+
+    <footer>
+      <div class="col rise rise-4">
+        <h4>Based</h4>
+        <p>Cape Town<br/>South Africa</p>
+      </div>
+      <div class="col center-col rise rise-4">
+        <h4>Year</h4>
+        <p>2026 —</p>
+      </div>
+      <div class="col right-col rise rise-4">
+        <h4>Contact</h4>
+        <a href="mailto:hello@dutchcape.co.za" data-hover>hello@dutchcape.co.za</a>
+      </div>
+    </footer>
   </div>
 
-  <div>
-    <div class="section-label">Physics</div>
-    <div class="slider-row">
-      <label>Gravity <span id="gVal">1.0×</span></label>
-      <input type="range" id="gSlider" min="0" max="200" value="100" />
-    </div>
-    <div class="slider-row">
-      <label>Time <span id="tVal">1.0×</span></label>
-      <input type="range" id="tSlider" min="0" max="200" value="100" />
-    </div>
-    <div class="slider-row">
-      <label>Trails <span id="trVal">Long</span></label>
-      <input type="range" id="trSlider" min="0" max="100" value="75" />
-    </div>
-  </div>
+  <script>
+    // ===== Interactive dot grid =====
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, dots = [];
+    const SPACING = 44;
+    const DOT_SIZE = 1.2;
+    const INFLUENCE = 180;
 
-  <div>
-    <div class="section-label">Controls</div>
-    <div class="toggle-row">
-      <button class="mini-btn" id="pauseBtn">Pause</button>
-      <button class="mini-btn" id="clearBtn">Clear</button>
-    </div>
-  </div>
-</div>
+    const mouse = { x: -9999, y: -9999, tx: -9999, ty: -9999 };
 
-<div id="status" class="panel">
-  <div class="row"><span>Bodies</span><span class="val" id="sCount">0</span></div>
-  <div class="row"><span>FPS</span><span class="val" id="sFps">—</span></div>
-  <div class="row"><span>State</span><span class="val" id="sState">running</span></div>
-</div>
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      width = canvas.width = window.innerWidth * dpr;
+      height = canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+      buildDots();
+    }
 
-<div id="presets" class="panel">
-  <button class="preset-btn" data-preset="binary">Binary</button>
-  <button class="preset-btn" data-preset="solar">Solar System</button>
-  <button class="preset-btn" data-preset="trinary">3-Body</button>
-  <button class="preset-btn" data-preset="galaxy">Galaxy</button>
-  <button class="preset-btn" data-preset="collision">Collision</button>
-</div>
+    function buildDots() {
+      dots = [];
+      const w = window.innerWidth, h = window.innerHeight;
+      const cols = Math.ceil(w / SPACING) + 2;
+      const rows = Math.ceil(h / SPACING) + 2;
+      const offsetX = (w - (cols - 1) * SPACING) / 2;
+      const offsetY = (h - (rows - 1) * SPACING) / 2;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = offsetX + c * SPACING;
+          const y = offsetY + r * SPACING;
+          dots.push({ x, y, ox: x, oy: y });
+        }
+      }
+    }
 
-<div id="hint" class="panel">
-  <div><b style="color:var(--ink);">Click &amp; drag</b> to launch. Longer drag = faster.</div>
-  <div style="margin-top:4px;">Keys: <kbd>Space</kbd> pause · <kbd>C</kbd> clear · <kbd>1</kbd>–<kbd>4</kbd> body</div>
-</div>
+    function getThemeColors() {
+      const cs = getComputedStyle(document.documentElement);
+      const inkRgb = cs.getPropertyValue('--ink-rgb').trim() || '10, 10, 10';
+      const accent = cs.getPropertyValue('--accent').trim() || '#ff4d1f';
+      // parse accent hex → rgb
+      let r = 255, g = 77, b = 31;
+      const m = accent.match(/#([0-9a-f]{6})/i);
+      if (m) {
+        const hex = m[1];
+        r = parseInt(hex.substr(0, 2), 16);
+        g = parseInt(hex.substr(2, 2), 16);
+        b = parseInt(hex.substr(4, 2), 16);
+      }
+      return { inkRgb, accentRgb: `${r}, ${g}, ${b}` };
+    }
+    let theme = getThemeColors();
 
-<script>
-"use strict";
+    let lastInput = 0;
+    let ambientActive = false;
 
-/* ============================================================
-   Cosmic Sandbox — n-body gravity playground
-   ============================================================ */
+    function draw() {
+      const w = window.innerWidth, h = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
 
-const canvas = document.getElementById("stage");
-const ctx = canvas.getContext("2d");
+      // If no real input for a while, drift an invisible cursor in a gentle lissajous
+      const now = performance.now();
+      if (now - lastInput > 1500) {
+        ambientActive = true;
+        const t = now * 0.0004;
+        mouse.tx = w / 2 + Math.sin(t * 1.1) * w * 0.32;
+        mouse.ty = h / 2 + Math.sin(t * 0.8 + 1.3) * h * 0.28;
+      } else {
+        ambientActive = false;
+      }
 
-let W = 0, H = 0, DPR = 1;
-function resize() {
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
-  W = window.innerWidth;
-  H = window.innerHeight;
-  canvas.width = Math.floor(W * DPR);
-  canvas.height = Math.floor(H * DPR);
-  canvas.style.width = W + "px";
-  canvas.style.height = H + "px";
-  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  rebuildStarfield();
-}
-window.addEventListener("resize", resize);
+      // ease mouse position
+      mouse.x += (mouse.tx - mouse.x) * 0.15;
+      mouse.y += (mouse.ty - mouse.y) * 0.15;
 
-/* ---------- Starfield background (parallax-twinkle) ---------- */
-let stars = [];
-function rebuildStarfield() {
-  const count = Math.floor((W * H) / 2200);
-  stars = [];
-  for (let i = 0; i < count; i++) {
-    stars.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.pow(Math.random(), 3) * 1.4 + 0.15,
-      tw: Math.random() * Math.PI * 2,
-      sp: 0.4 + Math.random() * 1.2,
-      hue: Math.random() < 0.1 ? (Math.random() < 0.5 ? 30 : 220) : 210,
+      for (const d of dots) {
+        const dx = d.ox - mouse.x;
+        const dy = d.oy - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        let tx = d.ox, ty = d.oy, size = DOT_SIZE, alpha = 0.25;
+
+        if (dist < INFLUENCE) {
+          const force = (1 - dist / INFLUENCE);
+          const angle = Math.atan2(dy, dx);
+          // push away from cursor
+          tx = d.ox + Math.cos(angle) * force * 28;
+          ty = d.oy + Math.sin(angle) * force * 28;
+          size = DOT_SIZE + force * 3.2;
+          alpha = 0.25 + force * 0.75;
+        }
+
+        d.x += (tx - d.x) * 0.18;
+        d.y += (ty - d.y) * 0.18;
+
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, size, 0, Math.PI * 2);
+        if (dist < INFLUENCE * 0.5) {
+          ctx.fillStyle = `rgba(${theme.accentRgb}, ${alpha})`;
+        } else {
+          ctx.fillStyle = `rgba(${theme.inkRgb}, ${alpha})`;
+        }
+        ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('mousemove', (e) => {
+      mouse.tx = e.clientX;
+      mouse.ty = e.clientY;
+      lastInput = performance.now();
     });
-  }
-}
-
-function drawStarfield(t) {
-  // Cosmic gradient base (drawn ONCE per frame under the trail-fade overlay)
-  const g = ctx.createRadialGradient(W*0.3, H*0.25, 0, W*0.5, H*0.5, Math.max(W, H)*0.9);
-  g.addColorStop(0, "rgba(30, 22, 64, 0.10)");
-  g.addColorStop(0.45, "rgba(14, 12, 36, 0.05)");
-  g.addColorStop(1, "rgba(3, 4, 10, 0.0)");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, H);
-
-  // Stars
-  for (let i = 0; i < stars.length; i++) {
-    const s = stars[i];
-    const tw = 0.55 + 0.45 * Math.sin(t * 0.001 * s.sp + s.tw);
-    const a = tw * (0.5 + s.r * 0.4);
-    if (s.hue === 30) ctx.fillStyle = `rgba(255, 210, 150, ${a})`;
-    else if (s.hue === 220) ctx.fillStyle = `rgba(170, 200, 255, ${a})`;
-    else ctx.fillStyle = `rgba(220, 230, 255, ${a})`;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-/* ---------- Body definitions ---------- */
-const BODY_TYPES = {
-  asteroid: {
-    mass: 1.2, radius: 3,
-    core: "#e6ecff", mid: "#9aa3bc", edge: "#2a2d3a",
-    glow: "rgba(200, 210, 240, 0.25)", glowR: 2.4,
-    emits: false,
-  },
-  planet: {
-    mass: 18, radius: 8,
-    core: "#ffffff", mid: "#5fb0ff", edge: "#0a1a44",
-    glow: "rgba(130, 180, 255, 0.45)", glowR: 3.2,
-    emits: false,
-  },
-  star: {
-    mass: 420, radius: 18,
-    core: "#ffffff", mid: "#ffd27a", edge: "#ff5a2e",
-    glow: "rgba(255, 170, 90, 0.75)", glowR: 6.0,
-    emits: true, emitColor: [255, 200, 130],
-  },
-  blackhole: {
-    mass: 2600, radius: 14,
-    core: "#000000", mid: "#000000", edge: "#000000",
-    glow: "rgba(180, 150, 255, 0.55)", glowR: 7.5,
-    emits: true, emitColor: [190, 160, 255],
-    blackhole: true,
-  },
-};
-
-/* ---------- State ---------- */
-const bodies = [];
-const particles = []; // collision flashes + accretion
-let nextId = 1;
-
-let selectedType = "planet";
-let gravityMul = 1.0;
-let timeMul = 1.0;
-let trailAlpha = 0.12; // semi-transparent overlay each frame (higher = shorter trails)
-let paused = false;
-
-const G = 0.35; // base gravitational constant (tuned for feel)
-const SOFTENING = 6; // softening length (px)
-const MAX_BODIES = 220;
-
-/* Drag launch state */
-let drag = null; // {x0,y0,x1,y1}
-
-function addBody(x, y, vx, vy, type) {
-  if (bodies.length >= MAX_BODIES) return;
-  const def = BODY_TYPES[type];
-  bodies.push({
-    id: nextId++,
-    x, y, vx, vy,
-    ax: 0, ay: 0,
-    mass: def.mass,
-    radius: def.radius,
-    type,
-  });
-}
-
-function addParticle(x, y, vx, vy, life, color, size) {
-  particles.push({ x, y, vx, vy, life, maxLife: life, color, size });
-}
-
-/* ---------- Physics ---------- */
-function step(dt) {
-  // Reset accelerations
-  for (let i = 0; i < bodies.length; i++) {
-    bodies[i].ax = 0;
-    bodies[i].ay = 0;
-  }
-
-  // O(n^2) gravity — fine up to ~220 bodies
-  for (let i = 0; i < bodies.length; i++) {
-    const a = bodies[i];
-    for (let j = i + 1; j < bodies.length; j++) {
-      const b = bodies[j];
-      const dx = b.x - a.x;
-      const dy = b.y - a.y;
-      const r2 = dx*dx + dy*dy + SOFTENING*SOFTENING;
-      const r = Math.sqrt(r2);
-      const f = (G * gravityMul * a.mass * b.mass) / r2;
-      const fx = (f * dx) / r;
-      const fy = (f * dy) / r;
-      a.ax += fx / a.mass;
-      a.ay += fy / a.mass;
-      b.ax -= fx / b.mass;
-      b.ay -= fy / b.mass;
-    }
-  }
-
-  // Integrate (semi-implicit Euler)
-  for (let i = 0; i < bodies.length; i++) {
-    const b = bodies[i];
-    b.vx += b.ax * dt;
-    b.vy += b.ay * dt;
-    b.x  += b.vx * dt;
-    b.y  += b.vy * dt;
-  }
-
-  // Collisions — merge smaller into larger
-  for (let i = 0; i < bodies.length; i++) {
-    for (let j = i + 1; j < bodies.length; j++) {
-      const a = bodies[i], b = bodies[j];
-      if (!a || !b) continue;
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const d2 = dx*dx + dy*dy;
-      const rsum = a.radius + b.radius;
-      if (d2 < rsum * rsum * 0.55) {
-        // Merge
-        const big = a.mass >= b.mass ? a : b;
-        const small = a.mass >= b.mass ? b : a;
-
-        // Black hole swallows everything
-        let newType = big.type;
-        if (big.type === "blackhole" || small.type === "blackhole") newType = "blackhole";
-        else if (big.type === "star" || small.type === "star") newType = "star";
-        else if (big.type === "planet" || small.type === "planet") newType = "planet";
-
-        const totalMass = big.mass + small.mass;
-        big.vx = (big.vx * big.mass + small.vx * small.mass) / totalMass;
-        big.vy = (big.vy * big.mass + small.vy * small.mass) / totalMass;
-        big.x  = (big.x * big.mass + small.x * small.mass) / totalMass;
-        big.y  = (big.y * big.mass + small.y * small.mass) / totalMass;
-        big.mass = totalMass;
-        big.type = newType;
-
-        // Cap radius growth to type baseline scaled by mass ratio (visual only)
-        const def = BODY_TYPES[newType];
-        big.radius = Math.min(
-          def.radius * Math.cbrt(totalMass / def.mass),
-          newType === "blackhole" ? 46 : 40
-        );
-
-        // Collision burst
-        const cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
-        const burst = 18 + Math.floor(Math.min(small.mass, 80) * 0.6);
-        for (let k = 0; k < burst; k++) {
-          const ang = Math.random() * Math.PI * 2;
-          const sp = 0.5 + Math.random() * 3.5;
-          const col = newType === "blackhole" ? [200,170,255]
-                    : newType === "star" ? [255,210,140]
-                    : [180, 210, 255];
-          addParticle(cx, cy, Math.cos(ang)*sp, Math.sin(ang)*sp,
-            0.5 + Math.random()*0.8, col, 1 + Math.random()*1.5);
-        }
-
-        // Remove smaller
-        bodies.splice(bodies.indexOf(small), 1);
-        // Restart inner loop
-        break;
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        mouse.tx = e.touches[0].clientX;
+        mouse.ty = e.touches[0].clientY;
+        lastInput = performance.now();
       }
-    }
-  }
-
-  // Cull bodies way off-screen (garbage collection for launched misses)
-  const pad = 2400;
-  for (let i = bodies.length - 1; i >= 0; i--) {
-    const b = bodies[i];
-    if (b.x < -pad || b.x > W + pad || b.y < -pad || b.y > H + pad) {
-      bodies.splice(i, 1);
-    }
-  }
-
-  // Particles
-  for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vx *= 0.985; p.vy *= 0.985;
-    p.life -= 0.016;
-    if (p.life <= 0) particles.splice(i, 1);
-  }
-
-  // Emit accretion / coronal particles from stars + black holes
-  for (let i = 0; i < bodies.length; i++) {
-    const b = bodies[i];
-    const def = BODY_TYPES[b.type];
-    if (!def.emits) continue;
-    if (Math.random() < (def.blackhole ? 0.9 : 0.55)) {
-      const ang = Math.random() * Math.PI * 2;
-      const rad = b.radius * (def.blackhole ? 1.7 : 1.1);
-      const sp = def.blackhole ? 0.3 + Math.random()*0.8 : 0.2 + Math.random()*0.6;
-      addParticle(
-        b.x + Math.cos(ang) * rad,
-        b.y + Math.sin(ang) * rad,
-        Math.cos(ang) * sp * (def.blackhole ? -1 : 1) + b.vx * 0.3,
-        Math.sin(ang) * sp * (def.blackhole ? -1 : 1) + b.vy * 0.3,
-        0.4 + Math.random() * 0.6,
-        def.emitColor,
-        0.8 + Math.random() * 1.2
-      );
-    }
-  }
-}
-
-/* ---------- Render ---------- */
-function drawBody(b) {
-  const def = BODY_TYPES[b.type];
-
-  // Outer glow (big soft radial)
-  const gr = b.radius * def.glowR;
-  const glow = ctx.createRadialGradient(b.x, b.y, b.radius * 0.6, b.x, b.y, gr);
-  glow.addColorStop(0, def.glow);
-  glow.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = glow;
-  ctx.beginPath();
-  ctx.arc(b.x, b.y, gr, 0, Math.PI * 2);
-  ctx.fill();
-
-  if (def.blackhole) {
-    // Accretion ring
-    const ring = ctx.createRadialGradient(b.x, b.y, b.radius * 0.85, b.x, b.y, b.radius * 1.6);
-    ring.addColorStop(0, "rgba(255, 200, 120, 0)");
-    ring.addColorStop(0.35, "rgba(255, 180, 110, 0.6)");
-    ring.addColorStop(0.55, "rgba(200, 160, 255, 0.9)");
-    ring.addColorStop(1, "rgba(100, 80, 220, 0)");
-    ctx.fillStyle = ring;
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, b.radius * 1.6, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Pure black event horizon
-    ctx.fillStyle = "#000";
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, b.radius * 0.95, 0, Math.PI * 2);
-    ctx.fill();
-    return;
-  }
-
-  // Core gradient (3-stop)
-  const core = ctx.createRadialGradient(
-    b.x - b.radius * 0.3, b.y - b.radius * 0.3, b.radius * 0.1,
-    b.x, b.y, b.radius
-  );
-  core.addColorStop(0, def.core);
-  core.addColorStop(0.55, def.mid);
-  core.addColorStop(1, def.edge);
-  ctx.fillStyle = core;
-  ctx.beginPath();
-  ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-function drawParticles() {
-  ctx.globalCompositeOperation = "lighter";
-  for (let i = 0; i < particles.length; i++) {
-    const p = particles[i];
-    const a = Math.max(0, p.life / p.maxLife);
-    const c = p.color;
-    ctx.fillStyle = `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a * 0.9})`;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.globalCompositeOperation = "source-over";
-}
-
-function drawDragArrow() {
-  if (!drag) return;
-  const { x0, y0, x1, y1 } = drag;
-  const dx = x1 - x0, dy = y1 - y0;
-  const len = Math.hypot(dx, dy);
-  if (len < 2) return;
-
-  // Line
-  ctx.strokeStyle = "rgba(180, 210, 255, 0.55)";
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(x0, y0);
-  ctx.lineTo(x1, y1);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Arrowhead at end
-  const ang = Math.atan2(dy, dx);
-  const ah = 8;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x1 - Math.cos(ang - 0.4) * ah, y1 - Math.sin(ang - 0.4) * ah);
-  ctx.lineTo(x1 - Math.cos(ang + 0.4) * ah, y1 - Math.sin(ang + 0.4) * ah);
-  ctx.closePath();
-  ctx.fillStyle = "rgba(200, 220, 255, 0.75)";
-  ctx.fill();
-
-  // Ghost body at origin
-  const def = BODY_TYPES[selectedType];
-  ctx.globalAlpha = 0.7;
-  drawBody({ x: x0, y: y0, radius: def.radius, type: selectedType });
-  ctx.globalAlpha = 1;
-
-  // Speed badge
-  const speed = len * 0.03;
-  ctx.fillStyle = "rgba(220, 230, 255, 0.85)";
-  ctx.font = "500 10px -apple-system, Segoe UI, sans-serif";
-  ctx.textBaseline = "top";
-  ctx.fillText(`v ≈ ${speed.toFixed(1)}`, x1 + 8, y1 + 6);
-}
-
-/* ---------- Main loop ---------- */
-let last = performance.now();
-let fpsAccum = 0, fpsFrames = 0, fpsDisplay = 0, fpsTimer = 0;
-
-function frame(now) {
-  const raw = (now - last) / 16.6667; // frames at 60fps reference
-  last = now;
-  const dt = Math.min(raw, 3) * timeMul;
-
-  // FPS meter
-  fpsAccum += (now - last + 16.6667); // approx
-  fpsFrames++;
-  fpsTimer += (1000 / 60);
-  if (fpsFrames >= 20) {
-    const rate = 1000 / ((performance.now() - (window.__fpsMark || now - 16.6667*fpsFrames)) / fpsFrames);
-    fpsDisplay = Math.round(rate);
-    window.__fpsMark = performance.now();
-    fpsFrames = 0;
-  }
-
-  if (!paused) step(dt);
-
-  // Trail fade overlay
-  ctx.fillStyle = `rgba(3, 4, 10, ${trailAlpha})`;
-  ctx.fillRect(0, 0, W, H);
-
-  drawStarfield(now);
-  drawParticles();
-
-  // Draw bodies with additive glow layer first, then crisp on top
-  ctx.globalCompositeOperation = "lighter";
-  for (const b of bodies) {
-    const def = BODY_TYPES[b.type];
-    if (def.blackhole) continue;
-    const gr = b.radius * def.glowR;
-    const glow = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, gr);
-    glow.addColorStop(0, def.glow);
-    glow.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, gr, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.globalCompositeOperation = "source-over";
-
-  for (const b of bodies) drawBody(b);
-
-  drawDragArrow();
-
-  // HUD
-  sCount.textContent = bodies.length;
-  sFps.textContent = fpsDisplay || "—";
-
-  requestAnimationFrame(frame);
-}
-
-/* ---------- Input ---------- */
-canvas.addEventListener("pointerdown", (e) => {
-  if (e.target !== canvas) return;
-  drag = { x0: e.clientX, y0: e.clientY, x1: e.clientX, y1: e.clientY };
-});
-canvas.addEventListener("pointermove", (e) => {
-  if (!drag) return;
-  drag.x1 = e.clientX;
-  drag.y1 = e.clientY;
-});
-canvas.addEventListener("pointerup", (e) => {
-  if (!drag) return;
-  const dx = drag.x1 - drag.x0;
-  const dy = drag.y1 - drag.y0;
-  // drag from body → velocity direction AWAY from drag-end (slingshot)
-  const vx = -dx * 0.03;
-  const vy = -dy * 0.03;
-  addBody(drag.x0, drag.y0, vx, vy, selectedType);
-  drag = null;
-});
-canvas.addEventListener("pointercancel", () => drag = null);
-
-// Keyboard
-window.addEventListener("keydown", (e) => {
-  if (e.code === "Space") { e.preventDefault(); togglePause(); }
-  else if (e.key === "c" || e.key === "C") clearAll();
-  else if (e.key === "1") selectType("asteroid");
-  else if (e.key === "2") selectType("planet");
-  else if (e.key === "3") selectType("star");
-  else if (e.key === "4") selectType("blackhole");
-});
-
-/* ---------- UI wiring ---------- */
-const gSlider = document.getElementById("gSlider");
-const tSlider = document.getElementById("tSlider");
-const trSlider = document.getElementById("trSlider");
-const gVal = document.getElementById("gVal");
-const tVal = document.getElementById("tVal");
-const trVal = document.getElementById("trVal");
-const pauseBtn = document.getElementById("pauseBtn");
-const clearBtn = document.getElementById("clearBtn");
-const sCount = document.getElementById("sCount");
-const sFps = document.getElementById("sFps");
-const sState = document.getElementById("sState");
-
-gSlider.addEventListener("input", () => {
-  gravityMul = gSlider.value / 100;
-  gVal.textContent = gravityMul.toFixed(2) + "×";
-});
-tSlider.addEventListener("input", () => {
-  timeMul = tSlider.value / 100;
-  tVal.textContent = timeMul.toFixed(2) + "×";
-});
-trSlider.addEventListener("input", () => {
-  // slider 0 → no trails (alpha 1), 100 → very long (alpha 0.01)
-  const v = trSlider.value / 100;
-  trailAlpha = 0.01 + Math.pow(1 - v, 2) * 0.99;
-  trVal.textContent = v < 0.15 ? "Off" : v < 0.5 ? "Short" : v < 0.85 ? "Long" : "Infinite";
-});
-
-pauseBtn.addEventListener("click", togglePause);
-clearBtn.addEventListener("click", clearAll);
-
-function togglePause() {
-  paused = !paused;
-  pauseBtn.textContent = paused ? "Resume" : "Pause";
-  pauseBtn.classList.toggle("active", paused);
-  sState.textContent = paused ? "paused" : "running";
-}
-function clearAll() {
-  bodies.length = 0;
-  particles.length = 0;
-}
-
-document.querySelectorAll("#bodyGrid .body-btn").forEach(btn => {
-  btn.addEventListener("click", () => selectType(btn.dataset.type));
-});
-function selectType(t) {
-  selectedType = t;
-  document.querySelectorAll("#bodyGrid .body-btn").forEach(b => {
-    b.classList.toggle("active", b.dataset.type === t);
-  });
-}
-
-document.querySelectorAll("#presets .preset-btn").forEach(btn => {
-  btn.addEventListener("click", () => loadPreset(btn.dataset.preset));
-});
-
-/* ---------- Presets ---------- */
-function loadPreset(name) {
-  clearAll();
-  const cx = W / 2, cy = H / 2;
-  switch (name) {
-    case "binary": {
-      // Two stars orbiting common barycenter
-      const d = 140;
-      const m = BODY_TYPES.star.mass;
-      const v = Math.sqrt(G * gravityMul * m / (2*d)) * 0.75;
-      addBody(cx - d, cy, 0, -v, "star");
-      addBody(cx + d, cy, 0,  v, "star");
-      break;
-    }
-    case "solar": {
-      addBody(cx, cy, 0, 0, "star");
-      const orbits = [90, 140, 200, 270, 340];
-      const types = ["asteroid","planet","planet","planet","asteroid"];
-      for (let i = 0; i < orbits.length; i++) {
-        const r = orbits[i];
-        const v = Math.sqrt(G * gravityMul * BODY_TYPES.star.mass / r) * 0.9;
-        const a = Math.random() * Math.PI * 2;
-        addBody(cx + Math.cos(a)*r, cy + Math.sin(a)*r,
-                -Math.sin(a)*v, Math.cos(a)*v, types[i]);
+    }, { passive: true });
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches[0]) {
+        mouse.tx = e.touches[0].clientX;
+        mouse.ty = e.touches[0].clientY;
+        lastInput = performance.now();
       }
-      // asteroid belt
-      for (let k = 0; k < 30; k++) {
-        const r = 230 + Math.random()*30;
-        const a = Math.random() * Math.PI * 2;
-        const v = Math.sqrt(G * gravityMul * BODY_TYPES.star.mass / r) * 0.88;
-        addBody(cx + Math.cos(a)*r, cy + Math.sin(a)*r,
-                -Math.sin(a)*v, Math.cos(a)*v, "asteroid");
-      }
-      break;
-    }
-    case "trinary": {
-      // Chaotic three-body
-      const r = 130;
-      for (let i = 0; i < 3; i++) {
-        const ang = (i / 3) * Math.PI * 2;
-        const v = 1.3 + Math.random()*0.3;
-        addBody(cx + Math.cos(ang)*r, cy + Math.sin(ang)*r,
-                -Math.sin(ang)*v * 0.8, Math.cos(ang)*v * 0.8, "star");
-      }
-      break;
-    }
-    case "galaxy": {
-      // Black hole + swirling disk
-      addBody(cx, cy, 0, 0, "blackhole");
-      const count = 140;
-      for (let i = 0; i < count; i++) {
-        const r = 70 + Math.pow(Math.random(), 0.7) * 320;
-        const a = Math.random() * Math.PI * 2;
-        const v = Math.sqrt(G * gravityMul * BODY_TYPES.blackhole.mass / r) * 0.95;
-        const type = Math.random() < 0.08 ? "planet" : "asteroid";
-        addBody(cx + Math.cos(a)*r, cy + Math.sin(a)*r,
-                -Math.sin(a)*v, Math.cos(a)*v, type);
-      }
-      break;
-    }
-    case "collision": {
-      // Two galaxies on collision course
-      const offsets = [[-260, -80], [260, 80]];
-      const vels = [[1.0, 0.2], [-1.0, -0.2]];
-      for (let g = 0; g < 2; g++) {
-        const [ox, oy] = offsets[g];
-        const [vx, vy] = vels[g];
-        const bx = cx + ox, by = cy + oy;
-        addBody(bx, by, vx, vy, "star");
-        for (let i = 0; i < 40; i++) {
-          const r = 30 + Math.pow(Math.random(), 0.7) * 100;
-          const a = Math.random() * Math.PI * 2;
-          const orb = Math.sqrt(G * gravityMul * BODY_TYPES.star.mass / r) * 0.9;
-          addBody(
-            bx + Math.cos(a)*r, by + Math.sin(a)*r,
-            vx - Math.sin(a)*orb, vy + Math.cos(a)*orb,
-            Math.random() < 0.12 ? "planet" : "asteroid"
-          );
-        }
-      }
-      break;
-    }
-  }
-}
+    }, { passive: true });
 
-/* ---------- Boot ---------- */
-resize();
-loadPreset("solar");
-requestAnimationFrame((t) => { last = t; frame(t); });
+    resize();
+    draw();
 
-/* ---------- Better FPS ---------- */
-(function() {
-  let frames = 0, mark = performance.now();
-  setInterval(() => {
-    const now = performance.now();
-    const fps = (frames * 1000) / (now - mark);
-    fpsDisplay = Math.round(fps);
-    frames = 0;
-    mark = now;
-  }, 500);
-  const orig = window.requestAnimationFrame;
-  window.requestAnimationFrame = function(cb) {
-    return orig(function(t) { frames++; cb(t); });
-  };
-})();
-</script>
+    // ===== Custom cursor =====
+    const cursor = document.querySelector('.cursor');
+    let cx = 0, cy = 0, tx = 0, ty = 0;
+    window.addEventListener('mousemove', (e) => {
+      tx = e.clientX; ty = e.clientY;
+    });
+    (function animCursor() {
+      cx += (tx - cx) * 0.25;
+      cy += (ty - cy) * 0.25;
+      cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+      requestAnimationFrame(animCursor);
+    })();
+
+    document.querySelectorAll('[data-hover], a').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    // ===== Headline letter parallax =====
+    const chars = document.querySelectorAll('.char');
+    window.addEventListener('mousemove', (e) => {
+      const mx = (e.clientX / window.innerWidth - 0.5);
+      const my = (e.clientY / window.innerHeight - 0.5);
+      chars.forEach((c, i) => {
+        const depth = ((i % 5) + 1) * 4;
+        c.style.transform = `translate(${mx * depth}px, ${my * depth}px)`;
+      });
+    });
+
+    // Hide native cursor when moving over anything
+    window.addEventListener('mouseleave', () => {
+      cursor.style.opacity = '0';
+    });
+    window.addEventListener('mouseenter', () => {
+      cursor.style.opacity = '1';
+    });
+
+    // ===== Theme toggle (dark is default; toggle flips to light) =====
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      if (current === 'light') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+      theme = getThemeColors();
+    });
+
+    // ===== Device orientation parallax (mobile) =====
+    if (window.DeviceOrientationEvent && 'ontouchstart' in window) {
+      window.addEventListener('deviceorientation', (e) => {
+        if (e.gamma == null || e.beta == null) return;
+        const mx = Math.max(-1, Math.min(1, e.gamma / 30));
+        const my = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
+        chars.forEach((c, i) => {
+          const depth = ((i % 5) + 1) * 3;
+          c.style.transform = `translate(${mx * depth}px, ${my * depth}px)`;
+        });
+      });
+    }
+  </script>
 </body>
 </html>
