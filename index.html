@@ -160,6 +160,12 @@
     width: 48px; height: 1px; background: var(--ink-dim);
   }
 
+  .tagline .discover {
+    color: var(--accent); text-decoration: none; cursor: none;
+    border-bottom: 1px solid transparent; transition: border-color 0.3s ease;
+  }
+  .tagline .discover:hover { border-color: var(--accent); }
+
   /* Bottom bar */
   footer {
     display: grid; grid-template-columns: 1fr 1fr 1fr;
@@ -308,6 +314,7 @@
       <div class="tagline rise rise-4">
         <span class="rule"></span>
         <span>Something new from the south</span>
+        <a class="discover" href="discover.html" data-hover>Step inside &rarr;</a>
       </div>
     </div>
 
