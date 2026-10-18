@@ -4,530 +4,118 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#0a0a0a" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<title>Dutch Cape</title>
-<meta name="description" content="Dutch Cape — in the workshop. Cape Town, South Africa." />
+<title>Dutch Cape · Die Speelkamer</title>
+<meta name="description" content="Die Speelkamer, the Dutch Cape playroom. Storybook solitaire, catch the koeksisters, and the great koeksister debate." />
+<link rel="icon" href="favicon.ico" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200..900;1,9..144,200..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --bg: #0a0a0a;
-    --ink: #f2efe9;
-    --ink-rgb: 242, 239, 233;
-    --ink-dim: rgba(242, 239, 233, 0.5);
-    --line: rgba(242, 239, 233, 0.12);
-    --accent: #ff6b3d;
-  }
-  :root[data-theme='light'] {
-    --bg: #f2efe9;
-    --ink: #0a0a0a;
-    --ink-rgb: 10, 10, 10;
-    --ink-dim: rgba(10, 10, 10, 0.45);
-    --line: rgba(10, 10, 10, 0.1);
-    --accent: #ff4d1f;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-  body {
-    font-family: 'JetBrains Mono', monospace;
-    background: var(--bg);
-    color: var(--ink);
-    overflow: hidden;
-    cursor: none;
-    -webkit-font-smoothing: antialiased;
-    transition: background 0.6s ease, color 0.6s ease;
-  }
-
-  /* Interactive dot field */
-  #canvas {
-    position: fixed; inset: 0; z-index: 0;
-  }
-
-  /* Custom cursor */
-  .cursor {
-    position: fixed; top: 0; left: 0; z-index: 100;
-    width: 14px; height: 14px; border-radius: 50%;
-    background: #fff;
-    mix-blend-mode: difference;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-    transition: width 0.25s ease, height 0.25s ease, background 0.25s ease;
-  }
-  .cursor.hover {
-    width: 60px; height: 60px;
-    background: var(--accent);
-  }
-
-  /* Theme toggle */
-  .header-right {
-    display: flex; align-items: flex-start; gap: 20px;
-  }
-  .theme-toggle {
-    width: 42px; height: 42px; border-radius: 50%;
-    background: transparent; border: 1px solid var(--line);
-    cursor: none; display: flex; align-items: center; justify-content: center;
-    transition: border-color 0.3s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-    padding: 0;
-  }
-  .theme-toggle:hover {
-    border-color: var(--accent);
-    transform: rotate(45deg);
-  }
-  .theme-toggle svg {
-    width: 16px; height: 16px;
-    color: var(--ink);
-    transition: color 0.3s ease;
-  }
-  .theme-toggle .sun { display: block; }
-  .theme-toggle .moon { display: none; }
-  :root[data-theme='light'] .theme-toggle .sun { display: none; }
-  :root[data-theme='light'] .theme-toggle .moon { display: block; }
-
-  /* Layout */
-  .shell {
-    position: relative; z-index: 2;
-    height: 100vh; width: 100vw;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    padding: 32px 40px;
-  }
-
-  /* Top bar */
-  header {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--ink-dim);
-  }
-  .mark {
-    font-family: 'Fraunces', serif;
-    font-size: 14px; letter-spacing: -0.01em;
-    color: var(--ink); text-transform: none;
-    font-weight: 500;
-  }
-  .meta { text-align: right; line-height: 1.8; }
-  .meta .live {
-    display: inline-flex; align-items: center; gap: 6px;
-    color: var(--ink);
-  }
-  .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent);
-    animation: blink 2s ease-in-out infinite;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  /* Center */
-  .center {
-    display: flex; flex-direction: column; justify-content: center;
-    align-items: flex-start;
-    max-width: 1200px; margin: 0 auto; width: 100%;
-  }
-
-  h1 {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(72px, 14vw, 220px);
-    line-height: 0.88;
-    letter-spacing: -0.04em;
-    font-weight: 300;
-    user-select: none;
-  }
-  h1 .word {
-    display: inline-block;
-  }
-  h1 .char {
-    display: inline-block;
-    transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2);
-    will-change: transform;
-  }
-  h1 em {
-    font-style: italic; font-weight: 400;
-    color: var(--accent);
-  }
-
-  .tagline {
-    margin-top: 32px;
-    display: flex; align-items: center; gap: 14px;
-    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--ink-dim);
-  }
-  .tagline .rule {
-    width: 48px; height: 1px; background: var(--ink-dim);
-  }
-
-  .tagline .discover {
-    color: var(--accent); text-decoration: none; cursor: none;
-    border-bottom: 1px solid transparent; transition: border-color 0.3s ease;
-  }
-  .tagline .discover:hover { border-color: var(--accent); }
-
-  /* Bottom bar */
-  footer {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    align-items: end;
-    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--ink-dim);
-  }
-  footer .col h4 {
-    font-weight: 400; color: var(--ink-dim);
-    margin-bottom: 8px; font-size: 10px;
-  }
-  footer .col p, footer .col a {
-    color: var(--ink); text-decoration: none;
-    font-size: 12px; letter-spacing: 0.04em; text-transform: none;
-    font-family: 'Fraunces', serif;
-    display: block; line-height: 1.5;
-    position: relative;
-  }
-  footer a { cursor: none; }
-  footer a::after {
-    content: ''; position: absolute; left: 0; bottom: -2px;
-    width: 0; height: 1px; background: var(--accent);
-    transition: width 0.3s ease;
-  }
-  footer a:hover::after { width: 100%; }
-  footer a:hover { color: var(--accent); }
-  .center-col { text-align: center; }
-  .right-col { text-align: right; }
-
-  /* Reveal animation */
-  .rise { opacity: 0; transform: translateY(20px); animation: rise 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-  .rise-2 { animation-delay: 0.15s; }
-  .rise-3 { animation-delay: 0.3s; }
-  .rise-4 { animation-delay: 0.45s; }
-  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
-
-  /* Corner crosshairs */
-  .crosshair {
-    position: fixed; width: 12px; height: 12px; z-index: 5;
-    pointer-events: none; opacity: 0.3;
-  }
-  .crosshair::before, .crosshair::after {
-    content: ''; position: absolute; background: var(--ink);
-  }
-  .crosshair::before { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-0.5px); }
-  .crosshair::after { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-0.5px); }
-  .crosshair.tl { top: 20px; left: 20px; }
-  .crosshair.tr { top: 20px; right: 20px; }
-  .crosshair.bl { bottom: 20px; left: 20px; }
-  .crosshair.br { bottom: 20px; right: 20px; }
-
-  @media (max-width: 760px) {
-    body { cursor: auto; overflow-y: auto; }
-    html, body { height: auto; min-height: 100%; }
-    .cursor { display: none; }
-    .shell {
-      padding: 20px 22px;
-      min-height: 100vh;
-      min-height: 100svh;
-      grid-template-rows: auto 1fr auto;
-      gap: 40px;
-    }
-    header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 20px;
-    }
-    .header-right {
-      width: 100%;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-    }
-    .meta { text-align: left; font-size: 10px; }
-    .theme-toggle { width: 46px; height: 46px; }
-    .theme-toggle svg { width: 18px; height: 18px; }
-    h1 { font-size: clamp(64px, 18vw, 140px); line-height: 0.9; }
-    .tagline { margin-top: 24px; font-size: 10px; letter-spacing: 0.14em; }
-    .tagline .rule { width: 28px; }
-    footer {
-      grid-template-columns: 1fr 1fr;
-      gap: 24px 16px;
-      padding-top: 20px;
-      border-top: 1px solid var(--line);
-    }
-    footer .col:last-child {
-      grid-column: 1 / -1;
-    }
-    .center-col { text-align: left; }
-    .right-col { text-align: left; }
-    footer .col h4 { font-size: 9px; letter-spacing: 0.14em; }
-    footer .col p, footer .col a { font-size: 14px; }
-    .crosshair { display: none; }
-  }
-
-  @media (max-width: 420px) {
-    h1 { font-size: clamp(56px, 20vw, 120px); }
-    .mark { font-size: 13px; }
-  }
-
-  /* Respect reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200..900;1,9..144,200..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <canvas id="canvas"></canvas>
-  <div class="cursor"></div>
+<a class="skip" href="#games">Skip to the games</a>
+<header class="top">
+  <a class="mark" href="#top">Dutch <b>Cape</b></a>
+  <nav class="links" aria-label="Games">
+    <a href="#solitaire">Solitaire</a>
+    <a href="#catch">Koeksisters</a>
+    <a href="#vote">Stem · Vote</a>
+    <a href="#about">About</a>
+  </nav>
+  <span class="live"><span class="dot"></span> Speelkamer open</span>
+</header>
 
-  <div class="crosshair tl"></div>
-  <div class="crosshair tr"></div>
-  <div class="crosshair bl"></div>
-  <div class="crosshair br"></div>
-
-  <div class="shell">
-    <header>
-      <div class="mark rise">Dutch Cape</div>
-      <div class="header-right rise rise-2">
-        <div class="meta">
-          <div class="live"><span class="dot"></span> In the workshop</div>
-          <div>33.9°S · 18.4°E</div>
-        </div>
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" data-hover>
-          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="4"/>
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-          </svg>
-        </button>
-      </div>
-    </header>
-
-    <div class="center">
-      <h1 class="rise rise-3" id="headline">
-        <span class="word" data-word="Dutch">
-          <span class="char">D</span><span class="char">u</span><span class="char">t</span><span class="char">c</span><span class="char">h</span>
-        </span>
-        <br/>
-        <em class="word" data-word="Cape">
-          <span class="char">C</span><span class="char">a</span><span class="char">p</span><span class="char">e</span>
-        </em>
-      </h1>
-      <div class="tagline rise rise-4">
-        <span class="rule"></span>
-        <span>Something new from the south</span>
-        <a class="discover" href="discover.html" data-hover>Step inside &rarr;</a>
+<main id="top">
+  <section class="hero" aria-labelledby="h1">
+    <div class="floaters" id="floaters" aria-hidden="true"></div>
+    <div class="hero-in">
+      <p class="kicker">Dutch Cape · Helderberg · 2026</p>
+      <h1 id="h1"><span class="l1">Die</span> <em class="l2">Speelkamer</em></h1>
+      <p class="sub">The Dutch Cape playroom. Something new is being built at the foot of the Helderberg. While we work on it, have a game on us.</p>
+      <div class="cabinet" id="games">
+        <a class="tile t1" href="#solitaire"><span class="num">01</span><span class="ico" aria-hidden="true">♠♥</span><span class="nm">Storieboek Solitaire</span><span class="d">Klondike with storybook characters</span></a>
+        <a class="tile t2" href="#catch"><span class="num">02</span><span class="ico" aria-hidden="true">◎</span><span class="nm">Vang die Koeksisters</span><span class="d">Catch the koeksisters, dodge the flies</span></a>
+        <a class="tile t3" href="#vote"><span class="num">03</span><span class="ico" aria-hidden="true">A/B</span><span class="nm">Die Groot Debat</span><span class="d">Koeksister or koesister? Choose a side</span></a>
       </div>
     </div>
+    <div class="marquee" aria-hidden="true"><div class="track">SPEEL · PLAY · NOG 'N RONDJIE · ONE MORE ROUND · LEKKER · HELDERBERG · KOEKSISTERS · SOLITAIRE · SPEEL · PLAY · NOG 'N RONDJIE · ONE MORE ROUND · LEKKER · HELDERBERG · KOEKSISTERS · SOLITAIRE ·&nbsp;</div></div>
+  </section>
 
-    <footer>
-      <div class="col rise rise-4">
-        <h4>Based</h4>
-        <p>Cape Town<br/>South Africa</p>
+  <section class="game" id="solitaire" aria-labelledby="solH">
+    <div class="ghead">
+      <div><p class="kicker">Speletjie 01</p><h2 id="solH">Storieboek <em>Solitaire</em></h2></div>
+      <p class="gnote">Klondike patience. Drag cards, or tap one to send it to the best spot. Build the four foundations from Ace to King.</p>
+    </div>
+    <div class="solbar" role="toolbar" aria-label="Solitaire controls">
+      <button class="btn" id="solNew" type="button">Nuwe spel · New</button>
+      <button class="btn ghost" id="solDraw" type="button" aria-pressed="false">Draw 1</button>
+      <button class="btn ghost" id="solUndo" type="button">↶ Undo</button>
+      <button class="btn hot" id="solAuto" type="button" hidden>Auto-complete ✦</button>
+      <span class="stat"><span id="solTime">00:00</span> · <span id="solMoves">0</span> moves</span>
+      <span class="stat dim">Wins <b id="solWins">0</b> · Best <b id="solBest">–</b></span>
+    </div>
+    <div class="felt"><div class="board" id="board" aria-label="Solitaire table"></div>
+      <div class="winbox" id="solWin" hidden><p class="big">Happily ever after!</p><p id="solWinStats"></p><button class="btn" id="solAgain" type="button">Nog een · Deal again</button></div>
+    </div>
+    <p class="credit">The faces come from public-domain stories: Alice's Adventures in Wonderland, Dracula, Frankenstein, The Invisible Man, The Legend of Sleepy Hollow, Winnie-the-Pooh, Peter Pan, The Wonderful Wizard of Oz and Robin Hood. They're all original drawings.</p>
+  </section>
+
+  <section class="game" id="catch" aria-labelledby="catchH">
+    <div class="ghead">
+      <div><p class="kicker">Speletjie 02</p><h2 id="catchH">Vang die <em>Koeksisters</em></h2></div>
+      <p class="gnote">Slide the tray (mouse, finger, or ← →) to catch the falling koeksisters. A melktert is worth five. Miss three, or catch three flies, and it's over.</p>
+    </div>
+    <div class="arcade">
+      <canvas id="catchCanvas" aria-label="Catch the koeksisters game" role="img"></canvas>
+      <div class="overlay" id="catchOverlay">
+        <p class="big" id="catchTitle">Vang die Koeksisters</p>
+        <p id="catchMsg">Syrupy, plaited, golden. Don't let them hit the floor.</p>
+        <button class="btn" id="catchStart" type="button">Begin · Start</button>
       </div>
-      <div class="col center-col rise rise-4">
-        <h4>Year</h4>
-        <p>2026 —</p>
-      </div>
-      <div class="col right-col rise rise-4">
-        <h4>Contact</h4>
-        <a href="mailto:hello@dutchcape.co.za" data-hover>hello@dutchcape.co.za</a>
-      </div>
-    </footer>
-  </div>
+      <div class="hud" aria-live="polite"><span>Score <b id="cScore">0</b></span><span>Best <b id="cBest">0</b></span><span id="cLives" aria-label="Lives">♥♥♥</span></div>
+    </div>
+  </section>
 
-  <script>
-    // ===== Interactive dot grid =====
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    let width, height, dots = [];
-    const SPACING = 44;
-    const DOT_SIZE = 1.2;
-    const INFLUENCE = 180;
+  <section class="game" id="vote" aria-labelledby="voteH">
+    <div class="ghead">
+      <div><p class="kicker">Speletjie 03</p><h2 id="voteH">Die Groot <em>Debat</em></h2></div>
+      <p class="gnote">Pick a side. Pass the phone around the braai and every tap counts. Tallies stay on this device and are never sent anywhere.</p>
+    </div>
+    <div class="ab" id="ab">
+      <button class="side a" id="voteA" type="button"><span class="tag">A</span><span class="opt" id="optA">Koeksister</span><span class="desc" id="descA">Plaited, crisp, dripping with syrup</span><span class="plus" aria-hidden="true">+1</span></button>
+      <div class="vs" aria-hidden="true">of</div>
+      <button class="side b" id="voteB" type="button"><span class="tag">B</span><span class="opt" id="optB">Koesister</span><span class="desc" id="descB">Spiced Cape Malay, rolled in coconut</span><span class="plus" aria-hidden="true">+1</span></button>
+    </div>
+    <div class="bars" aria-live="polite">
+      <div class="bar"><span class="fill" id="fillA"></span><span class="lbl"><b id="pctA">–</b> <span id="cntA">0 votes</span></span></div>
+      <div class="bar b"><span class="fill" id="fillB"></span><span class="lbl"><b id="pctB">–</b> <span id="cntB">0 votes</span></span></div>
+    </div>
+    <div class="qnav">
+      <button class="btn ghost" id="qPrev" type="button" aria-label="Previous question">←</button>
+      <span id="qIdx">1 / 6</span>
+      <button class="btn ghost" id="qNext" type="button" aria-label="Next question">Volgende · Next →</button>
+      <button class="btn ghost small" id="qReset" type="button">Reset this one</button>
+    </div>
+  </section>
 
-    const mouse = { x: -9999, y: -9999, tx: -9999, ty: -9999 };
+  <section class="about" id="about" aria-labelledby="aboutH">
+    <p class="kicker">Binnekort · Coming soon</p>
+    <h2 id="aboutH">Die speelkamer is net <em>die voorportaal</em>.</h2>
+    <p class="lede">The playroom is just the front hall. Dutch Cape is a small workshop in the Helderberg, putting together local finds, gatherings worth showing up for, and a better way for good neighbourhood businesses to be found. It's not open yet. Come back soon, or say hello.</p>
+    <div class="row">
+      <a class="btn" href="mailto:hello@dutchcape.co.za?subject=Hallo%20Dutch%20Cape">hello@dutchcape.co.za</a>
+      <a class="btn ghost" href="discover.html">Step inside: the night sky ✦</a>
+    </div>
+  </section>
+</main>
 
-    function resize() {
-      const dpr = window.devicePixelRatio || 1;
-      width = canvas.width = window.innerWidth * dpr;
-      height = canvas.height = window.innerHeight * dpr;
-      canvas.style.width = window.innerWidth + 'px';
-      canvas.style.height = window.innerHeight + 'px';
-      ctx.scale(dpr, dpr);
-      buildDots();
-    }
+<footer class="foot">
+  <div><h4>Based</h4><p>Cape Town<br/>South Africa</p></div>
+  <div class="c"><h4>Year</h4><p>2026 —</p></div>
+  <div class="r"><h4>Contact</h4><a href="mailto:hello@dutchcape.co.za">hello@dutchcape.co.za</a></div>
+</footer>
 
-    function buildDots() {
-      dots = [];
-      const w = window.innerWidth, h = window.innerHeight;
-      const cols = Math.ceil(w / SPACING) + 2;
-      const rows = Math.ceil(h / SPACING) + 2;
-      const offsetX = (w - (cols - 1) * SPACING) / 2;
-      const offsetY = (h - (rows - 1) * SPACING) / 2;
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const x = offsetX + c * SPACING;
-          const y = offsetY + r * SPACING;
-          dots.push({ x, y, ox: x, oy: y });
-        }
-      }
-    }
-
-    function getThemeColors() {
-      const cs = getComputedStyle(document.documentElement);
-      const inkRgb = cs.getPropertyValue('--ink-rgb').trim() || '10, 10, 10';
-      const accent = cs.getPropertyValue('--accent').trim() || '#ff4d1f';
-      // parse accent hex → rgb
-      let r = 255, g = 77, b = 31;
-      const m = accent.match(/#([0-9a-f]{6})/i);
-      if (m) {
-        const hex = m[1];
-        r = parseInt(hex.substr(0, 2), 16);
-        g = parseInt(hex.substr(2, 2), 16);
-        b = parseInt(hex.substr(4, 2), 16);
-      }
-      return { inkRgb, accentRgb: `${r}, ${g}, ${b}` };
-    }
-    let theme = getThemeColors();
-
-    let lastInput = 0;
-    let ambientActive = false;
-
-    function draw() {
-      const w = window.innerWidth, h = window.innerHeight;
-      ctx.clearRect(0, 0, w, h);
-
-      // If no real input for a while, drift an invisible cursor in a gentle lissajous
-      const now = performance.now();
-      if (now - lastInput > 1500) {
-        ambientActive = true;
-        const t = now * 0.0004;
-        mouse.tx = w / 2 + Math.sin(t * 1.1) * w * 0.32;
-        mouse.ty = h / 2 + Math.sin(t * 0.8 + 1.3) * h * 0.28;
-      } else {
-        ambientActive = false;
-      }
-
-      // ease mouse position
-      mouse.x += (mouse.tx - mouse.x) * 0.15;
-      mouse.y += (mouse.ty - mouse.y) * 0.15;
-
-      for (const d of dots) {
-        const dx = d.ox - mouse.x;
-        const dy = d.oy - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        let tx = d.ox, ty = d.oy, size = DOT_SIZE, alpha = 0.25;
-
-        if (dist < INFLUENCE) {
-          const force = (1 - dist / INFLUENCE);
-          const angle = Math.atan2(dy, dx);
-          // push away from cursor
-          tx = d.ox + Math.cos(angle) * force * 28;
-          ty = d.oy + Math.sin(angle) * force * 28;
-          size = DOT_SIZE + force * 3.2;
-          alpha = 0.25 + force * 0.75;
-        }
-
-        d.x += (tx - d.x) * 0.18;
-        d.y += (ty - d.y) * 0.18;
-
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, size, 0, Math.PI * 2);
-        if (dist < INFLUENCE * 0.5) {
-          ctx.fillStyle = `rgba(${theme.accentRgb}, ${alpha})`;
-        } else {
-          ctx.fillStyle = `rgba(${theme.inkRgb}, ${alpha})`;
-        }
-        ctx.fill();
-      }
-
-      requestAnimationFrame(draw);
-    }
-
-    window.addEventListener('resize', resize);
-    window.addEventListener('mousemove', (e) => {
-      mouse.tx = e.clientX;
-      mouse.ty = e.clientY;
-      lastInput = performance.now();
-    });
-    window.addEventListener('touchmove', (e) => {
-      if (e.touches && e.touches[0]) {
-        mouse.tx = e.touches[0].clientX;
-        mouse.ty = e.touches[0].clientY;
-        lastInput = performance.now();
-      }
-    }, { passive: true });
-    window.addEventListener('touchstart', (e) => {
-      if (e.touches && e.touches[0]) {
-        mouse.tx = e.touches[0].clientX;
-        mouse.ty = e.touches[0].clientY;
-        lastInput = performance.now();
-      }
-    }, { passive: true });
-
-    resize();
-    draw();
-
-    // ===== Custom cursor =====
-    const cursor = document.querySelector('.cursor');
-    let cx = 0, cy = 0, tx = 0, ty = 0;
-    window.addEventListener('mousemove', (e) => {
-      tx = e.clientX; ty = e.clientY;
-    });
-    (function animCursor() {
-      cx += (tx - cx) * 0.25;
-      cy += (ty - cy) * 0.25;
-      cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
-      requestAnimationFrame(animCursor);
-    })();
-
-    document.querySelectorAll('[data-hover], a').forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-    });
-
-    // ===== Headline letter parallax =====
-    const chars = document.querySelectorAll('.char');
-    window.addEventListener('mousemove', (e) => {
-      const mx = (e.clientX / window.innerWidth - 0.5);
-      const my = (e.clientY / window.innerHeight - 0.5);
-      chars.forEach((c, i) => {
-        const depth = ((i % 5) + 1) * 4;
-        c.style.transform = `translate(${mx * depth}px, ${my * depth}px)`;
-      });
-    });
-
-    // Hide native cursor when moving over anything
-    window.addEventListener('mouseleave', () => {
-      cursor.style.opacity = '0';
-    });
-    window.addEventListener('mouseenter', () => {
-      cursor.style.opacity = '1';
-    });
-
-    // ===== Theme toggle (dark is default; toggle flips to light) =====
-    const toggle = document.getElementById('themeToggle');
-    toggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      if (current === 'light') {
-        document.documentElement.removeAttribute('data-theme');
-      } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
-      theme = getThemeColors();
-    });
-
-    // ===== Device orientation parallax (mobile) =====
-    if (window.DeviceOrientationEvent && 'ontouchstart' in window) {
-      window.addEventListener('deviceorientation', (e) => {
-        if (e.gamma == null || e.beta == null) return;
-        const mx = Math.max(-1, Math.min(1, e.gamma / 30));
-        const my = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
-        chars.forEach((c, i) => {
-          const depth = ((i % 5) + 1) * 3;
-          c.style.transform = `translate(${mx * depth}px, ${my * depth}px)`;
-        });
-      });
-    }
-  </script>
+<script src="solitaire.js"></script>
+<script src="arcade.js"></script>
 </body>
 </html>
