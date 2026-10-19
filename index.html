@@ -1,27 +1,217 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dutch Cape | Under construction</title>
-<link rel="icon" href="favicon.ico">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;1,500&family=JetBrains+Mono&display=swap" rel="stylesheet">
-<style>
-  *{box-sizing:border-box;margin:0}
-  body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0d0d0d;color:#f2ede4;font-family:'Fraunces',Georgia,serif;text-align:center;padding:2rem}
-  h1{font-size:clamp(3rem,10vw,6rem);font-weight:400;line-height:1}
-  h1 em{color:#ff6a3d;font-weight:500}
-  .tag{font-family:'JetBrains Mono',monospace;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:#9a958c;margin:1.5rem 0 2.5rem}
-  p{font-size:1.15rem;max-width:32rem;line-height:1.6}
-  a{color:#ff6a3d;text-decoration:none;border-bottom:1px solid #ff6a3d}
-  footer{position:fixed;bottom:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#6b675f}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dutch Cape · Local deals, events and finds in the Helderberg</title>
+<meta name="description" content="Dutch Cape: local deals, events and finds in Somerset West, Strand and Gordon's Bay. Launching soon.">
+<meta name="theme-color" content="#2F4A39">
+<link rel="canonical" href="https://dutchcape.co.za/">
+<meta property="og:title" content="Dutch Cape · Helderberg">
+<meta property="og:description" content="Local deals, events and finds in the Helderberg. Launching soon.">
+<meta property="og:url" content="https://dutchcape.co.za/">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="i18n.js" defer></script>
+<script src="app.js" defer></script>
 </head>
 <body>
-  <h1>Dutch <em>Cape</em></h1>
-  <div class="tag">Under construction &middot; In aanbou</div>
-  <p>We're building something new from the south. Check back soon.</p>
-  <p style="margin-top:1.5rem">Get in touch: <a href="mailto:hello@dutchcape.co.za">hello@dutchcape.co.za</a></p>
-  <footer>&copy; 2026 Dutch Cape &middot; Cape Town, South Africa</footer>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+ <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+ <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+ <symbol id="i-mega" viewBox="0 0 24 24"><path d="M3 10v4h3l8 5V5L6 10zM17 9a4 4 0 0 1 0 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+ <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 20l1.5-4A8 8 0 1 1 9 19.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+ <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="m3 7 9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+ <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-12a7 7 0 0 1 14 0c0 5.7-7 12-7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9" r="2.5" fill="currentColor"/></symbol>
+ <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+ <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+ <symbol id="i-wine" viewBox="0 0 24 24"><path d="M8 3h8l-1 7a3 3 0 0 1-6 0zM12 13v7M8 21h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+ <symbol id="i-tent" viewBox="0 0 24 24"><path d="M3 20 12 4l9 16zM12 4v16M9 20l3-5 3 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+ <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17l-5.4 2.8 1.1-6.1-4.5-4.3 6.1-.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+ <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+ <symbol id="i-logo" viewBox="0 0 64 64"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 55h52"/><path d="M10 55V37h11c0-3-2-5-2-8 3 0 4-2 4-4.5 0-3 3-4.5 3-7.5h12c0 3 3 4.5 3 7.5 0 2.5 1 4.5 4 4.5 0 3-2 5-2 8h11v18"/><path d="M28 55v-9a4 4 0 0 1 8 0v9"/><rect x="14" y="42" width="4.5" height="7" rx=".5"/><rect x="45.5" y="42" width="4.5" height="7" rx=".5"/><circle cx="32" cy="27" r="2.6"/></g><circle cx="32" cy="15.6" r="2.2" fill="#C86D4E"/></symbol>
+ <symbol id="i-protea" viewBox="0 0 32 32"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" vector-effect="non-scaling-stroke"><path vector-effect="non-scaling-stroke" d="M16 22c-5 0-8-4-8-9 3 1 5 3 6 6M16 22c5 0 8-4 8-9-3 1-5 3-6 6M16 21c-2.5-3-3-8-1.5-12 .6 4 1 6 1.5 9M16 21c2.5-3 3-8 1.5-12-.6 4-1 6-1.5 9M11.5 17c-2-3-2.5-6-1.5-9 1 2 2.5 4 3.5 7M20.5 17c2-3 2.5-6 1.5-9-1 2-2.5 4-3.5 7" stroke="#C86D4E"/><path vector-effect="non-scaling-stroke" d="M16 22v8M16 27c-2-1-4-1-5 0M16 25.5c2-1 4-1 5 0" stroke="#2F4A39"/></g></symbol>
+ <symbol id="i-sprig" viewBox="0 0 32 32"><g fill="none" stroke="#2F4A39" stroke-width="1.3" stroke-linecap="round"><path d="M16 30C16 20 17 10 21 3"/><path d="M16.3 24c-3-1-5-3-6-6M16.6 19c3-1 5-3 5.5-6M17.4 14c-2.5-1-4-3-4.5-5.5M19 9c2-.5 3.5-2 4-4"/></g><circle cx="21" cy="3" r="1.4" fill="#E0A1B7"/></symbol>
+</svg>
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+<header class="top">
+ <div class="wrap">
+  <a class="logo" href="#home" aria-label="Dutch Cape home"><svg aria-hidden="true"><use href="#i-logo"/></svg><span class="wm"><span class="wn">DUTCH CAPE</span><span class="tl">Est. Helderberg</span></span></a>
+  <nav class="topnav" aria-label="Main">
+   <a href="#finds" data-i18n="nav_finds">Finds</a>
+   <a href="#events" data-i18n="nav_events">Events</a>
+   <a href="#business" data-i18n="nav_services">Services</a>
+   <a href="#about" data-i18n="nav_about">About</a>
+   <a href="#contact" data-i18n="nav_contact">Contact</a>
+  </nav>
+  <div class="lang">
+   <svg aria-hidden="true"><use href="#i-globe"/></svg>
+   <label for="lang" class="sr" data-i18n="lang_label">Language</label>
+   <select id="lang">
+    <option value="en">English</option>
+    <option value="af">Afrikaans</option>
+    <option value="xh">isiXhosa</option>
+    <option value="zu">isiZulu</option>
+   </select>
+  </div>
+ </div>
+</header>
+
+<main id="main">
+<section class="hero" id="home">
+ <div class="wrap">
+  <p class="kicker" lang="af"><svg aria-hidden="true"><use href="#i-sprig"/></svg>Iets nuuts uit die suide</p>
+  <h1 data-i18n="hero_title">Local deals, events and finds in the Helderberg</h1>
+  <p class="lead" data-i18n="hero_lead">Somerset West, Strand and Gordon's Bay. One simple place to find what's on and who's local.</p>
+  <p class="status"><span class="pill" data-i18n="soon_pill">Launching soon</span></p>
+  <div class="btns">
+   <a class="btn btn-main" href="#events"><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-i18n="hero_btn1">See what's coming</span></a>
+   <a class="btn btn-line" href="#business"><svg aria-hidden="true"><use href="#i-mega"/></svg><span data-i18n="hero_btn2">For businesses</span></a>
+  </div>
+ </div>
+ <svg class="scene" viewBox="0 0 1440 240" preserveAspectRatio="xMidYMax slice" role="img" aria-labelledby="scene-t"><title id="scene-t" data-i18n="scene_alt">Mountains over the sea at False Bay</title>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <circle cx="880" cy="46" r="22" stroke="#C86D4E" stroke-width="2"/>
+   <path d="M0 150 C80 140 120 120 170 118 S260 96 300 90 360 60 400 58 450 80 480 74 540 40 580 36 640 66 680 70 740 54 780 58 840 90 900 96 980 84 1040 100 1120 118 1200 116 1300 132 1440 128" stroke="#2F4A39" stroke-width="2.2"/>
+   <path d="M0 166 C200 160 420 158 640 160 S1100 164 1440 160" stroke="#1E5F8C" stroke-width="1.2" opacity=".7"/>
+   <path d="M0 240V196 C240 176 520 172 760 180 S1200 196 1440 186V240z" fill="#F6F1E7"/>
+   <path d="M0 196 C240 176 520 172 760 180 S1200 196 1440 186" stroke="#2F4A39" stroke-width="1.4"/>
+   <g stroke="#2F4A39" stroke-width="1" opacity=".55">
+    <path d="M0 207 C240 189 520 185 760 193 S1200 208 1440 198"/>
+    <path d="M0 219 C240 202 520 198 760 206 S1200 221 1440 211"/>
+    <path d="M0 231 C240 215 520 211 760 219 S1200 234 1440 224"/>
+   </g>
+   <g stroke="#2F4A39" stroke-width="4" stroke-dasharray="0.1 14" opacity=".8">
+    <path d="M0 205 C240 187 520 183 760 191 S1200 206 1440 196"/>
+    <path d="M7 217 C240 200 520 196 760 204 S1200 219 1440 209"/>
+    <path d="M0 229 C240 213 520 209 760 217 S1200 232 1440 222"/>
+   </g>
+  </g>
+ </svg>
+ <svg class="hero-protea" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-protea"/></svg>
+</section>
+
+<div class="wrap">
+ <nav class="tiles" aria-label="Quick links">
+  <a class="tile" href="#finds"><span class="ico"><svg aria-hidden="true"><use href="#i-bag"/></svg></span><span data-i18n="nav_finds">Finds</span></a>
+  <a class="tile" href="#events"><span class="ico"><svg aria-hidden="true"><use href="#i-cal"/></svg></span><span data-i18n="nav_events">Events</span></a>
+  <a class="tile" href="#business"><span class="ico"><svg aria-hidden="true"><use href="#i-mega"/></svg></span><span data-i18n="tile_ads">Local ads</span></a>
+  <a class="tile" href="#contact"><span class="ico"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><span data-i18n="tile_talk">Talk to us</span></a>
+ </nav>
+</div>
+
+<section id="finds">
+ <div class="wrap">
+  <p class="label"><svg aria-hidden="true"><use href="#i-protea"/></svg><span data-i18n="lbl_finds">Made nearby</span></p>
+  <div class="shead"><span class="ico"><svg aria-hidden="true"><use href="#i-bag"/></svg></span><h2 data-i18n="finds_title">Local finds</h2></div>
+  <p class="intro"><span class="soon" data-i18n="soon">Coming soon</span><br><span data-i18n="finds_lead">Great local products and the people who make them. We are still gathering the first ones.</span></p>
+  <div class="cards">
+   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><h3 data-i18n="find1_t">Home-made food</h3><p data-i18n="find1_d">Bakers, cooks and farm stalls near you.</p></article>
+   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-star"/></svg></span><h3 data-i18n="find2_t">Crafts and makers</h3><p data-i18n="find2_d">Clothes, art and gifts made in the Helderberg.</p></article>
+   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-pin"/></svg></span><h3 data-i18n="find3_t">Local services</h3><p data-i18n="find3_d">Fixers, cleaners, tutors and more.</p></article>
+  </div>
+  <p class="small" style="margin-top:14px" data-i18n="finds_cta">Make or sell something local? Tell us. We would love to hear from you.</p>
+ </div>
+</section>
+
+<section id="events" class="alt">
+ <div class="wrap">
+  <p class="label"><svg aria-hidden="true"><use href="#i-sprig"/></svg><span data-i18n="lbl_events">What's on</span></p>
+  <div class="shead"><span class="ico"><svg aria-hidden="true"><use href="#i-cal"/></svg></span><h2 data-i18n="events_title">Events</h2></div>
+  <p class="intro"><span class="soon" data-i18n="soon">Coming soon</span><br><span data-i18n="events_lead">Markets, tastings and pop-ups in the Helderberg. No dates yet.</span></p>
+  <div class="cards">
+   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-tent"/></svg></span><h3 data-i18n="ev1_t">Markets</h3><p data-i18n="ev1_d">Food, crafts and music outdoors.</p></article>
+   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-wine"/></svg></span><h3 data-i18n="ev2_t">Tastings</h3><p data-i18n="ev2_d">Wine, coffee and local food.</p></article>
+   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-star"/></svg></span><h3 data-i18n="ev3_t">Pop-ups</h3><p data-i18n="ev3_d">Short, fun events in new places.</p></article>
+  </div>
+
+  <h3 class="poll-h" data-i18n="poll_title">Help us plan: quick vote</h3>
+  <div class="poll">
+   <fieldset class="q" data-q="where">
+    <legend data-i18n="poll_q1">Where should we start?</legend>
+    <div class="opts">
+     <button type="button" class="opt" data-v="a" aria-pressed="false" data-i18n="poll_q1a">Strand</button>
+     <button type="button" class="opt" data-v="b" aria-pressed="false" data-i18n="poll_q1b">Gordon's Bay</button>
+    </div>
+    <p class="res" aria-live="polite"></p>
+   </fieldset>
+   <fieldset class="q" data-q="how">
+    <legend data-i18n="poll_q2">What do you prefer?</legend>
+    <div class="opts">
+     <button type="button" class="opt" data-v="a" aria-pressed="false" data-i18n="poll_q2a">Weekly market</button>
+     <button type="button" class="opt" data-v="b" aria-pressed="false" data-i18n="poll_q2b">Monthly festival</button>
+    </div>
+    <p class="res" aria-live="polite"></p>
+   </fieldset>
+  </div>
+  <p class="small" style="margin-top:12px"><svg aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:-2px"><use href="#i-lock"/></svg> <span data-i18n="poll_note">Your vote is saved only on this device (in localStorage). It is not sent to us. To really be counted, email us.</span></p>
+  <button type="button" class="linkbtn" id="poll-clear" data-i18n="poll_clear">Clear my votes</button>
+ </div>
+</section>
+
+<section id="business">
+ <div class="wrap">
+  <p class="label"><svg aria-hidden="true"><use href="#i-sprig"/></svg><span data-i18n="hero_btn2">For businesses</span></p>
+  <div class="shead"><span class="ico"><svg aria-hidden="true"><use href="#i-mega"/></svg></span><h2 data-i18n="biz_title">Get local customers on WhatsApp</h2></div>
+  <p class="intro" data-i18n="biz_lead">For small businesses in the Helderberg. We make simple Facebook and Instagram ads. People nearby tap the ad and it opens a WhatsApp chat with you.</p>
+  <ol class="steps">
+   <li><div><strong data-i18n="st1_t">We talk</strong><span data-i18n="st1_d">Tell us what you sell and who you want to reach.</span></div></li>
+   <li><div><strong data-i18n="st2_t">We make the ad</strong><span data-i18n="st2_d">Clear words and pictures, shown to people near you.</span></div></li>
+   <li><div><strong data-i18n="st3_t">They message you</strong><span data-i18n="st3_d">Customers tap the ad and chat to you on WhatsApp.</span></div></li>
+  </ol>
+  <p class="note" data-i18n="biz_note">We are still setting this up. No prices yet. Email us if you want to be one of the first.</p>
+  <a class="btn btn-terra" href="mailto:hello@dutchcape.co.za?subject=Local%20ads"><svg aria-hidden="true"><use href="#i-mail"/></svg><span data-i18n="biz_btn">Ask about local ads</span></a>
+ </div>
+</section>
+
+<section id="about" class="alt">
+ <div class="wrap">
+  <p class="label"><svg aria-hidden="true"><use href="#i-protea"/></svg><span data-i18n="lbl_about">Our story</span></p>
+  <div class="shead"><span class="ico"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><h2 data-i18n="about_title">About Dutch Cape</h2></div>
+  <p class="intro" data-i18n="about_p1">Dutch Cape is a new local project in the Helderberg, Cape Town. We want to help people find good local things, and help small businesses get seen.</p>
+  <p class="intro" data-i18n="about_p2">We are just starting, so we are honest: no listings yet, no fake reviews. Everything here is coming soon.</p>
+ </div>
+</section>
+
+<section id="contact">
+ <div class="wrap">
+  <p class="label"><svg aria-hidden="true"><use href="#i-sprig"/></svg><span data-i18n="tile_talk">Talk to us</span></p>
+  <div class="shead"><span class="ico"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><h2 data-i18n="contact_title">Contact</h2></div>
+  <p class="intro" data-i18n="contact_lead">Questions, ideas or want to join? Say hello.</p>
+  <div class="contact">
+   <a class="crow" href="mailto:hello@dutchcape.co.za"><span class="ico"><svg aria-hidden="true"><use href="#i-mail"/></svg></span><span><b data-i18n="c_email">Email</b><span class="s">hello@dutchcape.co.za</span></span></a>
+   <div class="crow"><span class="ico"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><span><b>WhatsApp</b><span class="s" data-i18n="soon">Coming soon</span></span></div>
+   <div class="crow"><span class="ico"><svg aria-hidden="true"><use href="#i-pin"/></svg></span><span><b data-i18n="c_area">Area</b><span class="s">Somerset West · Strand · Gordon's Bay</span></span></div>
+  </div>
+ </div>
+</section>
+</main>
+
+<footer>
+ <div class="wrap">
+  <span class="fmark"><svg aria-hidden="true"><use href="#i-logo"/></svg><span>© 2026 Dutch Cape · Helderberg, Cape Town</span></span>
+  <a href="privacy.html" data-i18n="privacy">Privacy</a>
+ </div>
+</footer>
+
+<!-- WhatsApp button: number not set up yet, so this shows "coming soon" and links to Contact.
+     TODO: when the WhatsApp Business number is live, change href to https://wa.me/27XXXXXXXXX
+     (international format, no + or spaces), remove the "coming soon" <small> line, and add rel="noopener". -->
+<a class="wa" href="#contact" id="wa"><span class="ico"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><span><span data-i18n="wa">WhatsApp us</span><small data-i18n="soon">Coming soon</small></span></a>
+
+<nav class="bnav" aria-label="Bottom">
+ <a href="#home"><svg aria-hidden="true"><use href="#i-home"/></svg><span data-i18n="nav_home">Home</span></a>
+ <a href="#finds"><svg aria-hidden="true"><use href="#i-bag"/></svg><span data-i18n="nav_finds">Finds</span></a>
+ <a href="#events"><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-i18n="nav_events">Events</span></a>
+ <a href="#business"><svg aria-hidden="true"><use href="#i-mega"/></svg><span data-i18n="nav_services">Services</span></a>
+ <a href="#contact"><svg aria-hidden="true"><use href="#i-mail"/></svg><span data-i18n="nav_contact">Contact</span></a>
+</nav>
 </body>
 </html>
