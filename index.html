@@ -1,217 +1,3137 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dutch Cape · Local deals, events and finds in the Helderberg</title>
-<meta name="description" content="Dutch Cape: local deals, events and finds in Somerset West, Strand and Gordon's Bay. Launching soon.">
-<meta name="theme-color" content="#2F4A39">
-<link rel="canonical" href="https://dutchcape.co.za/">
-<meta property="og:title" content="Dutch Cape · Helderberg">
-<meta property="og:description" content="Local deals, events and finds in the Helderberg. Launching soon.">
-<meta property="og:url" content="https://dutchcape.co.za/">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&amp;display=swap">
-<link rel="stylesheet" href="style.css">
-<script src="i18n.js" defer></script>
-<script src="app.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>AeroMatrix · Dutch Cape</title>
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js r128 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            touch-action: none;
+            overscroll-behavior: none;
+            font-family: 'Inter', sans-serif;
+            background-color: #090d16;
+            color: #f8fafc;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        canvas {
+            display: block;
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            touch-action: none;
+        }
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .glass {
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+        .stick-box {
+            position: relative;
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+        }
+        .stick-crosshair-h {
+            position: absolute;
+            top: 50%;
+            left: 8%;
+            right: 8%;
+            height: 1px;
+            background: rgba(148, 163, 184, 0.2);
+        }
+        .stick-crosshair-v {
+            position: absolute;
+            left: 50%;
+            top: 8%;
+            bottom: 8%;
+            width: 1px;
+            background: rgba(148, 163, 184, 0.2);
+        }
+        .stick-dot {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 10px #38bdf8;
+            transform: translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+            transition: background-color 0.15s;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 28px rgba(16, 185, 129, 0.8); }
+        }
+        .gate-flash {
+            animation: gateFlashAnim 0.45s ease-out;
+        }
+        @keyframes gateFlashAnim {
+            0% { background-color: rgba(16, 185, 129, 0.35); }
+            100% { background-color: transparent; }
+        }
+        .crash-flash {
+            animation: crashFlashAnim 0.55s ease-out;
+        }
+        @keyframes crashFlashAnim {
+            0% { background-color: rgba(244, 63, 94, 0.45); }
+            100% { background-color: transparent; }
+        }
+        @keyframes thumbPulse {
+            0%, 100% {
+                box-shadow: 0 0 25px rgba(56, 189, 248, 0.45), inset 0 0 18px rgba(34, 211, 238, 0.35);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 48px rgba(34, 211, 238, 0.85), inset 0 0 28px rgba(56, 189, 248, 0.6);
+                transform: scale(1.03);
+            }
+        }
+        .thumb-trigger-btn {
+            animation: thumbPulse 2.4s infinite ease-in-out;
+        }
+        .landing-fade-out {
+            opacity: 0;
+            transform: scale(1.06);
+            pointer-events: none;
+            transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+        }
+
+        /* Dutch Cape site chrome (does not affect gameplay) */
+        .dc-back {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            align-self: flex-start;
+            flex-shrink: 0;
+            padding: 5px 11px;
+            border-radius: 1rem;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            color: #e2e8f0;
+            text-decoration: none;
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+        }
+        .dc-back:hover,
+        .dc-back:focus-visible {
+            color: #fff;
+            border-color: rgba(148, 163, 184, 0.45);
+            outline: none;
+        }
+    </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
- <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
- <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
- <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
- <symbol id="i-mega" viewBox="0 0 24 24"><path d="M3 10v4h3l8 5V5L6 10zM17 9a4 4 0 0 1 0 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
- <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 20l1.5-4A8 8 0 1 1 9 19.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
- <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="m3 7 9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
- <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-12a7 7 0 0 1 14 0c0 5.7-7 12-7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9" r="2.5" fill="currentColor"/></symbol>
- <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
- <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
- <symbol id="i-wine" viewBox="0 0 24 24"><path d="M8 3h8l-1 7a3 3 0 0 1-6 0zM12 13v7M8 21h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
- <symbol id="i-tent" viewBox="0 0 24 24"><path d="M3 20 12 4l9 16zM12 4v16M9 20l3-5 3 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
- <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17l-5.4 2.8 1.1-6.1-4.5-4.3 6.1-.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
- <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
- <symbol id="i-logo" viewBox="0 0 64 64"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 55h52"/><path d="M10 55V37h11c0-3-2-5-2-8 3 0 4-2 4-4.5 0-3 3-4.5 3-7.5h12c0 3 3 4.5 3 7.5 0 2.5 1 4.5 4 4.5 0 3-2 5-2 8h11v18"/><path d="M28 55v-9a4 4 0 0 1 8 0v9"/><rect x="14" y="42" width="4.5" height="7" rx=".5"/><rect x="45.5" y="42" width="4.5" height="7" rx=".5"/><circle cx="32" cy="27" r="2.6"/></g><circle cx="32" cy="15.6" r="2.2" fill="#C86D4E"/></symbol>
- <symbol id="i-protea" viewBox="0 0 32 32"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" vector-effect="non-scaling-stroke"><path vector-effect="non-scaling-stroke" d="M16 22c-5 0-8-4-8-9 3 1 5 3 6 6M16 22c5 0 8-4 8-9-3 1-5 3-6 6M16 21c-2.5-3-3-8-1.5-12 .6 4 1 6 1.5 9M16 21c2.5-3 3-8 1.5-12-.6 4-1 6-1.5 9M11.5 17c-2-3-2.5-6-1.5-9 1 2 2.5 4 3.5 7M20.5 17c2-3 2.5-6 1.5-9-1 2-2.5 4-3.5 7" stroke="#C86D4E"/><path vector-effect="non-scaling-stroke" d="M16 22v8M16 27c-2-1-4-1-5 0M16 25.5c2-1 4-1 5 0" stroke="#2F4A39"/></g></symbol>
- <symbol id="i-sprig" viewBox="0 0 32 32"><g fill="none" stroke="#2F4A39" stroke-width="1.3" stroke-linecap="round"><path d="M16 30C16 20 17 10 21 3"/><path d="M16.3 24c-3-1-5-3-6-6M16.6 19c3-1 5-3 5.5-6M17.4 14c-2.5-1-4-3-4.5-5.5M19 9c2-.5 3.5-2 4-4"/></g><circle cx="21" cy="3" r="1.4" fill="#E0A1B7"/></symbol>
-</svg>
-<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
 
-<header class="top">
- <div class="wrap">
-  <a class="logo" href="#home" aria-label="Dutch Cape home"><svg aria-hidden="true"><use href="#i-logo"/></svg><span class="wm"><span class="wn">DUTCH CAPE</span><span class="tl">Est. Helderberg</span></span></a>
-  <nav class="topnav" aria-label="Main">
-   <a href="#finds" data-i18n="nav_finds">Finds</a>
-   <a href="#events" data-i18n="nav_events">Events</a>
-   <a href="#business" data-i18n="nav_services">Services</a>
-   <a href="#about" data-i18n="nav_about">About</a>
-   <a href="#contact" data-i18n="nav_contact">Contact</a>
-  </nav>
-  <div class="lang">
-   <svg aria-hidden="true"><use href="#i-globe"/></svg>
-   <label for="lang" class="sr" data-i18n="lang_label">Language</label>
-   <select id="lang">
-    <option value="en">English</option>
-    <option value="af">Afrikaans</option>
-    <option value="xh">isiXhosa</option>
-    <option value="zu">isiZulu</option>
-   </select>
-  </div>
- </div>
-</header>
+    <!-- Cyan-Blue Matrix Digital Rain Landing Overlay -->
+    <div id="matrix-landing" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050a14] overflow-hidden select-none">
+        <canvas id="matrix-canvas" class="fixed inset-0 w-full h-full pointer-events-none"></canvas>
 
-<main id="main">
-<section class="hero" id="home">
- <div class="wrap">
-  <p class="kicker" lang="af"><svg aria-hidden="true"><use href="#i-sprig"/></svg>Iets nuuts uit die suide</p>
-  <h1 data-i18n="hero_title">Local deals, events and finds in the Helderberg</h1>
-  <p class="lead" data-i18n="hero_lead">Somerset West, Strand and Gordon's Bay. One simple place to find what's on and who's local.</p>
-  <p class="status"><span class="pill" data-i18n="soon_pill">Launching soon</span></p>
-  <div class="btns">
-   <a class="btn btn-main" href="#events"><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-i18n="hero_btn1">See what's coming</span></a>
-   <a class="btn btn-line" href="#business"><svg aria-hidden="true"><use href="#i-mega"/></svg><span data-i18n="hero_btn2">For businesses</span></a>
-  </div>
- </div>
- <svg class="scene" viewBox="0 0 1440 240" preserveAspectRatio="xMidYMax slice" role="img" aria-labelledby="scene-t"><title id="scene-t" data-i18n="scene_alt">Mountains over the sea at False Bay</title>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-   <circle cx="880" cy="46" r="22" stroke="#C86D4E" stroke-width="2"/>
-   <path d="M0 150 C80 140 120 120 170 118 S260 96 300 90 360 60 400 58 450 80 480 74 540 40 580 36 640 66 680 70 740 54 780 58 840 90 900 96 980 84 1040 100 1120 118 1200 116 1300 132 1440 128" stroke="#2F4A39" stroke-width="2.2"/>
-   <path d="M0 166 C200 160 420 158 640 160 S1100 164 1440 160" stroke="#1E5F8C" stroke-width="1.2" opacity=".7"/>
-   <path d="M0 240V196 C240 176 520 172 760 180 S1200 196 1440 186V240z" fill="#F6F1E7"/>
-   <path d="M0 196 C240 176 520 172 760 180 S1200 196 1440 186" stroke="#2F4A39" stroke-width="1.4"/>
-   <g stroke="#2F4A39" stroke-width="1" opacity=".55">
-    <path d="M0 207 C240 189 520 185 760 193 S1200 208 1440 198"/>
-    <path d="M0 219 C240 202 520 198 760 206 S1200 221 1440 211"/>
-    <path d="M0 231 C240 215 520 211 760 219 S1200 234 1440 224"/>
-   </g>
-   <g stroke="#2F4A39" stroke-width="4" stroke-dasharray="0.1 14" opacity=".8">
-    <path d="M0 205 C240 187 520 183 760 191 S1200 206 1440 196"/>
-    <path d="M7 217 C240 200 520 196 760 204 S1200 219 1440 209"/>
-    <path d="M0 229 C240 213 520 209 760 217 S1200 232 1440 222"/>
-   </g>
-  </g>
- </svg>
- <svg class="hero-protea" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-protea"/></svg>
-</section>
+        <!-- Central Biometric Thumb Launch Interface -->
+        <div class="relative z-10 flex flex-col items-center text-center px-6 max-w-md">
+            <div class="mono text-[10px] sm:text-xs tracking-[0.35em] uppercase text-cyan-400/90 mb-2 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">
+                NEURAL FLIGHT UPLINK // v4.0
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-bold tracking-wider uppercase text-sky-100 drop-shadow-[0_0_18px_rgba(56,189,248,0.75)] mb-8">
+                AERO<span class="text-cyan-400">MATRIX</span>
+            </h1>
 
-<div class="wrap">
- <nav class="tiles" aria-label="Quick links">
-  <a class="tile" href="#finds"><span class="ico"><svg aria-hidden="true"><use href="#i-bag"/></svg></span><span data-i18n="nav_finds">Finds</span></a>
-  <a class="tile" href="#events"><span class="ico"><svg aria-hidden="true"><use href="#i-cal"/></svg></span><span data-i18n="nav_events">Events</span></a>
-  <a class="tile" href="#business"><span class="ico"><svg aria-hidden="true"><use href="#i-mega"/></svg></span><span data-i18n="tile_ads">Local ads</span></a>
-  <a class="tile" href="#contact"><span class="ico"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><span data-i18n="tile_talk">Talk to us</span></a>
- </nav>
-</div>
+            <!-- Thumbprint / Biometric Launch Button -->
+            <button id="btn-matrix-launch" class="thumb-trigger-btn group relative w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-slate-950/80 border-2 border-cyan-400/80 flex flex-col items-center justify-center cursor-pointer active:scale-95 transition-transform">
+                <!-- Outer Rotating Dashed Ring -->
+                <div class="absolute inset-1.5 rounded-full border border-dashed border-sky-400/50 group-hover:rotate-45 transition-transform duration-700"></div>
+                
+                <!-- Fingerprint / Thumb SVG Icon -->
+                <svg class="w-12 h-12 sm:w-14 sm:h-14 text-cyan-300 drop-shadow-[0_0_10px_rgba(34,211,238,0.9)] mb-1.5 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
+                    <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
+                    <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
+                    <path d="M2 12a10 10 0 0 1 18-6"/>
+                    <path d="M2 16h.01"/>
+                    <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
+                    <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/>
+                    <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
+                    <path d="M9 6.8a6 6 0 0 1 9 5.2v2"/>
+                </svg>
 
-<section id="finds">
- <div class="wrap">
-  <p class="label"><svg aria-hidden="true"><use href="#i-protea"/></svg><span data-i18n="lbl_finds">Made nearby</span></p>
-  <div class="shead"><span class="ico"><svg aria-hidden="true"><use href="#i-bag"/></svg></span><h2 data-i18n="finds_title">Local finds</h2></div>
-  <p class="intro"><span class="soon" data-i18n="soon">Coming soon</span><br><span data-i18n="finds_lead">Great local products and the people who make them. We are still gathering the first ones.</span></p>
-  <div class="cards">
-   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><h3 data-i18n="find1_t">Home-made food</h3><p data-i18n="find1_d">Bakers, cooks and farm stalls near you.</p></article>
-   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-star"/></svg></span><h3 data-i18n="find2_t">Crafts and makers</h3><p data-i18n="find2_d">Clothes, art and gifts made in the Helderberg.</p></article>
-   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-pin"/></svg></span><h3 data-i18n="find3_t">Local services</h3><p data-i18n="find3_d">Fixers, cleaners, tutors and more.</p></article>
-  </div>
-  <p class="small" style="margin-top:14px" data-i18n="finds_cta">Make or sell something local? Tell us. We would love to hear from you.</p>
- </div>
-</section>
+                <span class="mono text-[10px] font-bold tracking-widest uppercase text-sky-200 group-hover:text-cyan-300">
+                    TOUCH THUMB
+                </span>
+                <span class="mono text-[9px] tracking-wider uppercase text-cyan-400/80 mt-0.5">
+                    TO JACK IN
+                </span>
+            </button>
 
-<section id="events" class="alt">
- <div class="wrap">
-  <p class="label"><svg aria-hidden="true"><use href="#i-sprig"/></svg><span data-i18n="lbl_events">What's on</span></p>
-  <div class="shead"><span class="ico"><svg aria-hidden="true"><use href="#i-cal"/></svg></span><h2 data-i18n="events_title">Events</h2></div>
-  <p class="intro"><span class="soon" data-i18n="soon">Coming soon</span><br><span data-i18n="events_lead">Markets, tastings and pop-ups in the Helderberg. No dates yet.</span></p>
-  <div class="cards">
-   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-tent"/></svg></span><h3 data-i18n="ev1_t">Markets</h3><p data-i18n="ev1_d">Food, crafts and music outdoors.</p></article>
-   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-wine"/></svg></span><h3 data-i18n="ev2_t">Tastings</h3><p data-i18n="ev2_d">Wine, coffee and local food.</p></article>
-   <article class="card"><span class="tag" data-i18n="example">Example</span><span class="ico"><svg aria-hidden="true"><use href="#i-star"/></svg></span><h3 data-i18n="ev3_t">Pop-ups</h3><p data-i18n="ev3_d">Short, fun events in new places.</p></article>
-  </div>
-
-  <h3 class="poll-h" data-i18n="poll_title">Help us plan: quick vote</h3>
-  <div class="poll">
-   <fieldset class="q" data-q="where">
-    <legend data-i18n="poll_q1">Where should we start?</legend>
-    <div class="opts">
-     <button type="button" class="opt" data-v="a" aria-pressed="false" data-i18n="poll_q1a">Strand</button>
-     <button type="button" class="opt" data-v="b" aria-pressed="false" data-i18n="poll_q1b">Gordon's Bay</button>
+            <p class="mono text-[11px] text-sky-300/75 mt-8 tracking-wide">
+                [ PRESS THUMB TO INITIALIZE ROTORS &amp; TELEMETRY ]
+            </p>
+        </div>
     </div>
-    <p class="res" aria-live="polite"></p>
-   </fieldset>
-   <fieldset class="q" data-q="how">
-    <legend data-i18n="poll_q2">What do you prefer?</legend>
-    <div class="opts">
-     <button type="button" class="opt" data-v="a" aria-pressed="false" data-i18n="poll_q2a">Weekly market</button>
-     <button type="button" class="opt" data-v="b" aria-pressed="false" data-i18n="poll_q2b">Monthly festival</button>
+
+    <!-- Fullscreen Flash Overlay on Gate Pass or Crash -->
+    <div id="flash-overlay" class="fixed inset-0 pointer-events-none z-10"></div>
+
+    <!-- Top HUD Bar -->
+    <div id="top-hud-bar" class="fixed top-3 left-3 right-3 z-20 flex flex-wrap items-start justify-between gap-2 pointer-events-none">
+        
+        <!-- Controller & Level Selector Pill -->
+        <div class="flex flex-col gap-1.5 pointer-events-auto max-w-full">
+            <a href="/" class="dc-back" aria-label="Back to Dutch Cape">← Dutch Cape</a>
+            <div class="flex items-center gap-2">
+                <button id="btn-toggle-hud" class="glass shrink-0 px-3 py-1.5 rounded-2xl text-[11px] font-semibold text-sky-300 border border-sky-400/35 active:scale-95 transition cursor-pointer shadow-lg">
+                    Show HUD
+                </button>
+                <div id="controller-status-pill" class="glass rounded-2xl px-3.5 py-2 flex items-center gap-2.5 shadow-lg hidden min-w-0">
+                    <div id="status-dot" class="w-2.5 h-2.5 shrink-0 rounded-full bg-amber-400 animate-pulse"></div>
+                    <div class="truncate">
+                        <div id="controller-title" class="text-[11px] font-bold uppercase tracking-wider text-slate-200 truncate">
+                            Waiting for PS5 DualSense...
+                        </div>
+                        <div id="controller-sub" class="text-[10px] text-slate-400 truncate">
+                            Press button on controller or use Touch/Gyro
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible Level Switcher Pills (Starts Hidden) -->
+            <div id="hud-collapsible-area" class="flex flex-col gap-1.5 hidden">
+                <div class="glass rounded-2xl p-1.5 flex items-center gap-1 shadow-lg flex-wrap">
+                    <button data-level="0" class="lvl-btn px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-sky-500/30 text-sky-200 border border-sky-400/40 transition cursor-pointer">
+                        1. City Skyline
+                    </button>
+                    <button data-level="1" class="lvl-btn px-2.5 py-1 rounded-xl text-[11px] font-semibold text-slate-400 hover:text-slate-200 transition cursor-pointer">
+                        2. Alpine Canyon
+                    </button>
+                    <button data-level="2" class="lvl-btn px-2.5 py-1 rounded-xl text-[11px] font-semibold text-slate-400 hover:text-slate-200 transition cursor-pointer">
+                        3. Harbor Slalom
+                    </button>
+                    <button data-level="3" class="lvl-btn px-2.5 py-1 rounded-xl text-[11px] font-semibold text-slate-400 hover:text-rose-200 transition cursor-pointer">
+                        4. Laser Dogfight
+                    </button>
+                    <button id="btn-flight-tier" class="px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-sky-500/25 text-sky-200 border border-sky-400/40 hover:bg-sky-500/35 transition cursor-pointer">
+                        Physics: Angle Assist
+                    </button>
+                    <button id="btn-gyro" class="px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/35 hover:bg-emerald-500/30 transition cursor-pointer">
+                        Gyro: OFF
+                    </button>
+                    <button id="btn-fullscreen" class="px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/35 hover:bg-indigo-500/30 transition cursor-pointer">
+                        Full Screen
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flight Telemetry, Lap Timer & Gate / Combat Score (Starts Hidden) -->
+        <div id="hud-telemetry-card" class="glass rounded-2xl px-3.5 py-2 flex flex-wrap items-center gap-3 sm:gap-5 pointer-events-auto shadow-lg hidden">
+            <!-- Race Gates Counter (Shown in Race Modes) -->
+            <div id="race-score-box" class="text-center">
+                <div class="text-[10px] uppercase tracking-wider text-slate-400">Gates</div>
+                <div id="hud-gates" class="mono text-lg sm:text-xl font-bold text-emerald-400">0 / 8</div>
+            </div>
+            <!-- Dogfight Kills & Wave Counter (Shown in Dogfight Mode) -->
+            <div id="combat-score-box" class="text-center hidden">
+                <div class="text-[10px] uppercase tracking-wider text-rose-400">Kills / Wave</div>
+                <div class="mono text-lg sm:text-xl font-bold text-rose-400">
+                    <span id="hud-kills">0</span>
+                    <span class="text-slate-500 text-xs"> / W</span><span id="hud-wave" class="text-amber-300 text-sm">1</span>
+                </div>
+            </div>
+            <div class="h-7 w-px bg-slate-700/70"></div>
+            <!-- Race Timer (Race Modes) -->
+            <div id="race-time-box" class="text-center">
+                <div class="text-[10px] uppercase tracking-wider text-slate-400">Time / Best</div>
+                <div class="mono text-sm font-semibold text-amber-300">
+                    <span id="hud-time">00.0s</span>
+                    <span class="text-slate-500 text-xs"> / </span>
+                    <span id="hud-best" class="text-slate-300 text-xs">--.-s</span>
+                </div>
+            </div>
+            <!-- Player Hull / Shield Integrity (Dogfight Mode) -->
+            <div id="combat-hull-box" class="text-center hidden min-w-[96px]">
+                <div class="flex justify-between text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">
+                    <span>Hull</span>
+                    <span id="hud-hull-txt" class="mono text-emerald-400 font-bold">100%</span>
+                </div>
+                <div class="w-24 h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700/70">
+                    <div id="hud-hull-bar" class="h-full bg-emerald-400 transition-all duration-150" style="width: 100%"></div>
+                </div>
+            </div>
+            <div class="h-7 w-px bg-slate-700/70"></div>
+            <div class="text-center">
+                <div class="text-[10px] uppercase tracking-wider text-slate-400">Altitude</div>
+                <div id="hud-alt" class="mono text-base sm:text-lg font-semibold text-sky-400">0.0 m</div>
+            </div>
+            <div class="h-7 w-px bg-slate-700/70"></div>
+            <div class="text-center">
+                <div class="text-[10px] uppercase tracking-wider text-slate-400">Speed</div>
+                <div id="hud-speed" class="mono text-base sm:text-lg font-semibold text-indigo-300">0 km/h</div>
+            </div>
+            <div class="h-7 w-px bg-slate-700/70 hidden lg:block"></div>
+            <div class="text-center hidden lg:block">
+                <div class="text-[10px] uppercase tracking-wider text-slate-400">LiPo / Wind</div>
+                <div class="mono text-xs font-semibold">
+                    <span id="hud-volt" class="text-emerald-400">16.8V</span>
+                    <span class="text-slate-500"> | </span>
+                    <span id="hud-wind" class="text-cyan-300">2 m/s</span>
+                </div>
+            </div>
+            <div class="h-7 w-px bg-slate-700/70 hidden sm:block"></div>
+            <div class="hidden sm:flex flex-col items-end gap-1">
+                <div class="flex gap-1.5">
+                    <button id="btn-mode" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-400/30 hover:bg-sky-500/30 transition cursor-pointer">
+                        Mode: Angle Assist
+                    </button>
+                    <button id="btn-wind" class="px-2 py-1 rounded-lg text-xs font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 hover:bg-cyan-500/30 transition cursor-pointer">
+                        Wind: ON
+                    </button>
+                    <button id="btn-audio" class="px-2 py-1 rounded-lg text-xs font-semibold bg-slate-800/80 text-slate-300 border border-slate-600/40 hover:bg-slate-700 transition cursor-pointer">
+                        Audio: ON
+                    </button>
+                </div>
+                <div class="flex gap-1.5">
+                    <button id="btn-cam" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800/80 text-slate-300 border border-slate-600/40 hover:bg-slate-700 transition cursor-pointer">
+                        Cam: Chase (C)
+                    </button>
+                    <button id="btn-reset" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-400/30 hover:bg-rose-500/30 transition cursor-pointer">
+                        Reset (R)
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    <p class="res" aria-live="polite"></p>
-   </fieldset>
-  </div>
-  <p class="small" style="margin-top:12px"><svg aria-hidden="true" style="display:inline;width:16px;height:16px;vertical-align:-2px"><use href="#i-lock"/></svg> <span data-i18n="poll_note">Your vote is saved only on this device (in localStorage). It is not sent to us. To really be counted, email us.</span></p>
-  <button type="button" class="linkbtn" id="poll-clear" data-i18n="poll_clear">Clear my votes</button>
- </div>
-</section>
 
-<section id="business">
- <div class="wrap">
-  <p class="label"><svg aria-hidden="true"><use href="#i-sprig"/></svg><span data-i18n="hero_btn2">For businesses</span></p>
-  <div class="shead"><span class="ico"><svg aria-hidden="true"><use href="#i-mega"/></svg></span><h2 data-i18n="biz_title">Get local customers on WhatsApp</h2></div>
-  <p class="intro" data-i18n="biz_lead">For small businesses in the Helderberg. We make simple Facebook and Instagram ads. People nearby tap the ad and it opens a WhatsApp chat with you.</p>
-  <ol class="steps">
-   <li><div><strong data-i18n="st1_t">We talk</strong><span data-i18n="st1_d">Tell us what you sell and who you want to reach.</span></div></li>
-   <li><div><strong data-i18n="st2_t">We make the ad</strong><span data-i18n="st2_d">Clear words and pictures, shown to people near you.</span></div></li>
-   <li><div><strong data-i18n="st3_t">They message you</strong><span data-i18n="st3_d">Customers tap the ad and chat to you on WhatsApp.</span></div></li>
-  </ol>
-  <p class="note" data-i18n="biz_note">We are still setting this up. No prices yet. Email us if you want to be one of the first.</p>
-  <a class="btn btn-terra" href="mailto:hello@dutchcape.co.za?subject=Local%20ads"><svg aria-hidden="true"><use href="#i-mail"/></svg><span data-i18n="biz_btn">Ask about local ads</span></a>
- </div>
-</section>
+    <!-- Next Gate / Nearest Enemy Compass Arrow Indicator -->
+    <div id="gate-compass" class="fixed top-4 sm:top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none glass px-3 py-1 rounded-full flex items-center gap-2 text-[11px] mono text-sky-300 transition-all duration-150">
+        <span id="compass-arrow" class="inline-block text-sm font-bold text-emerald-400 transition-transform duration-75">▲</span>
+        <span id="compass-dist">Next Gate: 22m</span>
+    </div>
 
-<section id="about" class="alt">
- <div class="wrap">
-  <p class="label"><svg aria-hidden="true"><use href="#i-protea"/></svg><span data-i18n="lbl_about">Our story</span></p>
-  <div class="shead"><span class="ico"><svg aria-hidden="true"><use href="#i-heart"/></svg></span><h2 data-i18n="about_title">About Dutch Cape</h2></div>
-  <p class="intro" data-i18n="about_p1">Dutch Cape is a new local project in the Helderberg, Cape Town. We want to help people find good local things, and help small businesses get seen.</p>
-  <p class="intro" data-i18n="about_p2">We are just starting, so we are honest: no listings yet, no fake reviews. Everything here is coming soon.</p>
- </div>
-</section>
+    <!-- Dogfight Dynamic Target-Lock & Aiming HUD Overlay -->
+    <div id="combat-reticle-layer" class="fixed inset-0 pointer-events-none z-10 hidden">
+        <!-- Center Bore-Sight Crosshair -->
+        <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+            <div class="w-8 h-8 rounded-full border border-cyan-400/50 flex items-center justify-center">
+                <div class="w-1.5 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_#22d3ee]"></div>
+            </div>
+        </div>
+        <!-- Predictive Target-Lock Diamond (Projected in 2D screen space) -->
+        <div id="target-lock-box" class="fixed hidden -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+            <div id="target-diamond" class="w-9 h-9 border-2 border-rose-500 rotate-45 shadow-[0_0_12px_rgba(244,63,94,0.8)] transition-transform duration-75"></div>
+            <span id="target-label" class="mono text-[9px] font-bold text-rose-300 bg-slate-950/80 px-1.5 py-0.5 rounded mt-2">LOCK 45m</span>
+        </div>
+        <!-- Hit-Marker X Flash -->
+        <div id="hit-marker" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden text-amber-300 font-bold text-2xl mono drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]">
+            ✕
+        </div>
+    </div>
 
-<section id="contact">
- <div class="wrap">
-  <p class="label"><svg aria-hidden="true"><use href="#i-sprig"/></svg><span data-i18n="tile_talk">Talk to us</span></p>
-  <div class="shead"><span class="ico"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><h2 data-i18n="contact_title">Contact</h2></div>
-  <p class="intro" data-i18n="contact_lead">Questions, ideas or want to join? Say hello.</p>
-  <div class="contact">
-   <a class="crow" href="mailto:hello@dutchcape.co.za"><span class="ico"><svg aria-hidden="true"><use href="#i-mail"/></svg></span><span><b data-i18n="c_email">Email</b><span class="s">hello@dutchcape.co.za</span></span></a>
-   <div class="crow"><span class="ico"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><span><b>WhatsApp</b><span class="s" data-i18n="soon">Coming soon</span></span></div>
-   <div class="crow"><span class="ico"><svg aria-hidden="true"><use href="#i-pin"/></svg></span><span><b data-i18n="c_area">Area</b><span class="s">Somerset West · Strand · Gordon's Bay</span></span></div>
-  </div>
- </div>
-</section>
-</main>
+    <!-- Crash Banner Notification -->
+    <div id="crash-banner" class="fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none hidden">
+        <div class="glass border-rose-500/50 px-6 py-4 rounded-2xl text-center shadow-2xl">
+            <div id="crash-title" class="text-rose-400 font-bold text-lg tracking-wider uppercase">Impact Detected!</div>
+            <div class="text-xs text-slate-300 mt-1">Auto-recovering to Helipad... (or press Cross / R)</div>
+        </div>
+    </div>
 
-<footer>
- <div class="wrap">
-  <span class="fmark"><svg aria-hidden="true"><use href="#i-logo"/></svg><span>© 2026 Dutch Cape · Helderberg, Cape Town</span></span>
-  <a href="privacy.html" data-i18n="privacy">Privacy</a>
- </div>
-</footer>
+    <!-- Center FPV Crosshair & OSD (visible only in FPV mode) -->
+    <div id="fpv-hud" class="fixed inset-0 pointer-events-none z-10 hidden flex items-center justify-center">
+        <div class="relative w-64 h-64 flex items-center justify-center">
+            <!-- Artificial Horizon Line -->
+            <div id="fpv-horizon" class="w-48 h-0.5 bg-emerald-400/60 flex justify-between items-center">
+                <div class="w-2.5 h-2.5 border-l-2 border-t-2 border-emerald-400"></div>
+                <div class="w-2.5 h-2.5 border-r-2 border-t-2 border-emerald-400"></div>
+            </div>
+            <!-- Center Reticle -->
+            <div class="absolute w-3.5 h-3.5 rounded-full border-2 border-sky-400/90"></div>
+            <div class="absolute top-2 text-[10px] mono tracking-widest text-emerald-400/80 uppercase">FPV OSD // 4S 16.8V</div>
+            <div id="fpv-throttle-osd" class="absolute bottom-2 text-[10px] mono text-sky-300/80">THR 0%</div>
+        </div>
+    </div>
 
-<!-- WhatsApp button: number not set up yet, so this shows "coming soon" and links to Contact.
-     TODO: when the WhatsApp Business number is live, change href to https://wa.me/27XXXXXXXXX
-     (international format, no + or spaces), remove the "coming soon" <small> line, and add rel="noopener". -->
-<a class="wa" href="#contact" id="wa"><span class="ico"><svg aria-hidden="true"><use href="#i-chat"/></svg></span><span><span data-i18n="wa">WhatsApp us</span><small data-i18n="soon">Coming soon</small></span></a>
+    <!-- Bottom Left: Live DualSense Stick & Motor Telemetry -->
+    <div class="fixed bottom-4 left-4 z-20 glass rounded-2xl p-3.5 shadow-xl pointer-events-none hidden md:block">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center justify-between">
+            <span>Mode 2 Rates & Motor RPM</span>
+            <span id="deadzone-label" class="mono text-[9px] text-slate-500">DZ: 0.08 | EXPO</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- Left Stick (Throttle / Yaw) -->
+            <div class="flex flex-col items-center gap-1">
+                <div class="stick-box">
+                    <div class="stick-crosshair-h"></div>
+                    <div class="stick-crosshair-v"></div>
+                    <div id="left-stick-dot" class="stick-dot"></div>
+                </div>
+                <span class="text-[10px] text-slate-400 mono">THR / YAW</span>
+            </div>
 
-<nav class="bnav" aria-label="Bottom">
- <a href="#home"><svg aria-hidden="true"><use href="#i-home"/></svg><span data-i18n="nav_home">Home</span></a>
- <a href="#finds"><svg aria-hidden="true"><use href="#i-bag"/></svg><span data-i18n="nav_finds">Finds</span></a>
- <a href="#events"><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-i18n="nav_events">Events</span></a>
- <a href="#business"><svg aria-hidden="true"><use href="#i-mega"/></svg><span data-i18n="nav_services">Services</span></a>
- <a href="#contact"><svg aria-hidden="true"><use href="#i-mail"/></svg><span data-i18n="nav_contact">Contact</span></a>
-</nav>
+            <!-- Channel Bars -->
+            <div class="flex flex-col gap-1.5 w-32 text-[10px] mono">
+                <div>
+                    <div class="flex justify-between text-slate-300"><span>THR</span><span id="val-thr">0%</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <div id="bar-thr" class="h-full bg-emerald-400 transition-all duration-75" style="width: 50%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-slate-300"><span>YAW</span><span id="val-yaw">0.00</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <div id="bar-yaw" class="h-full bg-sky-400 transition-all duration-75" style="width: 50%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-slate-300"><span>PIT</span><span id="val-pit">0.00</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <div id="bar-pit" class="h-full bg-indigo-400 transition-all duration-75" style="width: 50%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-slate-300"><span>ROL</span><span id="val-rol">0.00</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <div id="bar-rol" class="h-full bg-amber-400 transition-all duration-75" style="width: 50%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Stick (Pitch / Roll) -->
+            <div class="flex flex-col items-center gap-1">
+                <div class="stick-box">
+                    <div class="stick-crosshair-h"></div>
+                    <div class="stick-crosshair-v"></div>
+                    <div id="right-stick-dot" class="stick-dot"></div>
+                </div>
+                <span class="text-[10px] text-slate-400 mono">PIT / ROL</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Right: Controls Legend -->
+    <div class="fixed bottom-4 right-4 z-20 glass rounded-2xl p-3.5 shadow-xl max-w-xs text-xs hidden md:block">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400">DualSense / Keyboard</span>
+            <button id="toggle-help" class="text-[10px] text-slate-400 hover:text-white underline cursor-pointer">Hide</button>
+        </div>
+        <div id="help-content" class="space-y-1.5 text-[11px] text-slate-300">
+            <div class="flex justify-between gap-4">
+                <span class="text-slate-400">Fire Lasers (Dogfight):</span>
+                <span class="mono text-cyan-300">R2 / Space / Click</span>
+            </div>
+            <div class="flex justify-between gap-4">
+                <span class="text-slate-400">Angle / 3D Acro / Hyper-Real:</span>
+                <span class="mono text-slate-100">△ Triangle / M</span>
+            </div>
+            <div class="flex justify-between gap-4">
+                <span class="text-slate-400">Course / Dogfight:</span>
+                <span class="mono text-slate-100">□ Square / L</span>
+            </div>
+            <div class="flex justify-between gap-4">
+                <span class="text-slate-400">Toggle Wind:</span>
+                <span class="mono text-slate-100">○ Circle / V</span>
+            </div>
+            <div class="flex justify-between gap-4">
+                <span class="text-slate-400">Chase / FPV Cam:</span>
+                <span class="mono text-slate-100">L1 / R1 / C</span>
+            </div>
+            <div class="flex justify-between gap-4">
+                <span class="text-slate-400">Reset Helipad:</span>
+                <span class="mono text-slate-100">✕ Cross / R</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Portrait Ergonomic Thumb Zone & Bottom Utility Row -->
+    <div id="mobile-controls" class="fixed inset-x-3 bottom-4 z-20 flex flex-col gap-5 pointer-events-none md:hidden">
+        <!-- Dual Ergonomic Thumb Pads -->
+        <div class="flex items-center justify-between px-4">
+            <!-- Left Thumbstick: Throttle (Lift) & Yaw -->
+            <div id="touch-left-pad" class="relative w-32 h-32 rounded-full glass border-2 border-sky-400/45 pointer-events-auto touch-none shadow-2xl">
+                <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-slate-500/30 pointer-events-none"></div>
+                <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-slate-500/30 pointer-events-none"></div>
+                <div id="touch-left-knob" class="absolute top-1/2 left-1/2 -ml-[22px] -mt-[22px] w-11 h-11 rounded-full bg-sky-400/45 border-2 border-sky-300 shadow-[0_0_14px_rgba(56,189,248,0.7)] pointer-events-none"></div>
+                <span class="absolute -bottom-5 inset-x-0 text-center text-[9px] mono text-slate-300 uppercase tracking-wider">Lift / Yaw</span>
+            </div>
+
+            <!-- Center Dogfight Fire Trigger (Big Thumb Target in Dogfight Mode) -->
+            <button id="mob-fire" class="w-20 h-20 rounded-full glass border-2 border-cyan-400/60 bg-cyan-500/20 text-cyan-200 font-bold text-xs tracking-wider uppercase shadow-[0_0_20px_rgba(34,211,238,0.4)] pointer-events-auto touch-none active:scale-90 transition hidden flex items-center justify-center">
+                FIRE
+            </button>
+
+            <!-- Right Thumbstick: Pitch & Roll (Backup when Gyro is OFF, or live tilt visualizer when Gyro is ON) -->
+            <div id="touch-right-pad" class="relative w-32 h-32 rounded-full glass border-2 border-indigo-400/45 pointer-events-auto touch-none shadow-2xl">
+                <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-slate-500/30 pointer-events-none"></div>
+                <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-slate-500/30 pointer-events-none"></div>
+                <div id="touch-right-knob" class="absolute top-1/2 left-1/2 -ml-[22px] -mt-[22px] w-11 h-11 rounded-full bg-indigo-400/45 border-2 border-indigo-300 shadow-[0_0_14px_rgba(129,140,248,0.7)] pointer-events-none"></div>
+                <span id="touch-right-label" class="absolute -bottom-5 inset-x-0 text-center text-[9px] mono text-slate-300 uppercase tracking-wider">Pitch / Roll</span>
+            </div>
+        </div>
+
+        <!-- Bottom Action Strip placed below pads so it never blocks the drone -->
+        <div class="flex items-center justify-center gap-2 pt-2 pointer-events-auto">
+            <button id="mob-gyro-cal" class="glass px-3 py-1.5 rounded-xl text-[11px] font-semibold text-emerald-300 border border-emerald-400/40 hidden active:scale-95 transition">Zero Gyro</button>
+            <button id="mob-mode" class="glass px-3 py-1.5 rounded-xl text-[11px] font-semibold text-sky-300 active:scale-95 transition">Angle</button>
+            <button id="mob-cam" class="glass px-3 py-1.5 rounded-xl text-[11px] font-semibold text-slate-200 active:scale-95 transition">Cam</button>
+            <button id="mob-reset" class="glass px-3 py-1.5 rounded-xl text-[11px] font-semibold text-rose-300 active:scale-95 transition">Reset</button>
+        </div>
+    </div>
+
+    <!-- Three.js Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <script>
+        /**
+         * 3D PS5 DualSense Drone Simulator v2.0
+         * - Realistic 3D Thrust-Vectoring Quadcopter Physics + Betaflight Expo Rates + Motor Inertia
+         * - Procedural PBR Canvas Textures (Albedo, Bump, Roughness)
+         * - 3 Distinct Selectable Courses: City Skyline, Alpine Canyon, Industrial Harbor
+         * - Real-time 4-Motor Web Audio Synthesizer + Wind & Gate SFX
+         */
+
+        // ==========================================
+        // 1. CONFIGURATION & FLIGHT STATE
+        // ==========================================
+        const CONFIG = {
+            deadzone: 0.08,
+            gravity: 9.81,                // Realistic m/s^2
+            mass: 0.68,                   // 680g 5-inch freestyle/racing quad
+            maxThrustAccel: 26.5,         // ~2.7:1 thrust-to-weight ratio (m/s^2)
+            motorSpoolRate: 18.0,         // First-order motor RPM spool-up responsiveness
+            linearDrag: 0.22,             // Parasitic air drag
+            quadraticDrag: 0.018,         // High-speed aerodynamic drag v*|v|
+            groundHeight: 0.26,
+            groundEffectHeight: 1.8,      // Cushion lift within 1.8m of ground
+            crashSpeedThreshold: 19.5,    // Hard impact threshold (m/s)
+            // Betaflight-style RC rates & expo
+            rcRate: 1.05,
+            superRate: 0.72,
+            expo: 0.32,
+            maxAngleTilt: 0.68            // ~39 deg max tilt in Angle Assist mode
+        };
+
+        const state = {
+            gamepadIndex: null,
+            gamepadName: '',
+            flightMode: 'angle',          // 'angle' | 'acro' | 'hyper' (Hyper-Real 3D Reversible Thrust + Propwash + Damage)
+            cameraMode: 'chase',          // 'chase' or 'fpv'
+            windEnabled: true,
+            audioEnabled: true,
+            currentLevel: 0,
+            gatesPassed: 0,
+            totalGates: 8,
+            lapStartTime: 0,
+            lapRunning: false,
+            bestTimes: JSON.parse(localStorage.getItem('drone_sim_best_times') || '{}'),
+            batteryVoltage: 16.8,         // 4S LiPo full charge (16.8V -> 14.0V)
+            crashed: false,
+            motorHealth: [1, 1, 1, 1],    // Individual motor/prop integrity (degrades on hard bumps in Hyper-Real mode)
+            inputs: { throttle: 0, yaw: 0, pitch: 0, roll: 0, fire: false },
+            prevButtons: {},
+            keys: {},
+            // Combat / Dogfight State
+            combatMode: false,
+            playerHull: 100,
+            maxHull: 100,
+            kills: 0,
+            wave: 1,
+            fireCooldown: 0,
+            cannonToggle: 0,
+            // Mobile Gyroscope & Touch Pad State
+            gyroEnabled: false,
+            gyroCalibrated: false,
+            gyroZeroBeta: 0,
+            gyroZeroGamma: 0,
+            gyroRawBeta: 0,
+            gyroRawGamma: 0,
+            gyroPitch: 0,
+            gyroRoll: 0,
+            touchThrottle: 0,
+            touchYaw: 0,
+            touchPitch: 0,
+            touchRoll: 0,
+            wakeLock: null
+        };
+
+        // Full 3D Quaternion-based Rigid Body Drone State
+        const droneState = {
+            position: new THREE.Vector3(0, CONFIG.groundHeight, 0),
+            velocity: new THREE.Vector3(0, 0, 0),
+            quaternion: new THREE.Quaternion(),
+            angularVelocity: new THREE.Vector3(0, 0, 0), // Local body rates (pitchRate, yawRate, rollRate)
+            motorThrottle: [0, 0, 0, 0],                 // Individual motor RPM normalized [-1..1] (reversible 3D props!)
+            avgRotorSpeed: 0
+        };
+
+        // Dynamic Wind Field
+        const windState = {
+            baseVector: new THREE.Vector3(1.8, 0, 0.8),
+            currentVector: new THREE.Vector3(0, 0, 0),
+            gustPhase: 0
+        };
+
+        // ==========================================
+        // 2. PROCEDURAL PBR TEXTURE GENERATOR
+        // ==========================================
+        const TEXTURES = {};
+
+        function createProceduralTextures() {
+            // 1. Carbon Fiber Weave (Diffuse + Bump)
+            const cfCanvas = document.createElement('canvas');
+            cfCanvas.width = 128;
+            cfCanvas.height = 128;
+            const cfCtx = cfCanvas.getContext('2d');
+            cfCtx.fillStyle = '#11161f';
+            cfCtx.fillRect(0, 0, 128, 128);
+            for (let y = 0; y < 128; y += 8) {
+                for (let x = 0; x < 128; x += 8) {
+                    const alt = ((x + y) / 8) % 2 === 0;
+                    cfCtx.fillStyle = alt ? '#1e2633' : '#0b0e14';
+                    cfCtx.fillRect(x, y, 7, 4);
+                    cfCtx.fillStyle = alt ? '#283242' : '#141923';
+                    cfCtx.fillRect(x, y + 4, 7, 4);
+                }
+            }
+            TEXTURES.carbon = new THREE.CanvasTexture(cfCanvas);
+            TEXTURES.carbon.wrapS = TEXTURES.carbon.wrapT = THREE.RepeatWrapping;
+            TEXTURES.carbon.repeat.set(4, 4);
+
+            // 2. Asphalt / Concrete Ground with Micro-grain & Grid
+            const groundCanvas = document.createElement('canvas');
+            groundCanvas.width = 512;
+            groundCanvas.height = 512;
+            const gCtx = groundCanvas.getContext('2d');
+            gCtx.fillStyle = '#131b29';
+            gCtx.fillRect(0, 0, 512, 512);
+
+            // Asphalt noise speckles
+            for (let i = 0; i < 9000; i++) {
+                const x = Math.random() * 512;
+                const y = Math.random() * 512;
+                const shade = 18 + Math.floor(Math.random() * 26);
+                gCtx.fillStyle = `rgb(${shade}, ${shade + 6}, ${shade + 16})`;
+                gCtx.fillRect(x, y, 2, 2);
+            }
+            // Subtle tactical road/grid markings
+            gCtx.strokeStyle = 'rgba(56, 189, 248, 0.14)';
+            gCtx.lineWidth = 2;
+            for (let i = 0; i <= 512; i += 128) {
+                gCtx.beginPath(); gCtx.moveTo(i, 0); gCtx.lineTo(i, 512); gCtx.stroke();
+                gCtx.beginPath(); gCtx.moveTo(0, i); gCtx.lineTo(512, i); gCtx.stroke();
+            }
+            TEXTURES.cityGround = new THREE.CanvasTexture(groundCanvas);
+            TEXTURES.cityGround.wrapS = TEXTURES.cityGround.wrapT = THREE.RepeatWrapping;
+            TEXTURES.cityGround.repeat.set(48, 48);
+            TEXTURES.cityGround.anisotropy = 8;
+
+            // 3. Alpine Rock & Grass Terrain Texture
+            const alpineCanvas = document.createElement('canvas');
+            alpineCanvas.width = 512;
+            alpineCanvas.height = 512;
+            const aCtx = alpineCanvas.getContext('2d');
+            aCtx.fillStyle = '#1e2d24';
+            aCtx.fillRect(0, 0, 512, 512);
+            for (let i = 0; i < 12000; i++) {
+                const x = Math.random() * 512;
+                const y = Math.random() * 512;
+                const isStone = Math.random() > 0.65;
+                aCtx.fillStyle = isStone ? 'rgba(100, 116, 139, 0.28)' : 'rgba(34, 85, 58, 0.35)';
+                aCtx.fillRect(x, y, 3, 3);
+            }
+            TEXTURES.alpineGround = new THREE.CanvasTexture(alpineCanvas);
+            TEXTURES.alpineGround.wrapS = TEXTURES.alpineGround.wrapT = THREE.RepeatWrapping;
+            TEXTURES.alpineGround.repeat.set(42, 42);
+
+            // 4. Skyscraper Glass Facade Texture (Lit & Unlit Windows)
+            const bldCanvas = document.createElement('canvas');
+            bldCanvas.width = 256;
+            bldCanvas.height = 512;
+            const bCtx = bldCanvas.getContext('2d');
+            bCtx.fillStyle = '#0f172a';
+            bCtx.fillRect(0, 0, 256, 512);
+            const cols = 8, rows = 20;
+            const padX = 6, padY = 6;
+            const winW = (256 / cols) - padX * 2;
+            const winH = (512 / rows) - padY * 2;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const lit = Math.random() > 0.62;
+                    if (lit) {
+                        const warm = Math.random() > 0.4;
+                        bCtx.fillStyle = warm ? '#fde68a' : '#bae6fd';
+                    } else {
+                        bCtx.fillStyle = '#1e293b';
+                    }
+                    bCtx.fillRect(c * (256 / cols) + padX, r * (512 / rows) + padY, winW, winH);
+                }
+            }
+            TEXTURES.skyscraper = new THREE.CanvasTexture(bldCanvas);
+            TEXTURES.skyscraper.wrapS = TEXTURES.skyscraper.wrapT = THREE.RepeatWrapping;
+
+            // 5. Corrugated Shipping Container Texture
+            const contCanvas = document.createElement('canvas');
+            contCanvas.width = 256;
+            contCanvas.height = 128;
+            const cCtx = contCanvas.getContext('2d');
+            cCtx.fillStyle = '#ffffff';
+            cCtx.fillRect(0, 0, 256, 128);
+            for (let x = 0; x < 256; x += 8) {
+                cCtx.fillStyle = (x % 16 === 0) ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.15)';
+                cCtx.fillRect(x, 0, 4, 128);
+            }
+            cCtx.strokeStyle = 'rgba(0,0,0,0.35)';
+            cCtx.lineWidth = 6;
+            cCtx.strokeRect(0, 0, 256, 128);
+            TEXTURES.container = new THREE.CanvasTexture(contCanvas);
+        }
+
+        // ==========================================
+        // 3. PROCEDURAL WEB AUDIO ENGINE (MOTORS + WIND + SFX)
+        // ==========================================
+        let audioCtx = null;
+        let motorOscs = [];
+        let motorGain = null;
+        let windFilter = null;
+        let windGain = null;
+
+        function initAudio() {
+            if (!state.audioEnabled) return;
+            try {
+                if (!audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioContext) return;
+                    audioCtx = new AudioContext();
+
+                    // Master Motor Gain
+                    motorGain = audioCtx.createGain();
+                    motorGain.gain.value = 0.0;
+
+                    const motorFilter = audioCtx.createBiquadFilter();
+                    motorFilter.type = 'bandpass';
+                    motorFilter.frequency.value = 420;
+                    motorFilter.Q.value = 1.4;
+
+                    motorGain.connect(motorFilter);
+                    motorFilter.connect(audioCtx.destination);
+
+                    // 4 slightly detuned oscillators representing the 4 brushless motors
+                    const detunes = [-9, -3, 4, 11];
+                    for (let i = 0; i < 4; i++) {
+                        const osc = audioCtx.createOscillator();
+                        osc.type = i % 2 === 0 ? 'sawtooth' : 'triangle';
+                        osc.frequency.value = 110;
+                        osc.detune.value = detunes[i];
+                        osc.connect(motorGain);
+                        osc.start();
+                        motorOscs.push(osc);
+                    }
+
+                    // Aerodynamic Wind Rush Noise Generator
+                    const bufferSize = audioCtx.sampleRate * 2;
+                    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    const output = noiseBuffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    const whiteNoise = audioCtx.createBufferSource();
+                    whiteNoise.buffer = noiseBuffer;
+                    whiteNoise.loop = true;
+
+                    windFilter = audioCtx.createBiquadFilter();
+                    windFilter.type = 'lowpass';
+                    windFilter.frequency.value = 220;
+
+                    windGain = audioCtx.createGain();
+                    windGain.gain.value = 0.0;
+
+                    whiteNoise.connect(windFilter);
+                    windFilter.connect(windGain);
+                    windGain.connect(audioCtx.destination);
+                    whiteNoise.start();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            } catch (e) {
+                // Ignore if blocked before user gesture
+            }
+        }
+
+        function updateContinuousAudio() {
+            if (!audioCtx || !motorGain || !state.audioEnabled) {
+                if (motorGain) motorGain.gain.value = 0;
+                if (windGain) windGain.gain.value = 0;
+                return;
+            }
+            const now = audioCtx.currentTime;
+            const avgThr = droneState.motorThrottle.reduce((a, b) => a + Math.abs(b), 0) / 4;
+            const speed = droneState.velocity.length();
+
+            // Modulate motor pitch (95 Hz idle -> 420 Hz full positive/negative 3D thrust)
+            const baseFreq = 92 + avgThr * 315;
+            motorOscs.forEach((osc, idx) => {
+                const indiv = Math.abs(droneState.motorThrottle[idx] || avgThr);
+                osc.frequency.setTargetAtTime(baseFreq + indiv * 38, now, 0.04);
+            });
+
+            const targetMotorVol = state.crashed ? 0 : Math.min(0.07, 0.012 + avgThr * 0.055);
+            motorGain.gain.setTargetAtTime(targetMotorVol, now, 0.05);
+
+            // Modulate airspeed wind rush
+            const speedNorm = Math.min(1, speed / 32);
+            windFilter.frequency.setTargetAtTime(180 + speedNorm * 1100, now, 0.08);
+            windGain.gain.setTargetAtTime(speedNorm * 0.09, now, 0.08);
+        }
+
+        function playGateChime(allCleared = false) {
+            if (!state.audioEnabled) return;
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                const notes = allCleared ? [523.25, 659.25, 783.99, 1046.50] : [587.33, 880.00];
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.075);
+                    gain.gain.setValueAtTime(0.001, now + idx * 0.075);
+                    gain.gain.exponentialRampToValueAtTime(0.16, now + idx * 0.075 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.075 + 0.32);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.075);
+                    osc.stop(now + idx * 0.075 + 0.34);
+                });
+            } catch (e) {}
+        }
+
+        function playCrashSound() {
+            if (!state.audioEnabled) return;
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(130, now);
+                osc.frequency.exponentialRampToValueAtTime(32, now + 0.38);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.42);
+            } catch (e) {}
+        }
+
+        function playLaserSound(isEnemy = false) {
+            if (!state.audioEnabled) return;
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = isEnemy ? 'sawtooth' : 'square';
+                const startFreq = isEnemy ? 620 : 980;
+                const endFreq = isEnemy ? 160 : 210;
+                osc.frequency.setValueAtTime(startFreq, now);
+                osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.11);
+                gain.gain.setValueAtTime(isEnemy ? 0.055 : 0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.13);
+            } catch (e) {}
+        }
+
+        function playHitMarkerSound(killed = false) {
+            if (!state.audioEnabled) return;
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(killed ? 1280 : 1650, now);
+                osc.frequency.exponentialRampToValueAtTime(killed ? 420 : 920, now + (killed ? 0.22 : 0.06));
+                gain.gain.setValueAtTime(0.14, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + (killed ? 0.24 : 0.07));
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + (killed ? 0.25 : 0.08));
+            } catch (e) {}
+        }
+
+        // DualSense Haptic Vibration Feedback Helper
+        function triggerHapticPulse(weak = 0.3, strong = 0.2, duration = 70) {
+            if (state.gamepadIndex === null) return;
+            try {
+                const gps = navigator.getGamepads ? navigator.getGamepads() : [];
+                const gp = gps[state.gamepadIndex];
+                if (gp && gp.vibrationActuator && gp.vibrationActuator.playEffect) {
+                    gp.vibrationActuator.playEffect('dual-rumble', {
+                        startDelay: 0,
+                        duration: duration,
+                        weakMagnitude: Math.min(1, weak),
+                        strongMagnitude: Math.min(1, strong)
+                    });
+                }
+            } catch (e) {}
+        }
+
+        // ==========================================
+        // 4. THREE.JS SCENE, LEVELS & COLLIDERS
+        // ==========================================
+        let scene, camera, renderer;
+        let droneGroup, rotors = [];
+        let levelGroup;
+        let gates = [];
+        let colliders = [];          // AABB boxes for realistic obstacle collisions
+        let animatedProps = [];      // Spinning wind turbines, moving ship deck, etc.
+        let crashParticles = [];
+        // Dogfight Entities
+        let enemyDrones = [];
+        let laserBolts = [];
+        let repairPickups = [];
+        let lockedEnemy = null;
+        const clock = new THREE.Clock();
+
+        const LEVELS = [
+            {
+                name: 'City Skyline',
+                skyColor: 0x0b1221,
+                fogDensity: 0.0034,
+                windBase: new THREE.Vector3(1.6, 0, 0.7),
+                gates: [
+                    { x: 0,   y: 5.5,  z: -24, rotY: 0 },
+                    { x: 16,  y: 11.0, z: -48, rotY: -0.35 },
+                    { x: 0,   y: 18.5, z: -74, rotY: 0 },
+                    { x: -18, y: 12.0, z: -98, rotY: 0.45 },
+                    { x: -38, y: 16.0, z: -72, rotY: 1.3 },
+                    { x: -34, y: 9.5,  z: -38, rotY: 1.57 },
+                    { x: -16, y: 6.5,  z: -16, rotY: 2.3 },
+                    { x: 0,   y: 4.5,  z: -8,  rotY: Math.PI }
+                ]
+            },
+            {
+                name: 'Alpine Canyon',
+                skyColor: 0x101d2c,
+                fogDensity: 0.0030,
+                windBase: new THREE.Vector3(3.8, 0.2, -1.4),
+                gates: [
+                    { x: 0,   y: 6.0,  z: -26, rotY: 0 },
+                    { x: -14, y: 12.0, z: -56, rotY: 0.3 },
+                    { x: 12,  y: 19.0, z: -86, rotY: -0.35 },
+                    { x: 0,   y: 25.0, z: -120, rotY: 0 },
+                    { x: 26,  y: 18.0, z: -96, rotY: -1.2 },
+                    { x: 28,  y: 11.0, z: -60, rotY: -1.57 },
+                    { x: 14,  y: 7.0,  z: -28, rotY: -2.2 },
+                    { x: 0,   y: 4.5,  z: -9,  rotY: Math.PI }
+                ]
+            },
+            {
+                name: 'Harbor Slalom',
+                skyColor: 0x091522,
+                fogDensity: 0.0036,
+                windBase: new THREE.Vector3(-2.6, 0, 1.9),
+                gates: [
+                    { x: 0,   y: 4.2,  z: -22, rotY: 0 },
+                    { x: -14, y: 7.5,  z: -44, rotY: 0.4 },
+                    { x: 14,  y: 7.5,  z: -66, rotY: -0.4 },
+                    { x: 0,   y: 14.5, z: -92, rotY: 0 },
+                    { x: -24, y: 11.0, z: -112, rotY: 0.8 },
+                    { x: -32, y: 5.2,  z: -74, rotY: 1.57 },
+                    { x: -18, y: 4.8,  z: -34, rotY: 2.1 },
+                    { x: 0,   y: 4.2,  z: -9,  rotY: Math.PI }
+                ]
+            },
+            {
+                name: 'Laser Dogfight',
+                skyColor: 0x0a0d1a,
+                fogDensity: 0.0028,
+                windBase: new THREE.Vector3(1.2, 0, -0.9),
+                gates: []
+            }
+        ];
+
+        function initScene() {
+            const container = document.getElementById('canvas-container');
+            createProceduralTextures();
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(LEVELS[0].skyColor);
+            scene.fog = new THREE.FogExp2(LEVELS[0].skyColor, LEVELS[0].fogDensity);
+
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 650);
+            camera.position.set(0, 4, 8);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // Three-Point / Hemisphere + Sunlight
+            const hemiLight = new THREE.HemisphereLight(0x93c5fd, 0x1e293b, 0.85);
+            hemiLight.position.set(0, 90, 0);
+            scene.add(hemiLight);
+
+            const dirLight = new THREE.DirectionalLight(0xfffbeb, 1.25);
+            dirLight.position.set(55, 95, 40);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            dirLight.shadow.camera.near = 10;
+            dirLight.shadow.camera.far = 280;
+            const d = 110;
+            dirLight.shadow.camera.left = -d;
+            dirLight.shadow.camera.right = d;
+            dirLight.shadow.camera.top = d;
+            dirLight.shadow.camera.bottom = -d;
+            scene.add(dirLight);
+
+            levelGroup = new THREE.Group();
+            scene.add(levelGroup);
+
+            buildDroneModel();
+            loadLevel(0);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function addBoxObstacle(x, y, z, w, h, d, material, castShadow = true) {
+            const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+            mesh.position.set(x, y, z);
+            mesh.castShadow = castShadow;
+            mesh.receiveShadow = true;
+            levelGroup.add(mesh);
+
+            // Register physics AABB collider
+            colliders.push({
+                minX: x - w / 2, maxX: x + w / 2,
+                minY: y - h / 2, maxY: y + h / 2,
+                minZ: z - d / 2, maxZ: z + d / 2
+            });
+            return mesh;
+        }
+
+        function buildHelipad() {
+            const padGroup = new THREE.Group();
+            const padBase = new THREE.Mesh(
+                new THREE.CylinderGeometry(3.4, 3.8, 0.14, 36),
+                new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65, metalness: 0.2 })
+            );
+            padBase.position.y = 0.07;
+            padBase.receiveShadow = true;
+            padGroup.add(padBase);
+
+            const padRing = new THREE.Mesh(
+                new THREE.RingGeometry(2.6, 3.0, 36),
+                new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide })
+            );
+            padRing.rotation.x = -Math.PI / 2;
+            padRing.position.y = 0.15;
+            padGroup.add(padRing);
+
+            const hMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+            const hL = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.02, 1.7), hMat);
+            hL.position.set(-0.6, 0.15, 0);
+            const hR = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.02, 1.7), hMat);
+            hR.position.set(0.6, 0.15, 0);
+            const hM = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.02, 0.3), hMat);
+            hM.position.set(0, 0.15, 0);
+            padGroup.add(hL, hR, hM);
+
+            levelGroup.add(padGroup);
+        }
+
+        function buildSkyClouds() {
+            const cloudMat = new THREE.MeshLambertMaterial({
+                color: 0x334155,
+                transparent: true,
+                opacity: 0.35
+            });
+            for (let i = 0; i < 18; i++) {
+                const cloud = new THREE.Group();
+                const puffs = 3 + Math.floor(Math.random() * 3);
+                for (let p = 0; p < puffs; p++) {
+                    const puff = new THREE.Mesh(
+                        new THREE.DodecahedronGeometry(6 + Math.random() * 7, 1),
+                        cloudMat
+                    );
+                    puff.position.set((p - 1) * 7, Math.random() * 2, (Math.random() - 0.5) * 5);
+                    puff.scale.y = 0.45;
+                    cloud.add(puff);
+                }
+                cloud.position.set(
+                    (Math.random() - 0.5) * 320,
+                    58 + Math.random() * 35,
+                    (Math.random() - 0.5) * 320
+                );
+                levelGroup.add(cloud);
+                animatedProps.push({ type: 'cloud', mesh: cloud, speed: 0.8 + Math.random() * 1.2 });
+            }
+        }
+
+        function loadLevel(levelIdx) {
+            state.currentLevel = levelIdx;
+            state.combatMode = (levelIdx === 3);
+            const cfg = LEVELS[levelIdx];
+
+            // Clear previous level objects & combat entities
+            while (levelGroup.children.length > 0) {
+                levelGroup.remove(levelGroup.children[0]);
+            }
+            clearCombatEntities();
+            gates = [];
+            colliders = [];
+            animatedProps = [];
+
+            scene.background = new THREE.Color(cfg.skyColor);
+            scene.fog = new THREE.FogExp2(cfg.skyColor, cfg.fogDensity);
+            windState.baseVector.copy(cfg.windBase);
+
+            // Toggle Race vs Combat HUD panels
+            document.getElementById('race-score-box').classList.toggle('hidden', state.combatMode);
+            document.getElementById('race-time-box').classList.toggle('hidden', state.combatMode);
+            document.getElementById('combat-score-box').classList.toggle('hidden', !state.combatMode);
+            document.getElementById('combat-hull-box').classList.toggle('hidden', !state.combatMode);
+            document.getElementById('combat-reticle-layer').classList.toggle('hidden', !state.combatMode);
+            document.getElementById('mob-fire').classList.toggle('hidden', !state.combatMode);
+
+            buildHelipad();
+            buildSkyClouds();
+
+            if (levelIdx === 0) {
+                // ======================================
+                // LEVEL 1: CITY SKYLINE CIRCUIT
+                // ======================================
+                const ground = new THREE.Mesh(
+                    new THREE.PlaneGeometry(600, 600),
+                    new THREE.MeshStandardMaterial({ map: TEXTURES.cityGround, roughness: 0.85, metalness: 0.1 })
+                );
+                ground.rotation.x = -Math.PI / 2;
+                ground.receiveShadow = true;
+                levelGroup.add(ground);
+
+                const towerMat = new THREE.MeshStandardMaterial({
+                    map: TEXTURES.skyscraper,
+                    roughness: 0.35,
+                    metalness: 0.45
+                });
+                const trimMat = new THREE.MeshBasicMaterial({ color: 0x0ea5e9 });
+
+                const towers = [
+                    { x: -24, z: -24, w: 9,  h: 22, d: 9 },
+                    { x: 26,  z: -20, w: 10, h: 28, d: 10 },
+                    { x: -32, z: -66, w: 12, h: 36, d: 12 },
+                    { x: 32,  z: -74, w: 11, h: 32, d: 11 },
+                    { x: 0,   z: -116, w: 16, h: 42, d: 14 },
+                    { x: -52, z: -108, w: 10, h: 26, d: 10 },
+                    { x: 52,  z: -112, w: 11, h: 30, d: 11 },
+                    { x: -28, z: 24,  w: 8,  h: 18, d: 8 },
+                    { x: 28,  z: 26,  w: 8,  h: 22, d: 8 }
+                ];
+
+                towers.forEach(b => {
+                    addBoxObstacle(b.x, b.h / 2, b.z, b.w, b.h, b.d, towerMat);
+                    const trim = new THREE.Mesh(new THREE.BoxGeometry(b.w + 0.2, 0.3, b.d + 0.2), trimMat);
+                    trim.position.set(b.x, b.h - 0.4, b.z);
+                    levelGroup.add(trim);
+                });
+
+                // Skybridge connecting two towers at z = -68, y = 24
+                const bridgeMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.6, roughness: 0.3 });
+                addBoxObstacle(0, 24.5, -70, 52, 2.2, 4.5, bridgeMat);
+
+            } else if (levelIdx === 1) {
+                // ======================================
+                // LEVEL 2: ALPINE CANYON & WIND TURBINES
+                // ======================================
+                const ground = new THREE.Mesh(
+                    new THREE.PlaneGeometry(600, 600),
+                    new THREE.MeshStandardMaterial({ map: TEXTURES.alpineGround, roughness: 0.92 })
+                );
+                ground.rotation.x = -Math.PI / 2;
+                ground.receiveShadow = true;
+                levelGroup.add(ground);
+
+                const rockMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.9, flatShading: true });
+                const snowMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.5 });
+
+                // Canyon Cliff Mesas
+                const cliffs = [
+                    { x: -34, z: -35, w: 22, h: 28, d: 35 },
+                    { x: 36,  z: -42, w: 24, h: 32, d: 38 },
+                    { x: -38, z: -95, w: 26, h: 42, d: 44 },
+                    { x: 42,  z: -100, w: 25, h: 38, d: 42 },
+                    { x: 0,   z: -145, w: 55, h: 48, d: 24 }
+                ];
+                cliffs.forEach(c => {
+                    addBoxObstacle(c.x, c.h / 2, c.z, c.w, c.h, c.d, rockMat);
+                    const cap = new THREE.Mesh(new THREE.BoxGeometry(c.w + 0.3, 1.4, c.d + 0.3), snowMat);
+                    cap.position.set(c.x, c.h + 0.5, c.z);
+                    levelGroup.add(cap);
+                });
+
+                // Giant Spinning Wind Turbines
+                const poleMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 });
+                const bladeMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0369a1, emissiveIntensity: 0.3 });
+                const turbineCoords = [
+                    { x: -16, y: 24, z: -72 },
+                    { x: 18,  y: 26, z: -108 },
+                    { x: 0,   y: 22, z: -42 }
+                ];
+                turbineCoords.forEach((t, idx) => {
+                    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.9, t.y, 16), poleMat);
+                    mast.position.set(t.x, t.y / 2, t.z);
+                    mast.castShadow = true;
+                    levelGroup.add(mast);
+
+                    const rotorHub = new THREE.Group();
+                    rotorHub.position.set(t.x, t.y, t.z + 0.8);
+                    for (let b = 0; b < 3; b++) {
+                        const blade = new THREE.Mesh(new THREE.BoxGeometry(0.7, 9.5, 0.18), bladeMat);
+                        blade.position.y = 4.6;
+                        const pivot = new THREE.Group();
+                        pivot.rotation.z = (b * Math.PI * 2) / 3;
+                        pivot.add(blade);
+                        rotorHub.add(pivot);
+                    }
+                    levelGroup.add(rotorHub);
+                    animatedProps.push({ type: 'turbine', mesh: rotorHub, speed: 1.4 + idx * 0.3 });
+                });
+
+            } else if (levelIdx === 2) {
+                // ======================================
+                // LEVEL 3: INDUSTRIAL HARBOR & CRANE SLALOM
+                // ======================================
+                const ground = new THREE.Mesh(
+                    new THREE.PlaneGeometry(600, 600),
+                    new THREE.MeshStandardMaterial({ map: TEXTURES.cityGround, roughness: 0.8 })
+                );
+                ground.rotation.x = -Math.PI / 2;
+                ground.receiveShadow = true;
+                levelGroup.add(ground);
+
+                // Harbor Water Basin on East Side
+                const water = new THREE.Mesh(
+                    new THREE.PlaneGeometry(240, 600),
+                    new THREE.MeshStandardMaterial({ color: 0x0c4a6e, roughness: 0.15, metalness: 0.8 })
+                );
+                water.rotation.x = -Math.PI / 2;
+                water.position.set(145, 0.05, 0);
+                levelGroup.add(water);
+
+                // Stacked Shipping Containers
+                const colors = [0xdc2626, 0x2563eb, 0xd97706, 0x059669, 0x4f46e5];
+                const stacks = [
+                    { x: -14, z: -32, rows: 3 },
+                    { x: 14,  z: -52, rows: 4 },
+                    { x: -16, z: -74, rows: 3 },
+                    { x: 12,  z: -95, rows: 4 },
+                    { x: -34, z: -92, rows: 3 },
+                    { x: -28, z: -50, rows: 2 }
+                ];
+                stacks.forEach((st, idx) => {
+                    for (let r = 0; r < st.rows; r++) {
+                        const cMat = new THREE.MeshStandardMaterial({
+                            map: TEXTURES.container,
+                            color: colors[(idx + r) % colors.length],
+                            roughness: 0.55
+                        });
+                        addBoxObstacle(st.x, 1.4 + r * 2.8, st.z, 5.2, 2.8, 12.2, cMat);
+                    }
+                });
+
+                // Harbor Gantry Cranes (Fly under & through!)
+                const craneMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.4, metalness: 0.5 });
+                [-44, -88].forEach(zPos => {
+                    addBoxObstacle(-18, 10, zPos, 1.6, 20, 1.6, craneMat);
+                    addBoxObstacle(18, 10, zPos, 1.6, 20, 1.6, craneMat);
+                    addBoxObstacle(0, 20.5, zPos, 44, 1.8, 2.2, craneMat);
+                });
+            } else if (levelIdx === 3) {
+                // ======================================
+                // LEVEL 4: CYBER-INDUSTRIAL DOGFIGHT ARENA
+                // ======================================
+                const ground = new THREE.Mesh(
+                    new THREE.PlaneGeometry(600, 600),
+                    new THREE.MeshStandardMaterial({ map: TEXTURES.cityGround, roughness: 0.85, metalness: 0.15 })
+                );
+                ground.rotation.x = -Math.PI / 2;
+                ground.receiveShadow = true;
+                levelGroup.add(ground);
+
+                const towerMat = new THREE.MeshStandardMaterial({
+                    map: TEXTURES.skyscraper,
+                    roughness: 0.35,
+                    metalness: 0.5
+                });
+                const neonTrimMat = new THREE.MeshBasicMaterial({ color: 0xf43f5e });
+                const cyanTrimMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee });
+
+                // Tactical Cover Skyscrapers & Glowing Pylons
+                const arenaTowers = [
+                    { x: -35, z: -45, w: 12, h: 32, d: 12 },
+                    { x:  35, z: -45, w: 12, h: 32, d: 12 },
+                    { x: -45, z: -105, w: 14, h: 42, d: 14 },
+                    { x:  45, z: -105, w: 14, h: 42, d: 14 },
+                    { x:   0, z: -85, w: 10, h: 24, d: 10 },
+                    { x: -65, z:  15, w: 12, h: 28, d: 12 },
+                    { x:  65, z:  15, w: 12, h: 28, d: 12 },
+                    { x:   0, z: -150, w: 22, h: 48, d: 16 }
+                ];
+
+                arenaTowers.forEach((b, i) => {
+                    addBoxObstacle(b.x, b.h / 2, b.z, b.w, b.h, b.d, towerMat);
+                    const trim = new THREE.Mesh(
+                        new THREE.BoxGeometry(b.w + 0.3, 0.4, b.d + 0.3),
+                        i % 2 === 0 ? neonTrimMat : cyanTrimMat
+                    );
+                    trim.position.set(b.x, b.h - 0.5, b.z);
+                    levelGroup.add(trim);
+                });
+
+                // Elevated Aerial Archways for Dogfight Weaving
+                const archMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, roughness: 0.25 });
+                addBoxObstacle(0, 26, -45, 58, 2.2, 4.0, archMat);
+
+                // Spawn Floating Green Nano-Repair Rings
+                const repairCoords = [
+                    new THREE.Vector3(-22, 10, -25),
+                    new THREE.Vector3(22, 10, -25),
+                    new THREE.Vector3(0, 16, -65),
+                    new THREE.Vector3(-30, 18, -80),
+                    new THREE.Vector3(30, 18, -80)
+                ];
+                repairCoords.forEach(pos => createRepairPickup(pos));
+            }
+
+            // Build Racing Gates for Selected Level
+            cfg.gates.forEach((gCfg, idx) => {
+                const gateGroup = new THREE.Group();
+                gateGroup.position.set(gCfg.x, gCfg.y, gCfg.z);
+                gateGroup.rotation.y = gCfg.rotY;
+
+                const torusMat = new THREE.MeshStandardMaterial({
+                    color: idx === 0 ? 0xf59e0b : 0x38bdf8,
+                    emissive: idx === 0 ? 0xd97706 : 0x0284c7,
+                    emissiveIntensity: 0.9,
+                    roughness: 0.2
+                });
+                const torus = new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.2, 16, 48), torusMat);
+                gateGroup.add(torus);
+
+                const innerRing = new THREE.Mesh(
+                    new THREE.RingGeometry(3.05, 3.25, 36),
+                    new THREE.MeshBasicMaterial({
+                        color: idx === 0 ? 0xfcd34d : 0x7dd3fc,
+                        transparent: true,
+                        opacity: 0.35,
+                        side: THREE.DoubleSide
+                    })
+                );
+                gateGroup.add(innerRing);
+
+                levelGroup.add(gateGroup);
+                gates.push({
+                    mesh: gateGroup,
+                    mat: torusMat,
+                    innerMat: innerRing.material,
+                    position: new THREE.Vector3(gCfg.x, gCfg.y, gCfg.z),
+                    radius: 3.5,
+                    passed: false,
+                    index: idx
+                });
+            });
+
+            // Update Level Button Styling
+            document.querySelectorAll('.lvl-btn').forEach((btn, i) => {
+                if (i === levelIdx) {
+                    btn.className = i === 3
+                        ? 'lvl-btn px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-rose-500/30 text-rose-200 border border-rose-400/50 transition cursor-pointer'
+                        : 'lvl-btn px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-sky-500/30 text-sky-200 border border-sky-400/40 transition cursor-pointer';
+                } else {
+                    btn.className = 'lvl-btn px-2.5 py-1 rounded-xl text-[11px] font-semibold text-slate-400 hover:text-slate-200 transition cursor-pointer';
+                }
+            });
+
+            updateBestTimeDisplay();
+            resetDrone();
+        }
+
+        function buildDroneModel() {
+            droneGroup = new THREE.Group();
+
+            // Carbon fiber main fuselage plate
+            const bodyMat = new THREE.MeshStandardMaterial({
+                map: TEXTURES.carbon,
+                roughness: 0.35,
+                metalness: 0.55
+            });
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.16, 0.86), bodyMat);
+            body.castShadow = true;
+            droneGroup.add(body);
+
+            // Top LiPo Battery Pack
+            const lipo = new THREE.Mesh(
+                new THREE.BoxGeometry(0.32, 0.14, 0.52),
+                new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4 })
+            );
+            lipo.position.set(0, 0.14, 0.05);
+            droneGroup.add(lipo);
+
+            // Front HD FPV Camera Pod
+            const camPod = new THREE.Mesh(
+                new THREE.BoxGeometry(0.24, 0.16, 0.2),
+                new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.25 })
+            );
+            camPod.position.set(0, 0.05, -0.45);
+            droneGroup.add(camPod);
+
+            const lens = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.055, 0.055, 0.06, 16),
+                new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+            );
+            lens.rotation.x = Math.PI / 2;
+            lens.position.set(0, 0.05, -0.55);
+            droneGroup.add(lens);
+
+            // Twin Front Laser Emitter Cannons
+            const cannonMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.85, roughness: 0.2 });
+            const tipMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee });
+            [-0.22, 0.22].forEach(xSide => {
+                const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.032, 0.34, 10), cannonMat);
+                barrel.rotation.x = Math.PI / 2;
+                barrel.position.set(xSide, -0.02, -0.48);
+                droneGroup.add(barrel);
+
+                const tip = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), tipMat);
+                tip.position.set(xSide, -0.02, -0.66);
+                droneGroup.add(tip);
+            });
+
+            // Rear programmable RGB LED bar
+            const rearLed = new THREE.Mesh(
+                new THREE.BoxGeometry(0.36, 0.06, 0.05),
+                new THREE.MeshBasicMaterial({ color: 0xf43f5e })
+            );
+            rearLed.position.set(0, 0.02, 0.45);
+            droneGroup.add(rearLed);
+
+            // 4 Carbon Arms + Brushless Motors + Propellers
+            const armPositions = [
+                { x: -0.52, z: -0.52, front: true },  // M1 Front-Left
+                { x:  0.52, z: -0.52, front: true },  // M2 Front-Right
+                { x: -0.52, z:  0.52, front: false }, // M3 Rear-Left
+                { x:  0.52, z:  0.52, front: false }  // M4 Rear-Right
+            ];
+
+            const motorMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8, roughness: 0.2 });
+
+            armPositions.forEach((pos, index) => {
+                const arm = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.055, 0.82), bodyMat);
+                arm.position.set(pos.x * 0.5, 0, pos.z * 0.5);
+                arm.rotation.y = (pos.x * pos.z > 0) ? -Math.PI / 4 : Math.PI / 4;
+                arm.castShadow = true;
+                droneGroup.add(arm);
+
+                const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.12, 16), motorMat);
+                motor.position.set(pos.x, 0.06, pos.z);
+                droneGroup.add(motor);
+
+                const navLed = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.038, 8, 8),
+                    new THREE.MeshBasicMaterial({ color: pos.front ? 0x10b981 : 0xf43f5e })
+                );
+                navLed.position.set(pos.x, -0.04, pos.z);
+                droneGroup.add(navLed);
+
+                const rotorGroup = new THREE.Group();
+                rotorGroup.position.set(pos.x, 0.14, pos.z);
+
+                const bladeMat = new THREE.MeshBasicMaterial({
+                    color: pos.front ? 0x38bdf8 : 0x94a3b8,
+                    transparent: true,
+                    opacity: 0.85
+                });
+                const blade = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.012, 0.065), bladeMat);
+                rotorGroup.add(blade);
+
+                const disc = new THREE.Mesh(
+                    new THREE.RingGeometry(0.08, 0.34, 24),
+                    new THREE.MeshBasicMaterial({
+                        color: pos.front ? 0x38bdf8 : 0x94a3b8,
+                        transparent: true,
+                        opacity: 0.18,
+                        side: THREE.DoubleSide
+                    })
+                );
+                disc.rotation.x = -Math.PI / 2;
+                rotorGroup.add(disc);
+
+                droneGroup.add(rotorGroup);
+                rotors.push({
+                    mesh: rotorGroup,
+                    dir: (index === 0 || index === 3) ? 1 : -1
+                });
+            });
+
+            // TPU Landing Skids
+            const skidMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6 });
+            [-0.24, 0.24].forEach(xOffset => {
+                const skid = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.72), skidMat);
+                skid.position.set(xOffset, -0.22, 0);
+                droneGroup.add(skid);
+
+                [-0.22, 0.22].forEach(zStrut => {
+                    const strut = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.16, 0.03), skidMat);
+                    strut.position.set(xOffset, -0.14, zStrut);
+                    droneGroup.add(strut);
+                });
+            });
+
+            droneGroup.position.copy(droneState.position);
+            scene.add(droneGroup);
+        }
+
+        // ==========================================
+        // 4B. DOGFIGHT COMBAT ENTITIES (ENEMIES, LASERS & REPAIRS)
+        // ==========================================
+        function clearCombatEntities() {
+            enemyDrones.forEach(e => scene.remove(e.mesh));
+            enemyDrones = [];
+            laserBolts.forEach(b => scene.remove(b.mesh));
+            laserBolts = [];
+            repairPickups.forEach(r => scene.remove(r.mesh));
+            repairPickups = [];
+            lockedEnemy = null;
+        }
+
+        function createRepairPickup(pos) {
+            const group = new THREE.Group();
+            group.position.copy(pos);
+
+            const ring = new THREE.Mesh(
+                new THREE.TorusGeometry(2.1, 0.14, 12, 32),
+                new THREE.MeshBasicMaterial({ color: 0x10b981 })
+            );
+            group.add(ring);
+
+            const core = new THREE.Mesh(
+                new THREE.OctahedronGeometry(0.65, 0),
+                new THREE.MeshBasicMaterial({ color: 0x34d399, wireframe: true })
+            );
+            group.add(core);
+
+            levelGroup.add(group);
+            repairPickups.push({
+                mesh: group,
+                core: core,
+                position: pos.clone(),
+                cooldown: 0
+            });
+        }
+
+        function buildEnemyDroneMesh() {
+            const enemyGroup = new THREE.Group();
+
+            // Hostile Crimson/Charcoal Chassis
+            const hullMat = new THREE.MeshStandardMaterial({ color: 0x1f1218, roughness: 0.35, metalness: 0.65 });
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.2, 0.98), hullMat);
+            enemyGroup.add(body);
+
+            // Glowing Red Visor Core
+            const visor = new THREE.Mesh(
+                new THREE.BoxGeometry(0.36, 0.12, 0.18),
+                new THREE.MeshBasicMaterial({ color: 0xf43f5e })
+            );
+            visor.position.set(0, 0.04, -0.48);
+            enemyGroup.add(visor);
+
+            // Overhead Health Bar Sprite/Mesh
+            const hpBg = new THREE.Mesh(
+                new THREE.PlaneGeometry(1.1, 0.14),
+                new THREE.MeshBasicMaterial({ color: 0x0f172a, side: THREE.DoubleSide })
+            );
+            hpBg.position.set(0, 0.65, 0);
+            enemyGroup.add(hpBg);
+
+            const hpFill = new THREE.Mesh(
+                new THREE.PlaneGeometry(1.04, 0.09),
+                new THREE.MeshBasicMaterial({ color: 0xf43f5e, side: THREE.DoubleSide })
+            );
+            hpFill.position.set(0, 0.65, 0.01);
+            enemyGroup.add(hpFill);
+
+            // 4 Hostile Arms + Spinning Crimson Rotors
+            const enemyRotors = [];
+            const armOffsets = [
+                { x: -0.6, z: -0.6 },
+                { x:  0.6, z: -0.6 },
+                { x: -0.6, z:  0.6 },
+                { x:  0.6, z:  0.6 }
+            ];
+            armOffsets.forEach((pos, i) => {
+                const arm = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.06, 0.9), hullMat);
+                arm.position.set(pos.x * 0.5, 0, pos.z * 0.5);
+                arm.rotation.y = (pos.x * pos.z > 0) ? -Math.PI / 4 : Math.PI / 4;
+                enemyGroup.add(arm);
+
+                const disc = new THREE.Mesh(
+                    new THREE.RingGeometry(0.06, 0.38, 20),
+                    new THREE.MeshBasicMaterial({
+                        color: 0xfb7185,
+                        transparent: true,
+                        opacity: 0.45,
+                        side: THREE.DoubleSide
+                    })
+                );
+                disc.rotation.x = -Math.PI / 2;
+                disc.position.set(pos.x, 0.12, pos.z);
+                enemyGroup.add(disc);
+                enemyRotors.push({ mesh: disc, dir: i % 2 === 0 ? 1 : -1 });
+            });
+
+            return { group: enemyGroup, rotors: enemyRotors, hpFill, hpBg };
+        }
+
+        function spawnEnemyWave(waveNum) {
+            const count = Math.min(6, 3 + waveNum);
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2;
+                const radius = 38 + Math.random() * 28;
+                const spawnPos = new THREE.Vector3(
+                    Math.cos(angle) * radius,
+                    10 + Math.random() * 14,
+                    -55 + Math.sin(angle) * radius
+                );
+
+                const model = buildEnemyDroneMesh();
+                model.group.position.copy(spawnPos);
+                scene.add(model.group);
+
+                enemyDrones.push({
+                    mesh: model.group,
+                    rotors: model.rotors,
+                    hpFill: model.hpFill,
+                    hpBg: model.hpBg,
+                    position: spawnPos,
+                    velocity: new THREE.Vector3(),
+                    hp: 100,
+                    maxHp: 100,
+                    fireTimer: 1.0 + Math.random() * 1.5,
+                    orbitDir: i % 2 === 0 ? 1 : -1,
+                    orbitRadius: 16 + (i % 3) * 6,
+                    preferredAlt: 8 + (i % 4) * 4.5,
+                    hitFlash: 0
+                });
+            }
+        }
+
+        function spawnLaserBolt(origin, direction, isPlayer = true) {
+            const boltLen = 2.6;
+            const geo = new THREE.CylinderGeometry(0.065, 0.065, boltLen, 8);
+            geo.rotateX(Math.PI / 2);
+            const mat = new THREE.MeshBasicMaterial({
+                color: isPlayer ? 0x22d3ee : 0xf43f5e
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.copy(origin);
+            mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, -1), direction.clone().normalize());
+            scene.add(mesh);
+
+            const speed = isPlayer ? 135 : 82;
+            laserBolts.push({
+                mesh,
+                position: origin.clone(),
+                velocity: direction.clone().normalize().multiplyScalar(speed),
+                isPlayer,
+                life: 1.8
+            });
+        }
+
+        function firePlayerLasers() {
+            if (!state.combatMode || state.crashed || state.fireCooldown > 0) return;
+            state.fireCooldown = 0.13; // ~7.7 shots/sec rapid twin cannons
+
+            // Alternate left/right nose cannon barrels
+            const sideOffset = state.cannonToggle === 0 ? -0.22 : 0.22;
+            state.cannonToggle = 1 - state.cannonToggle;
+
+            const muzzleWorld = new THREE.Vector3(sideOffset, -0.02, -0.75)
+                .applyQuaternion(droneState.quaternion)
+                .add(droneState.position);
+
+            // Base forward nose direction
+            let aimDir = new THREE.Vector3(0, 0, -1).applyQuaternion(droneState.quaternion).normalize();
+
+            // Subtle Smart Aim-Assist toward locked enemy within cone
+            if (lockedEnemy) {
+                const dist = muzzleWorld.distanceTo(lockedEnemy.position);
+                const leadPos = lockedEnemy.position.clone().addScaledVector(lockedEnemy.velocity, dist / 135);
+                const toTarget = leadPos.sub(muzzleWorld).normalize();
+                if (aimDir.dot(toTarget) > 0.92) {
+                    aimDir.lerp(toTarget, 0.65).normalize();
+                }
+            }
+
+            spawnLaserBolt(muzzleWorld, aimDir, true);
+            playLaserSound(false);
+            triggerHapticPulse(0.18, 0.12, 45);
+        }
+
+        function spawnExplosion(pos, colorHex = 0xf97316, count = 26) {
+            const mat = new THREE.MeshBasicMaterial({ color: colorHex });
+            for (let i = 0; i < count; i++) {
+                const p = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.14, 0.14), mat);
+                p.position.copy(pos);
+                scene.add(p);
+                crashParticles.push({
+                    mesh: p,
+                    vel: new THREE.Vector3(
+                        (Math.random() - 0.5) * 20,
+                        Math.random() * 14 + 2,
+                        (Math.random() - 0.5) * 20
+                    ),
+                    life: 0.9 + Math.random() * 0.5
+                });
+            }
+        }
+
+        // ==========================================
+        // 5. PS5 DUALSENSE GAMEPAD & BETAFLIGHT RATES
+        // ==========================================
+        function applyDeadzone(value, dz = CONFIG.deadzone) {
+            if (Math.abs(value) < dz) return 0;
+            const sign = Math.sign(value);
+            return sign * ((Math.abs(value) - dz) / (1 - dz));
+        }
+
+        // Betaflight-style exponential curve for fine center precision + snappy full-stick rolls
+        function applyBetaflightCurve(stickInput) {
+            const absVal = Math.abs(stickInput);
+            const expoFactor = (1 - CONFIG.expo) * absVal + CONFIG.expo * Math.pow(absVal, 3);
+            const superFactor = 1 / (1 - absVal * CONFIG.superRate);
+            return Math.sign(stickInput) * expoFactor * CONFIG.rcRate * superFactor * 3.2; // rad/s
+        }
+
+        window.addEventListener('gamepadconnected', (e) => {
+            state.gamepadIndex = e.gamepad.index;
+            state.gamepadName = e.gamepad.id;
+            updateControllerBanner(true, e.gamepad.id);
+            initAudio();
+        });
+
+        window.addEventListener('gamepaddisconnected', (e) => {
+            if (state.gamepadIndex === e.gamepad.index) {
+                state.gamepadIndex = null;
+                state.gamepadName = '';
+                updateControllerBanner(false);
+            }
+        });
+
+        function updateControllerBanner(connected, rawId = '') {
+            const dot = document.getElementById('status-dot');
+            const title = document.getElementById('controller-title');
+            const sub = document.getElementById('controller-sub');
+
+            if (connected) {
+                dot.className = 'w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]';
+                const isDualSense = /054c|dualsense|wireless controller/i.test(rawId);
+                title.textContent = isDualSense ? 'PS5 DualSense Connected' : 'Gamepad Connected';
+                sub.textContent = rawId.length > 42 ? rawId.substring(0, 42) + '...' : rawId;
+            } else {
+                dot.className = 'w-3 h-3 rounded-full bg-amber-400 animate-pulse';
+                title.textContent = 'Waiting for PS5 DualSense...';
+                sub.textContent = 'Press any button on controller or use Keyboard';
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            initAudio();
+            state.keys[e.code] = true;
+            if (e.code === 'KeyC') toggleCameraMode();
+            if (e.code === 'KeyR') resetDrone();
+            if (e.code === 'KeyM') toggleFlightMode();
+            if (e.code === 'KeyL') loadLevel((state.currentLevel + 1) % LEVELS.length);
+            if (e.code === 'KeyV') toggleWind();
+        });
+
+        window.addEventListener('keyup', (e) => {
+            state.keys[e.code] = false;
+        });
+
+        window.addEventListener('mousedown', (e) => {
+            if (e.button === 0 && e.target.tagName === 'CANVAS') {
+                initAudio();
+                state.keys['MouseLeft'] = true;
+            }
+        });
+
+        window.addEventListener('mouseup', (e) => {
+            if (e.button === 0) state.keys['MouseLeft'] = false;
+        });
+
+        function pollInputs() {
+            let throttle = 0, yaw = 0, pitch = 0, roll = 0, fire = false;
+
+            const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+            let gp = state.gamepadIndex !== null ? gamepads[state.gamepadIndex] : null;
+
+            if (!gp) {
+                for (let i = 0; i < gamepads.length; i++) {
+                    if (gamepads[i]) {
+                        gp = gamepads[i];
+                        state.gamepadIndex = gp.index;
+                        updateControllerBanner(true, gp.id);
+                        break;
+                    }
+                }
+            }
+
+            if (gp) {
+                yaw      = applyDeadzone(gp.axes[0] || 0);
+                throttle = applyDeadzone(-(gp.axes[1] || 0));
+                roll     = applyDeadzone(gp.axes[2] || 0);
+                pitch    = applyDeadzone(-(gp.axes[3] || 0));
+
+                // DualSense Standard Mapping:
+                // 0: Cross (X), 1: Circle (O), 2: Square ([]), 3: Triangle (/\), 4: L1, 5: R1, 7: R2
+                const btnCross    = gp.buttons[0]?.pressed || false;
+                const btnCircle   = gp.buttons[1]?.pressed || false;
+                const btnSquare   = gp.buttons[2]?.pressed || false;
+                const btnTriangle = gp.buttons[3]?.pressed || false;
+                const btnL1       = gp.buttons[4]?.pressed || false;
+                const btnR1       = gp.buttons[5]?.pressed || false;
+                const btnR2       = (gp.buttons[7]?.pressed || (gp.buttons[7]?.value || 0) > 0.25);
+
+                if (btnR2) fire = true;
+                if (btnCross && !state.prevButtons.cross) resetDrone();
+                if (btnCircle && !state.prevButtons.circle) toggleWind();
+                if (btnSquare && !state.prevButtons.square) loadLevel((state.currentLevel + 1) % LEVELS.length);
+                if (btnTriangle && !state.prevButtons.triangle) toggleFlightMode();
+                if ((btnR1 && !state.prevButtons.r1) || (btnL1 && !state.prevButtons.l1)) {
+                    toggleCameraMode();
+                }
+
+                state.prevButtons = {
+                    cross: btnCross, circle: btnCircle, square: btnSquare,
+                    triangle: btnTriangle, r1: btnR1, l1: btnL1
+                };
+            }
+
+            if (state.keys['KeyW']) throttle = 1;
+            if (state.keys['KeyS']) throttle = -1;
+            if (state.keys['KeyA']) yaw = -1;
+            if (state.keys['KeyD']) yaw = 1;
+            if (state.keys['ArrowUp'])    pitch = 1;
+            if (state.keys['ArrowDown'])  pitch = -1;
+            if (state.keys['ArrowLeft'])  roll = -1;
+            if (state.keys['ArrowRight']) roll = 1;
+            if (state.keys['Space'] || state.keys['MouseLeft']) fire = true;
+
+            // Blend Mobile Gyroscope Tilt (Pitch/Roll) & Touch Stick (Throttle/Yaw)
+            if (state.gyroEnabled) {
+                if (Math.abs(state.gyroPitch) > 0.01) pitch = state.gyroPitch;
+                if (Math.abs(state.gyroRoll) > 0.01) roll = state.gyroRoll;
+            }
+            if (Math.abs(state.touchThrottle) > 0.01) throttle = state.touchThrottle;
+            if (Math.abs(state.touchYaw) > 0.01) yaw = state.touchYaw;
+            if (!state.gyroEnabled) {
+                if (Math.abs(state.touchPitch) > 0.01) pitch = state.touchPitch;
+                if (Math.abs(state.touchRoll) > 0.01) roll = state.touchRoll;
+            }
+
+            state.inputs = { throttle, yaw, pitch, roll, fire };
+        }
+
+        // ==========================================
+        // 5B. MOBILE GYROSCOPE, FULLSCREEN & TOUCH THUMBSTICKS
+        // ==========================================
+        // Prevent iOS Safari two-finger pinch-zoom & gesture zoom
+        ['gesturestart', 'gesturechange', 'gestureend'].forEach(evtName => {
+            document.addEventListener(evtName, (e) => e.preventDefault(), { passive: false });
+        });
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+
+        async function requestScreenWakeLock() {
+            try {
+                if ('wakeLock' in navigator && !state.wakeLock) {
+                    state.wakeLock = await navigator.wakeLock.request('screen');
+                    state.wakeLock.addEventListener('release', () => { state.wakeLock = null; });
+                }
+            } catch (e) {}
+        }
+
+        async function toggleFullScreen() {
+            initAudio();
+            requestScreenWakeLock();
+            const btn = document.getElementById('btn-fullscreen');
+            const docEl = document.documentElement;
+            try {
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    if (docEl.requestFullscreen) {
+                        await docEl.requestFullscreen();
+                    } else if (docEl.webkitRequestFullscreen) {
+                        await docEl.webkitRequestFullscreen();
+                    }
+                    btn.textContent = 'Exit Full';
+                } else {
+                    if (document.exitFullscreen) {
+                        await document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        await document.webkitExitFullscreen();
+                    }
+                    btn.textContent = 'Full Screen';
+                }
+            } catch (e) {
+                btn.textContent = 'Fullscreen N/A';
+                setTimeout(() => { btn.textContent = 'Full Screen'; }, 1600);
+            }
+        }
+
+        function handleDeviceOrientation(event) {
+            if (!state.gyroEnabled || event.beta === null || event.gamma === null) return;
+
+            // Account for screen orientation (Portrait vs Landscape Left/Right)
+            const screenAngle = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+            let tiltFB = event.beta;   // Front-back tilt (-180..180)
+            let tiltLR = event.gamma;  // Left-right tilt (-90..90)
+
+            if (screenAngle === 90) {
+                const temp = tiltFB;
+                tiltFB = -tiltLR;
+                tiltLR = temp;
+            } else if (screenAngle === -90 || screenAngle === 270) {
+                const temp = tiltFB;
+                tiltFB = tiltLR;
+                tiltLR = -temp;
+            }
+
+            state.gyroRawBeta = tiltFB;
+            state.gyroRawGamma = tiltLR;
+
+            // Automatically capture resting phone holding angle on first reading
+            if (!state.gyroCalibrated) {
+                state.gyroZeroBeta = tiltFB;
+                state.gyroZeroGamma = tiltLR;
+                state.gyroCalibrated = true;
+            }
+
+            const maxTiltDeg = 28; // 28 degrees of phone tilt = 100% stick deflection
+            const deltaPitch = (tiltFB - state.gyroZeroBeta) / maxTiltDeg;
+            const deltaRoll  = (tiltLR - state.gyroZeroGamma) / maxTiltDeg;
+
+            // Tilting top of phone forward (away from you) pitches drone forward (+pitch)
+            state.gyroPitch = THREE.MathUtils.clamp(-applyDeadzone(deltaPitch, 0.07), -1, 1);
+            state.gyroRoll  = THREE.MathUtils.clamp(applyDeadzone(deltaRoll, 0.07), -1, 1);
+
+            // Mirror live gyro tilt onto the right mobile pad knob as a visual artificial horizon
+            const rightKnob = document.getElementById('touch-right-knob');
+            if (rightKnob) {
+                rightKnob.style.transform = `translate(${state.gyroRoll * 40}px, ${-state.gyroPitch * 40}px)`;
+            }
+        }
+
+        function calibrateGyro() {
+            state.gyroZeroBeta = state.gyroRawBeta;
+            state.gyroZeroGamma = state.gyroRawGamma;
+            state.gyroCalibrated = true;
+            state.gyroPitch = 0;
+            state.gyroRoll = 0;
+            const rightKnob = document.getElementById('touch-right-knob');
+            if (rightKnob) rightKnob.style.transform = 'translate(0px, 0px)';
+        }
+
+        async function toggleGyroscope() {
+            initAudio();
+            requestScreenWakeLock();
+            if (state.gyroEnabled) {
+                state.gyroEnabled = false;
+                state.gyroPitch = 0;
+                state.gyroRoll = 0;
+                window.removeEventListener('deviceorientation', handleDeviceOrientation);
+                updateGyroUI();
+                return;
+            }
+
+            // iOS 13+ requires explicit user-gesture permission request
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const perm = await DeviceOrientationEvent.requestPermission();
+                    if (perm !== 'granted') {
+                        document.getElementById('controller-sub').textContent = 'Motion sensor permission denied on device';
+                        return;
+                    }
+                } catch (err) {
+                    document.getElementById('controller-sub').textContent = 'Gyro requires HTTPS on mobile browsers';
+                    return;
+                }
+            }
+
+            state.gyroEnabled = true;
+            state.gyroCalibrated = false;
+            window.addEventListener('deviceorientation', handleDeviceOrientation);
+            updateGyroUI();
+        }
+
+        function updateGyroUI() {
+            const btn = document.getElementById('btn-gyro');
+            const calBtn = document.getElementById('mob-gyro-cal');
+            const rightLabel = document.getElementById('touch-right-label');
+            const rightKnob = document.getElementById('touch-right-knob');
+            if (state.gyroEnabled) {
+                btn.textContent = 'Gyro: ON';
+                btn.className = 'px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-emerald-500/35 text-emerald-200 border border-emerald-400/60 transition cursor-pointer';
+                calBtn.classList.remove('hidden');
+                if (rightLabel) rightLabel.textContent = 'Gyro Horizon';
+                if (state.gamepadIndex === null) {
+                    document.getElementById('status-dot').className = 'w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]';
+                    document.getElementById('controller-title').textContent = 'Mobile Gyroscope Active';
+                    document.getElementById('controller-sub').textContent = 'Tilt phone to Pitch/Roll • Left pad for Lift/Yaw';
+                }
+            } else {
+                btn.textContent = 'Gyro: OFF';
+                btn.className = 'px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/35 hover:bg-emerald-500/30 transition cursor-pointer';
+                calBtn.classList.add('hidden');
+                if (rightLabel) rightLabel.textContent = 'Pitch / Roll';
+                if (rightKnob) rightKnob.style.transform = 'translate(0px, 0px)';
+                if (state.gamepadIndex === null) {
+                    updateControllerBanner(false);
+                }
+            }
+        }
+
+        function bindVirtualStick(padId, knobId, onMoveCallback, isDisabledFn = null) {
+            const pad = document.getElementById(padId);
+            const knob = document.getElementById(knobId);
+            if (!pad || !knob) return;
+
+            let activeTouchId = null;
+
+            const updateStickFromTouch = (touch) => {
+                if (isDisabledFn && isDisabledFn()) return;
+                const rect = pad.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const maxRadius = rect.width * 0.36;
+
+                let dx = touch.clientX - centerX;
+                let dy = touch.clientY - centerY;
+                const dist = Math.hypot(dx, dy);
+                if (dist > maxRadius) {
+                    dx = (dx / dist) * maxRadius;
+                    dy = (dy / dist) * maxRadius;
+                }
+
+                knob.style.transform = `translate(${dx}px, ${dy}px)`;
+                onMoveCallback(
+                    applyDeadzone(dx / maxRadius, 0.08),
+                    applyDeadzone(-dy / maxRadius, 0.08)
+                );
+            };
+
+            const resetTouchStick = () => {
+                activeTouchId = null;
+                if (!isDisabledFn || !isDisabledFn()) {
+                    knob.style.transform = 'translate(0px, 0px)';
+                }
+                onMoveCallback(0, 0);
+            };
+
+            pad.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                initAudio();
+                requestScreenWakeLock();
+                if (activeTouchId === null && e.changedTouches.length > 0) {
+                    const t = e.changedTouches[0];
+                    activeTouchId = t.identifier;
+                    updateStickFromTouch(t);
+                }
+            }, { passive: false });
+
+            pad.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                for (let i = 0; i < e.changedTouches.length; i++) {
+                    if (e.changedTouches[i].identifier === activeTouchId) {
+                        updateStickFromTouch(e.changedTouches[i]);
+                        break;
+                    }
+                }
+            }, { passive: false });
+
+            pad.addEventListener('touchend', (e) => {
+                for (let i = 0; i < e.changedTouches.length; i++) {
+                    if (e.changedTouches[i].identifier === activeTouchId) {
+                        resetTouchStick();
+                        break;
+                    }
+                }
+            });
+            pad.addEventListener('touchcancel', resetTouchStick);
+        }
+
+        function setupTouchPads() {
+            // Left Pad: Yaw (X) & Throttle/Lift (Y)
+            bindVirtualStick('touch-left-pad', 'touch-left-knob', (x, y) => {
+                state.touchYaw = x;
+                state.touchThrottle = y;
+            });
+            // Right Pad: Roll (X) & Pitch (Y) when Gyro is OFF
+            bindVirtualStick('touch-right-pad', 'touch-right-knob', (x, y) => {
+                state.touchRoll = x;
+                state.touchPitch = y;
+            }, () => state.gyroEnabled);
+        }
+
+        // ==========================================
+        // 6. REALISTIC QUADCOPTER PHYSICS & COLLISIONS
+        // ==========================================
+        function updatePhysics(dt, elapsed) {
+            if (state.crashed) {
+                updateCrashParticles(dt);
+                return;
+            }
+
+            const { throttle, yaw, pitch, roll, fire } = state.inputs;
+            if (state.fireCooldown > 0) state.fireCooldown -= dt;
+            if (fire && state.combatMode) firePlayerLasers();
+
+            // Start lap timer on first takeoff throttle input
+            if (!state.lapRunning && throttle > 0.15) {
+                state.lapRunning = true;
+                state.lapStartTime = performance.now();
+            }
+
+            const isAngle = state.flightMode === 'angle';
+            const isHyper = state.flightMode === 'hyper';
+
+            // 1. Rotational Dynamics (Angle Assist vs 3D Acro vs Hyper-Real Unassisted)
+            const euler = new THREE.Euler().setFromQuaternion(droneState.quaternion, 'YXZ');
+
+            if (isAngle) {
+                // Self-leveling Angle Mode + Smooth Yaw Rate
+                const targetPitch = -pitch * CONFIG.maxAngleTilt;
+                const targetRoll  = -roll * CONFIG.maxAngleTilt;
+                const targetYawRate = -yaw * 2.6;
+
+                euler.y += targetYawRate * dt;
+                euler.x += (targetPitch - euler.x) * Math.min(1, 10.5 * dt);
+                euler.z += (targetRoll - euler.z) * Math.min(1, 10.5 * dt);
+                droneState.quaternion.setFromEuler(euler);
+                droneState.angularVelocity.set(0, targetYawRate, 0);
+            } else {
+                // Full 3D Acro / Hyper-Real Mode with Betaflight Exponential Rates & Rotational Inertia
+                const rateMult = isHyper ? 1.28 : 1.0; // Faster snap flips/rolls in Hyper-Real mode
+                const desiredPitchRate = applyBetaflightCurve(-pitch) * rateMult;
+                const desiredYawRate   = applyBetaflightCurve(-yaw) * 0.9 * rateMult;
+                const desiredRollRate  = applyBetaflightCurve(-roll) * rateMult;
+
+                // Hyper-Real mode adds motor-health asymmetry torque + propwash wobble when descending fast through dirty air
+                const motorImbalanceRoll = isHyper ? (state.motorHealth[0] + state.motorHealth[2] - state.motorHealth[1] - state.motorHealth[3]) * 1.4 : 0;
+                const motorImbalancePitch = isHyper ? (state.motorHealth[0] + state.motorHealth[1] - state.motorHealth[2] - state.motorHealth[3]) * 1.4 : 0;
+
+                const descentSpeed = Math.max(0, -droneState.velocity.y);
+                const propwashWobble = isHyper && descentSpeed > 3.5
+                    ? Math.sin(elapsed * 28) * Math.min(1.6, (descentSpeed - 3.5) * 0.22)
+                    : 0;
+
+                const rateResponse = Math.min(1, (isHyper ? 13.5 : 16.0) * dt);
+                droneState.angularVelocity.x += (desiredPitchRate + motorImbalancePitch + propwashWobble - droneState.angularVelocity.x) * rateResponse;
+                droneState.angularVelocity.y += (desiredYawRate - droneState.angularVelocity.y) * rateResponse;
+                droneState.angularVelocity.z += (desiredRollRate + motorImbalanceRoll - propwashWobble * 0.8 - droneState.angularVelocity.z) * rateResponse;
+
+                // Apply local body angular velocity step via quaternion multiplication
+                const deltaRot = new THREE.Quaternion().setFromEuler(
+                    new THREE.Euler(
+                        droneState.angularVelocity.x * dt,
+                        droneState.angularVelocity.y * dt,
+                        droneState.angularVelocity.z * dt,
+                        'YXZ'
+                    )
+                );
+                droneState.quaternion.multiply(deltaRot).normalize();
+            }
+
+            // 2. Reversible 3D Motor Thrust & Spool-Up Inertia
+            // Pulling throttle down (throttle < 0) reverses blade pitch / motor spin to generate active down-thrust
+            // for rapid dives and inverted upside-down hover stunts!
+            let collectiveCommand = 0;
+            if (isAngle) {
+                const droneUp = new THREE.Vector3(0, 1, 0).applyQuaternion(droneState.quaternion);
+                const tiltComp = Math.max(0.65, droneUp.y);
+                const hoverThrustNorm = (CONFIG.gravity / CONFIG.maxThrustAccel) / tiltComp;
+                const baseIdleLift = hoverThrustNorm * 0.78;
+
+                if (throttle >= 0) {
+                    collectiveCommand = THREE.MathUtils.clamp(baseIdleLift + throttle * (1.0 - baseIdleLift), -1, 1);
+                } else {
+                    // Pulling down generates up to -0.85 active down-thrust on top of gravity
+                    collectiveCommand = THREE.MathUtils.clamp(baseIdleLift + throttle * (baseIdleLift + 0.85), -0.85, 1);
+                }
+            } else {
+                // Full 3D Bidirectional Stick (-1.0 full inverted down-thrust .. 0 zero-G .. +1.0 full up-thrust)
+                collectiveCommand = THREE.MathUtils.clamp(throttle, -1, 1);
+            }
+
+            // Battery voltage sag reduces peak motor authority as pack discharges (more pronounced in Hyper-Real)
+            const voltFactor = Math.pow(state.batteryVoltage / 16.8, isHyper ? 1.35 : 1.0);
+            const mixAuthority = isHyper ? 0.16 : 0.12;
+            const motorMix = [
+                collectiveCommand + pitch * mixAuthority + roll * mixAuthority - yaw * 0.08, // M1 FL
+                collectiveCommand + pitch * mixAuthority - roll * mixAuthority + yaw * 0.08, // M2 FR
+                collectiveCommand - pitch * mixAuthority + roll * mixAuthority + yaw * 0.08, // M3 RL
+                collectiveCommand - pitch * mixAuthority - roll * mixAuthority - yaw * 0.08  // M4 RR
+            ];
+
+            let netMotorThrust = 0;
+            let absMotorLoad = 0;
+            const spoolRate = isHyper ? 14.5 : CONFIG.motorSpoolRate;
+            for (let i = 0; i < 4; i++) {
+                const health = isHyper ? state.motorHealth[i] : 1.0;
+                const targetM = THREE.MathUtils.clamp(motorMix[i], -1, 1) * health;
+                droneState.motorThrottle[i] += (targetM - droneState.motorThrottle[i]) * Math.min(1, spoolRate * dt);
+                netMotorThrust += droneState.motorThrottle[i];
+                absMotorLoad += Math.abs(droneState.motorThrottle[i]);
+            }
+            netMotorThrust /= 4;
+            absMotorLoad /= 4;
+
+            // Discharge LiPo under load (faster drain in Hyper-Real mode)
+            if (droneState.position.y > CONFIG.groundHeight + 0.1) {
+                const drainRate = isHyper ? 0.011 : 0.0045;
+                state.batteryVoltage = Math.max(13.6, state.batteryVoltage - absMotorLoad * drainRate * dt);
+            }
+
+            // 3. True 3D Thrust Vectoring along Drone's Local Up Axis (supports negative inverted thrust!)
+            const localUp = new THREE.Vector3(0, 1, 0).applyQuaternion(droneState.quaternion);
+
+            // Ground effect air cushion when flying close to ground with positive lift
+            const heightAboveGround = Math.max(0, droneState.position.y - CONFIG.groundHeight);
+            const groundEffectMult = (heightAboveGround < CONFIG.groundEffectHeight && netMotorThrust > 0)
+                ? 1 + 0.16 * Math.pow(1 - heightAboveGround / CONFIG.groundEffectHeight, 2)
+                : 1.0;
+
+            const thrustMagnitude = netMotorThrust * CONFIG.maxThrustAccel * voltFactor * groundEffectMult;
+            const thrustForce = localUp.clone().multiplyScalar(thrustMagnitude);
+
+            // Gravity force
+            const gravityForce = new THREE.Vector3(0, -CONFIG.gravity, 0);
+
+            // Dynamic Wind Gusts (stronger & more turbulent in Hyper-Real mode)
+            if (state.windEnabled) {
+                windState.gustPhase += dt * (isHyper ? 2.1 : 1.4);
+                const gustMult = (isHyper ? 1.35 : 1.0) * (0.75 + 0.45 * Math.sin(windState.gustPhase) + 0.25 * Math.cos(windState.gustPhase * 2.3));
+                windState.currentVector.copy(windState.baseVector).multiplyScalar(gustMult);
+            } else {
+                windState.currentVector.set(0, 0, 0);
+            }
+
+            // Relative air velocity (drone velocity minus wind)
+            const airVel = droneState.velocity.clone().sub(windState.currentVector);
+            const airSpeed = airVel.length();
+
+            // Quadratic + Linear Aerodynamic Drag: F_drag = -(c1 + c2 * |v|) * v
+            const dragAccel = airVel.clone().multiplyScalar(-(CONFIG.linearDrag + CONFIG.quadraticDrag * airSpeed));
+
+            // Sum accelerations & integrate velocity
+            const totalAccel = new THREE.Vector3()
+                .add(thrustForce)
+                .add(gravityForce)
+                .add(dragAccel);
+
+            droneState.velocity.addScaledVector(totalAccel, dt);
+
+            // Light aerodynamic vertical damping only in Angle mode when climbing (never damps downward dives)
+            if (isAngle && heightAboveGround > 0.05 && droneState.velocity.y > 0) {
+                droneState.velocity.y *= Math.exp(-0.45 * dt);
+            }
+
+            // Integrate position
+            droneState.position.addScaledVector(droneState.velocity, dt);
+
+            // 4. Ground & Obstacle Collision Detection
+            if (droneState.position.y <= CONFIG.groundHeight) {
+                const impactSpeed = Math.abs(droneState.velocity.y);
+                const crashLimit = isHyper ? 11.5 : CONFIG.crashSpeedThreshold;
+                const invertedHit = isHyper && localUp.y < 0.25 && impactSpeed > 3.0;
+                if (impactSpeed > crashLimit || invertedHit) {
+                    document.getElementById('crash-title').textContent = invertedHit ? 'Inverted Prop Strike!' : 'Hard Frame Impact!';
+                    triggerCrash();
+                    return;
+                }
+                droneState.position.y = CONFIG.groundHeight;
+                if (droneState.velocity.y < 0) droneState.velocity.y = 0;
+
+                // Skid friction when on ground
+                droneState.velocity.x *= Math.exp(-8.5 * dt);
+                droneState.velocity.z *= Math.exp(-8.5 * dt);
+
+                // Auto-level skids on ground only in Angle Assist mode
+                if (isAngle) {
+                    const gEuler = new THREE.Euler().setFromQuaternion(droneState.quaternion, 'YXZ');
+                    gEuler.x *= 0.85;
+                    gEuler.z *= 0.85;
+                    droneState.quaternion.setFromEuler(gEuler);
+                }
+            }
+
+            // World boundaries
+            droneState.position.x = THREE.MathUtils.clamp(droneState.position.x, -260, 260);
+            droneState.position.z = THREE.MathUtils.clamp(droneState.position.z, -260, 260);
+            droneState.position.y = Math.min(droneState.position.y, 145);
+
+            // Check AABB obstacle collisions
+            checkObstacleCollisions();
+
+            // Update 3D Drone Mesh & Spinning Propellers (reverses spin direction when applying down-thrust!)
+            droneGroup.position.copy(droneState.position);
+            droneGroup.quaternion.copy(droneState.quaternion);
+
+            droneState.avgRotorSpeed = 8 + absMotorLoad * 36;
+            rotors.forEach((r, idx) => {
+                const mThr = droneState.motorThrottle[idx];
+                const spinDir = mThr < -0.05 ? -r.dir : r.dir;
+                const mSpd = 6 + Math.abs(mThr) * 38;
+                r.mesh.rotation.y += spinDir * mSpd * dt;
+            });
+
+            checkGateCollisions();
+            if (state.combatMode) {
+                updateDogfightCombat(dt, elapsed);
+            }
+            updateCrashParticles(dt);
+        }
+
+        function updateDogfightCombat(dt, elapsed) {
+            // 1. Update Repair Pickups
+            for (const pickup of repairPickups) {
+                pickup.core.rotation.y += 2.2 * dt;
+                pickup.core.rotation.x += 1.4 * dt;
+                if (pickup.cooldown > 0) {
+                    pickup.cooldown -= dt;
+                    pickup.mesh.visible = pickup.cooldown <= 0;
+                    continue;
+                }
+                if (droneState.position.distanceTo(pickup.position) < 2.6 && state.playerHull < state.maxHull) {
+                    state.playerHull = Math.min(state.maxHull, state.playerHull + 35);
+                    pickup.cooldown = 12.0;
+                    pickup.mesh.visible = false;
+                    playGateChime(false);
+                    triggerGateFlash();
+                    triggerHapticPulse(0.4, 0.3, 120);
+                }
+            }
+
+            // 2. Spawn Next Wave if All Enemy Drones Destroyed
+            if (enemyDrones.length === 0) {
+                state.wave++;
+                document.getElementById('hud-wave').textContent = state.wave;
+                spawnEnemyWave(state.wave);
+            }
+
+            // 3. Update AI Enemy Interceptor Drones
+            const playerForward = new THREE.Vector3(0, 0, -1).applyQuaternion(droneState.quaternion).normalize();
+            let bestLockCandidate = null;
+            let bestLockDot = 0.84; // ~32 degree forward lock cone
+
+            for (let i = enemyDrones.length - 1; i >= 0; i--) {
+                const enemy = enemyDrones[i];
+
+                // Spin enemy rotors & orient overhead health bar toward camera
+                enemy.rotors.forEach(r => r.mesh.rotation.y += r.dir * 32 * dt);
+                enemy.hpBg.lookAt(camera.position);
+                enemy.hpFill.lookAt(camera.position);
+
+                // AI 3D Steering: Pursue & orbit around player while avoiding ground/obstacles
+                const toPlayer = droneState.position.clone().sub(enemy.position);
+                const distToPlayer = toPlayer.length();
+                const dirToPlayer = toPlayer.clone().normalize();
+
+                // Tangential strafe/orbit vector
+                const strafeDir = new THREE.Vector3(-dirToPlayer.z, 0, dirToPlayer.x).multiplyScalar(enemy.orbitDir);
+                const radialWeight = distToPlayer > enemy.orbitRadius + 6 ? 0.85 : (distToPlayer < enemy.orbitRadius - 5 ? -0.65 : 0.15);
+
+                const desiredVel = new THREE.Vector3()
+                    .addScaledVector(dirToPlayer, radialWeight * 14.5)
+                    .addScaledVector(strafeDir, 10.5);
+
+                // Maintain tactical altitude band
+                const targetY = Math.max(enemy.preferredAlt, droneState.position.y + 1.5);
+                desiredVel.y = (targetY - enemy.position.y) * 1.8;
+
+                // Repel from arena towers
+                for (const box of colliders) {
+                    const cx = (box.minX + box.maxX) * 0.5;
+                    const cz = (box.minZ + box.maxZ) * 0.5;
+                    const dx = enemy.position.x - cx;
+                    const dz = enemy.position.z - cz;
+                    const horizDist = Math.hypot(dx, dz);
+                    if (horizDist < 14 && enemy.position.y < box.maxY + 4) {
+                        desiredVel.x += (dx / Math.max(1, horizDist)) * 18;
+                        desiredVel.z += (dz / Math.max(1, horizDist)) * 18;
+                    }
+                }
+
+                enemy.velocity.lerp(desiredVel, Math.min(1, 2.4 * dt));
+                enemy.position.addScaledVector(enemy.velocity, dt);
+                enemy.position.y = Math.max(2.5, Math.min(75, enemy.position.y));
+                enemy.mesh.position.copy(enemy.position);
+
+                // Bank & Face toward player
+                const lookTarget = droneState.position.clone();
+                enemy.mesh.lookAt(lookTarget);
+                enemy.mesh.rotateZ(-enemy.orbitDir * 0.28);
+
+                // Check if inside player's forward lock-on cone
+                const toEnemyDir = enemy.position.clone().sub(droneState.position).normalize();
+                const dot = playerForward.dot(toEnemyDir);
+                if (dot > bestLockDot && distToPlayer < 140) {
+                    bestLockDot = dot;
+                    bestLockCandidate = enemy;
+                }
+
+                // Enemy Laser Firing AI
+                enemy.fireTimer -= dt;
+                if (enemy.fireTimer <= 0 && distToPlayer < 95) {
+                    enemy.fireTimer = Math.max(0.75, 2.1 - state.wave * 0.12) + Math.random() * 0.8;
+                    // Slight lead + inaccuracy so skilled flying dodges enemy shots
+                    const aimPoint = droneState.position.clone()
+                        .addScaledVector(droneState.velocity, (distToPlayer / 82) * 0.65)
+                        .add(new THREE.Vector3((Math.random() - 0.5) * 2.4, (Math.random() - 0.5) * 1.6, (Math.random() - 0.5) * 2.4));
+                    const shotDir = aimPoint.sub(enemy.position).normalize();
+                    const muzzlePos = enemy.position.clone().addScaledVector(shotDir, 0.9);
+                    spawnLaserBolt(muzzlePos, shotDir, false);
+                    playLaserSound(true);
+                }
+            }
+
+            lockedEnemy = bestLockCandidate;
+
+            // 4. Update Laser Bolts & Hit Detection
+            for (let i = laserBolts.length - 1; i >= 0; i--) {
+                const bolt = laserBolts[i];
+                bolt.position.addScaledVector(bolt.velocity, dt);
+                bolt.mesh.position.copy(bolt.position);
+                bolt.life -= dt;
+
+                let removeBolt = bolt.life <= 0 || bolt.position.y <= 0.1;
+
+                // Check obstacle collisions
+                if (!removeBolt) {
+                    for (const box of colliders) {
+                        if (
+                            bolt.position.x > box.minX && bolt.position.x < box.maxX &&
+                            bolt.position.y > box.minY && bolt.position.y < box.maxY &&
+                            bolt.position.z > box.minZ && bolt.position.z < box.maxZ
+                        ) {
+                            spawnExplosion(bolt.position, bolt.isPlayer ? 0x22d3ee : 0xf43f5e, 5);
+                            removeBolt = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Player Laser -> Enemy Drone Hit
+                if (!removeBolt && bolt.isPlayer) {
+                    for (let eIdx = enemyDrones.length - 1; eIdx >= 0; eIdx--) {
+                        const enemy = enemyDrones[eIdx];
+                        if (bolt.position.distanceTo(enemy.position) < 1.35) {
+                            enemy.hp -= 25;
+                            removeBolt = true;
+                            spawnExplosion(bolt.position, 0x38bdf8, 8);
+                            showHitMarker();
+                            triggerHapticPulse(0.35, 0.25, 60);
+
+                            const hpRatio = Math.max(0, enemy.hp / enemy.maxHp);
+                            enemy.hpFill.scale.x = Math.max(0.01, hpRatio);
+
+                            if (enemy.hp <= 0) {
+                                // Enemy Drone Destroyed!
+                                spawnExplosion(enemy.position, 0xf97316, 32);
+                                scene.remove(enemy.mesh);
+                                enemyDrones.splice(eIdx, 1);
+                                state.kills++;
+                                document.getElementById('hud-kills').textContent = state.kills;
+                                playHitMarkerSound(true);
+                                triggerHapticPulse(0.8, 0.7, 180);
+                            } else {
+                                playHitMarkerSound(false);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                // Enemy Laser -> Player Drone Hit
+                if (!removeBolt && !bolt.isPlayer) {
+                    if (bolt.position.distanceTo(droneState.position) < 0.95) {
+                        removeBolt = true;
+                        state.playerHull = Math.max(0, state.playerHull - 12);
+                        spawnExplosion(bolt.position, 0xf43f5e, 10);
+                        playCrashSound();
+                        triggerHapticPulse(0.75, 0.65, 140);
+
+                        const overlay = document.getElementById('flash-overlay');
+                        overlay.classList.remove('gate-flash', 'crash-flash');
+                        void overlay.offsetWidth;
+                        overlay.classList.add('crash-flash');
+
+                        if (state.playerHull <= 0) {
+                            document.getElementById('crash-title').textContent = 'Hull Destroyed!';
+                            triggerCrash();
+                        }
+                    }
+                }
+
+                if (removeBolt) {
+                    scene.remove(bolt.mesh);
+                    laserBolts.splice(i, 1);
+                }
+            }
+        }
+
+        let hitMarkerTimeout = null;
+        function showHitMarker() {
+            const hm = document.getElementById('hit-marker');
+            hm.classList.remove('hidden');
+            clearTimeout(hitMarkerTimeout);
+            hitMarkerTimeout = setTimeout(() => hm.classList.add('hidden'), 110);
+        }
+
+        function checkObstacleCollisions() {
+            const r = 0.42; // Drone bounding radius
+            const p = droneState.position;
+            const speed = droneState.velocity.length();
+            const isHyper = state.flightMode === 'hyper';
+
+            for (const box of colliders) {
+                if (
+                    p.x + r > box.minX && p.x - r < box.maxX &&
+                    p.y + 0.18 > box.minY && p.y - 0.22 < box.maxY &&
+                    p.z + r > box.minZ && p.z - r < box.maxZ
+                ) {
+                    const fatalSpeed = isHyper ? 6.5 : 9.5;
+                    if (speed > fatalSpeed) {
+                        document.getElementById('crash-title').textContent = isHyper ? 'Carbon Frame Shattered!' : 'Impact Detected!';
+                        triggerCrash();
+                        return;
+                    } else {
+                        // In Hyper-Real mode, clipping a wall bends a random prop/motor!
+                        if (isHyper && speed > 2.2) {
+                            const dmgIdx = Math.floor(Math.random() * 4);
+                            state.motorHealth[dmgIdx] = Math.max(0.45, state.motorHealth[dmgIdx] - 0.22);
+                            triggerHapticPulse(0.7, 0.6, 110);
+                            playCrashSound();
+                        }
+                        droneState.velocity.multiplyScalar(-0.45);
+                        p.addScaledVector(droneState.velocity, 0.05);
+                    }
+                }
+            }
+        }
+
+        function triggerCrash() {
+            if (state.crashed) return;
+            state.crashed = true;
+            playCrashSound();
+
+            const overlay = document.getElementById('flash-overlay');
+            overlay.classList.remove('gate-flash', 'crash-flash');
+            void overlay.offsetWidth;
+            overlay.classList.add('crash-flash');
+
+            document.getElementById('crash-banner').classList.remove('hidden');
+
+            // Spawn spark/debris particles
+            const sparkMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
+            for (let i = 0; i < 24; i++) {
+                const spark = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.08), sparkMat);
+                spark.position.copy(droneState.position);
+                scene.add(spark);
+                crashParticles.push({
+                    mesh: spark,
+                    vel: new THREE.Vector3(
+                        (Math.random() - 0.5) * 14,
+                        Math.random() * 10 + 2,
+                        (Math.random() - 0.5) * 14
+                    ),
+                    life: 1.2
+                });
+            }
+
+            setTimeout(() => {
+                if (state.crashed) resetDrone();
+            }, 1600);
+        }
+
+        function updateCrashParticles(dt) {
+            for (let i = crashParticles.length - 1; i >= 0; i--) {
+                const pt = crashParticles[i];
+                pt.vel.y -= CONFIG.gravity * dt;
+                pt.mesh.position.addScaledVector(pt.vel, dt);
+                pt.life -= dt;
+                if (pt.life <= 0) {
+                    scene.remove(pt.mesh);
+                    crashParticles.splice(i, 1);
+                }
+            }
+        }
+
+        function checkGateCollisions() {
+            for (const gate of gates) {
+                if (gate.passed) continue;
+
+                const dist = droneState.position.distanceTo(gate.position);
+                if (dist < gate.radius) {
+                    gate.passed = true;
+                    state.gatesPassed++;
+
+                    gate.mat.color.setHex(0x10b981);
+                    gate.mat.emissive.setHex(0x059669);
+                    gate.innerMat.color.setHex(0x34d399);
+
+                    // Highlight next unpassed gate in warm amber
+                    const nextGate = gates.find(g => !g.passed);
+                    if (nextGate) {
+                        nextGate.mat.color.setHex(0xf59e0b);
+                        nextGate.mat.emissive.setHex(0xd97706);
+                        nextGate.innerMat.color.setHex(0xfcd34d);
+                    }
+
+                    triggerGateFlash();
+                    const allCleared = state.gatesPassed === state.totalGates;
+                    playGateChime(allCleared);
+
+                    document.getElementById('hud-gates').textContent = `${state.gatesPassed} / ${state.totalGates}`;
+
+                    if (allCleared) {
+                        const finalTime = (performance.now() - state.lapStartTime) / 1000;
+                        state.lapRunning = false;
+                        const prevBest = state.bestTimes[state.currentLevel];
+                        if (!prevBest || finalTime < prevBest) {
+                            state.bestTimes[state.currentLevel] = finalTime;
+                            localStorage.setItem('drone_sim_best_times', JSON.stringify(state.bestTimes));
+                            updateBestTimeDisplay();
+                        }
+
+                        setTimeout(() => {
+                            gates.forEach((g, idx) => {
+                                g.passed = false;
+                                g.mat.color.setHex(idx === 0 ? 0xf59e0b : 0x38bdf8);
+                                g.mat.emissive.setHex(idx === 0 ? 0xd97706 : 0x0284c7);
+                                g.innerMat.color.setHex(idx === 0 ? 0xfcd34d : 0x7dd3fc);
+                            });
+                            state.gatesPassed = 0;
+                            document.getElementById('hud-gates').textContent = `0 / ${state.totalGates}`;
+                            state.lapRunning = true;
+                            state.lapStartTime = performance.now();
+                        }, 1200);
+                    }
+                }
+            }
+        }
+
+        function triggerGateFlash() {
+            const overlay = document.getElementById('flash-overlay');
+            overlay.classList.remove('gate-flash', 'crash-flash');
+            void overlay.offsetWidth;
+            overlay.classList.add('gate-flash');
+        }
+
+        function updateBestTimeDisplay() {
+            const best = state.bestTimes[state.currentLevel];
+            document.getElementById('hud-best').textContent = best ? `${best.toFixed(1)}s` : '--.-s';
+        }
+
+        // ==========================================
+        // 7. CAMERA CONTROLLER (CHASE CAM & FPV)
+        // ==========================================
+        const currentCamPos = new THREE.Vector3(0, 4, 8);
+        const currentCamLook = new THREE.Vector3(0, 1, -5);
+
+        function updateCamera(dt) {
+            if (state.cameraMode === 'fpv') {
+                // First-Person Nose Camera mounted to Drone Frame
+                const camOffset = new THREE.Vector3(0, 0.08, -0.52).applyQuaternion(droneState.quaternion);
+                camera.position.copy(droneState.position).add(camOffset);
+
+                // Slight 15-degree upward FPV camera tilt
+                const fpvQuat = droneState.quaternion.clone().multiply(
+                    new THREE.Quaternion().setFromEuler(new THREE.Euler(0.24, 0, 0, 'YXZ'))
+                );
+                camera.quaternion.copy(fpvQuat);
+
+                // Update artificial horizon roll/pitch in FPV OSD
+                const euler = new THREE.Euler().setFromQuaternion(droneState.quaternion, 'YXZ');
+                const horizon = document.getElementById('fpv-horizon');
+                horizon.style.transform = `translateY(${euler.x * 65}px) rotate(${-THREE.MathUtils.radToDeg(euler.z)}deg)`;
+            } else {
+                // Smooth Spring-Damped Third-Person Chase Camera
+                const euler = new THREE.Euler().setFromQuaternion(droneState.quaternion, 'YXZ');
+                const flatYawQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, euler.y, 0, 'YXZ'));
+
+                const desiredOffset = new THREE.Vector3(0, 2.35, 5.8).applyQuaternion(flatYawQuat);
+                const desiredPos = droneState.position.clone().add(desiredOffset);
+                desiredPos.y = Math.max(0.8, desiredPos.y);
+
+                currentCamPos.lerp(desiredPos, Math.min(1, 8.5 * dt));
+                camera.position.copy(currentCamPos);
+
+                const lookAhead = new THREE.Vector3(0, 0.4, -7.5).applyQuaternion(flatYawQuat);
+                const desiredLook = droneState.position.clone().add(lookAhead);
+                currentCamLook.lerp(desiredLook, Math.min(1, 12.0 * dt));
+                camera.lookAt(currentCamLook);
+            }
+        }
+
+        // ==========================================
+        // 8. UI ACTIONS, RESET & HUD TELEMETRY
+        // ==========================================
+        function resetDrone() {
+            state.crashed = false;
+            document.getElementById('crash-banner').classList.add('hidden');
+            document.getElementById('crash-title').textContent = 'Impact Detected!';
+
+            droneState.position.set(0, CONFIG.groundHeight, 0);
+            droneState.velocity.set(0, 0, 0);
+            droneState.quaternion.identity();
+            droneState.angularVelocity.set(0, 0, 0);
+            droneState.motorThrottle = [0, 0, 0, 0];
+            state.motorHealth = [1, 1, 1, 1];
+
+            state.batteryVoltage = 16.8;
+            state.gatesPassed = 0;
+            state.lapRunning = false;
+            document.getElementById('hud-gates').textContent = `0 / ${state.totalGates}`;
+            document.getElementById('hud-time').textContent = '00.0s';
+
+            gates.forEach((g, idx) => {
+                g.passed = false;
+                g.mat.color.setHex(idx === 0 ? 0xf59e0b : 0x38bdf8);
+                g.mat.emissive.setHex(idx === 0 ? 0xd97706 : 0x0284c7);
+                g.innerMat.color.setHex(idx === 0 ? 0xfcd34d : 0x7dd3fc);
+            });
+
+            if (state.combatMode) {
+                clearCombatEntities();
+                state.playerHull = state.maxHull;
+                state.kills = 0;
+                state.wave = 1;
+                document.getElementById('hud-kills').textContent = '0';
+                document.getElementById('hud-wave').textContent = '1';
+                spawnEnemyWave(1);
+            }
+        }
+
+        function toggleFlightMode() {
+            const order = ['angle', 'acro', 'hyper'];
+            const nextIdx = (order.indexOf(state.flightMode) + 1) % order.length;
+            state.flightMode = order[nextIdx];
+
+            const btn = document.getElementById('btn-mode');
+            const topPillBtn = document.getElementById('btn-flight-tier');
+            const mobBtn = document.getElementById('mob-mode');
+
+            if (state.flightMode === 'angle') {
+                btn.textContent = 'Mode: Angle Assist';
+                btn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-400/30 hover:bg-sky-500/30 transition cursor-pointer';
+                if (topPillBtn) {
+                    topPillBtn.textContent = 'Physics: Angle Assist';
+                    topPillBtn.className = 'px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-sky-500/25 text-sky-200 border border-sky-400/40 hover:bg-sky-500/35 transition cursor-pointer';
+                }
+                mobBtn.textContent = 'Angle';
+                mobBtn.className = 'glass px-3 py-1.5 rounded-xl text-[11px] font-semibold text-sky-300 active:scale-95 transition';
+            } else if (state.flightMode === 'acro') {
+                btn.textContent = 'Mode: 3D Acro';
+                btn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30 hover:bg-amber-500/30 transition cursor-pointer';
+                if (topPillBtn) {
+                    topPillBtn.textContent = 'Physics: 3D Acro';
+                    topPillBtn.className = 'px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-amber-500/25 text-amber-200 border border-amber-400/45 hover:bg-amber-500/35 transition cursor-pointer';
+                }
+                mobBtn.textContent = '3D Acro';
+                mobBtn.className = 'glass px-3 py-1.5 rounded-xl text-[11px] font-semibold text-amber-300 active:scale-95 transition';
+            } else {
+                btn.textContent = 'Mode: HYPER-REAL';
+                btn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/30 text-rose-200 border border-rose-400/50 hover:bg-rose-500/40 transition cursor-pointer';
+                if (topPillBtn) {
+                    topPillBtn.textContent = 'Physics: HYPER-REAL';
+                    topPillBtn.className = 'px-2.5 py-1 rounded-xl text-[11px] font-bold bg-rose-500/30 text-rose-200 border border-rose-400/55 hover:bg-rose-500/40 transition cursor-pointer';
+                }
+                mobBtn.textContent = 'Hyper';
+                mobBtn.className = 'glass px-3 py-1.5 rounded-xl text-[11px] font-bold text-rose-300 border border-rose-400/45 active:scale-95 transition';
+            }
+        }
+
+        function toggleFlightMode() {
+            state.hoverAssist = !state.hoverAssist;
+            const btn = document.getElementById('btn-mode');
+            const mobBtn = document.getElementById('mob-mode');
+            if (state.hoverAssist) {
+                btn.textContent = 'Mode: Angle Assist';
+                btn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-400/30 hover:bg-sky-500/30 transition cursor-pointer';
+                mobBtn.textContent = 'Angle';
+            } else {
+                btn.textContent = 'Mode: 3D Acro';
+                btn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30 hover:bg-amber-500/30 transition cursor-pointer';
+                mobBtn.textContent = 'Acro';
+            }
+        }
+
+        function toggleWind() {
+            state.windEnabled = !state.windEnabled;
+            const btn = document.getElementById('btn-wind');
+            btn.textContent = state.windEnabled ? 'Wind: ON' : 'Wind: OFF';
+            btn.className = state.windEnabled
+                ? 'px-2 py-1 rounded-lg text-xs font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 hover:bg-cyan-500/30 transition cursor-pointer'
+                : 'px-2 py-1 rounded-lg text-xs font-semibold bg-slate-800/80 text-slate-400 border border-slate-600/40 hover:bg-slate-700 transition cursor-pointer';
+        }
+
+        function toggleAudio() {
+            state.audioEnabled = !state.audioEnabled;
+            if (state.audioEnabled) initAudio();
+            const btn = document.getElementById('btn-audio');
+            btn.textContent = state.audioEnabled ? 'Audio: ON' : 'Audio: OFF';
+        }
+
+        function toggleCameraMode() {
+            state.cameraMode = state.cameraMode === 'chase' ? 'fpv' : 'chase';
+            const btn = document.getElementById('btn-cam');
+            const fpvHud = document.getElementById('fpv-hud');
+            if (state.cameraMode === 'fpv') {
+                btn.textContent = 'Cam: FPV (C)';
+                fpvHud.classList.remove('hidden');
+                droneGroup.visible = false;
+            } else {
+                btn.textContent = 'Cam: Chase (C)';
+                fpvHud.classList.add('hidden');
+                droneGroup.visible = true;
+            }
+        }
+
+        function updateHUD() {
+            const altitude = Math.max(0, droneState.position.y - CONFIG.groundHeight);
+            const speedKmh = droneState.velocity.length() * 3.6;
+            const windSpeed = windState.currentVector.length();
+
+            document.getElementById('hud-alt').textContent = `${altitude.toFixed(1)} m`;
+            document.getElementById('hud-speed').textContent = `${Math.round(speedKmh)} km/h`;
+
+            const voltEl = document.getElementById('hud-volt');
+            voltEl.textContent = `${state.batteryVoltage.toFixed(1)}V`;
+            voltEl.className = state.batteryVoltage < 14.6 ? 'text-rose-400' : 'text-emerald-400';
+            document.getElementById('hud-wind').textContent = `${windSpeed.toFixed(1)} m/s`;
+
+            if (state.lapRunning && !state.combatMode) {
+                const elapsedSec = (performance.now() - state.lapStartTime) / 1000;
+                document.getElementById('hud-time').textContent = `${elapsedSec.toFixed(1)}s`;
+            }
+
+            // Update Dogfight Hull Bar & 2D Target-Lock Reticle
+            if (state.combatMode) {
+                const hullPct = Math.round(state.playerHull);
+                document.getElementById('hud-hull-txt').textContent = `${hullPct}%`;
+                const hullBar = document.getElementById('hud-hull-bar');
+                hullBar.style.width = `${hullPct}%`;
+                hullBar.className = hullPct > 50
+                    ? 'h-full bg-emerald-400 transition-all duration-150'
+                    : (hullPct > 25 ? 'h-full bg-amber-400 transition-all duration-150' : 'h-full bg-rose-500 transition-all duration-150');
+
+                const lockBox = document.getElementById('target-lock-box');
+                if (lockedEnemy) {
+                    const proj = lockedEnemy.position.clone().project(camera);
+                    if (proj.z < 1) {
+                        const sx = (proj.x * 0.5 + 0.5) * window.innerWidth;
+                        const sy = (-proj.y * 0.5 + 0.5) * window.innerHeight;
+                        lockBox.style.left = `${sx}px`;
+                        lockBox.style.top = `${sy}px`;
+                        const d = Math.round(droneState.position.distanceTo(lockedEnemy.position));
+                        document.getElementById('target-label').textContent = `LOCK ${d}m`;
+                        lockBox.classList.remove('hidden');
+                    } else {
+                        lockBox.classList.add('hidden');
+                    }
+                } else {
+                    lockBox.classList.add('hidden');
+                }
+            }
+
+            // Next Gate or Nearest Hostile Drone Direction Compass Arrow
+            if (state.combatMode && enemyDrones.length > 0) {
+                let nearest = enemyDrones[0];
+                let minDist = droneState.position.distanceTo(nearest.position);
+                for (const e of enemyDrones) {
+                    const d = droneState.position.distanceTo(e.position);
+                    if (d < minDist) {
+                        minDist = d;
+                        nearest = e;
+                    }
+                }
+                const toEnemy = nearest.position.clone().sub(droneState.position);
+                document.getElementById('compass-dist').textContent = `Hostile: ${Math.round(minDist)}m`;
+                document.getElementById('compass-arrow').className = 'inline-block text-sm font-bold text-rose-400 transition-transform duration-75';
+
+                const droneEuler = new THREE.Euler().setFromQuaternion(droneState.quaternion, 'YXZ');
+                const localTarget = toEnemy.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), -droneEuler.y);
+                const angleRad = Math.atan2(localTarget.x, -localTarget.z);
+                document.getElementById('compass-arrow').style.transform = `rotate(${THREE.MathUtils.radToDeg(angleRad)}deg)`;
+            } else {
+                const nextGate = gates.find(g => !g.passed);
+                if (nextGate) {
+                    const toGate = nextGate.position.clone().sub(droneState.position);
+                    const dist = Math.round(toGate.length());
+                    document.getElementById('compass-dist').textContent = `Gate ${nextGate.index + 1}: ${dist}m`;
+                    document.getElementById('compass-arrow').className = 'inline-block text-sm font-bold text-emerald-400 transition-transform duration-75';
+
+                    // Transform target vector into drone's horizontal local frame
+                    const droneEuler = new THREE.Euler().setFromQuaternion(droneState.quaternion, 'YXZ');
+                    const localTarget = toGate.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), -droneEuler.y);
+                    const angleRad = Math.atan2(localTarget.x, -localTarget.z);
+                    document.getElementById('compass-arrow').style.transform = `rotate(${THREE.MathUtils.radToDeg(angleRad)}deg)`;
+                }
+            }
+
+            // Stick visualizers & Telemetry bars
+            const { throttle, yaw, pitch, roll } = state.inputs;
+            const leftDot = document.getElementById('left-stick-dot');
+            const rightDot = document.getElementById('right-stick-dot');
+
+            leftDot.style.left  = `${50 + yaw * 35}%`;
+            leftDot.style.top   = `${50 - throttle * 35}%`;
+            rightDot.style.left = `${50 + roll * 35}%`;
+            rightDot.style.top  = `${50 - pitch * 35}%`;
+
+            const thrPct = Math.round(((throttle + 1) / 2) * 100);
+            document.getElementById('val-thr').textContent = `${thrPct}%`;
+            document.getElementById('bar-thr').style.width = `${thrPct}%`;
+            document.getElementById('fpv-throttle-osd').textContent = `THR ${thrPct}%`;
+
+            document.getElementById('val-yaw').textContent = yaw.toFixed(2);
+            document.getElementById('bar-yaw').style.width = `${((yaw + 1) / 2) * 100}%`;
+
+            document.getElementById('val-pit').textContent = pitch.toFixed(2);
+            document.getElementById('bar-pit').style.width = `${((pitch + 1) / 2) * 100}%`;
+
+            document.getElementById('val-rol').textContent = roll.toFixed(2);
+            document.getElementById('bar-rol').style.width = `${((roll + 1) / 2) * 100}%`;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Wire up UI Buttons
+        document.getElementById('btn-mode').addEventListener('click', toggleFlightMode);
+        document.getElementById('btn-flight-tier').addEventListener('click', toggleFlightMode);
+        document.getElementById('btn-wind').addEventListener('click', toggleWind);
+        document.getElementById('btn-audio').addEventListener('click', toggleAudio);
+        document.getElementById('btn-cam').addEventListener('click', toggleCameraMode);
+        document.getElementById('btn-reset').addEventListener('click', resetDrone);
+
+        document.querySelectorAll('.lvl-btn').forEach(btn => {
+            btn.addEventListener('click', () => loadLevel(parseInt(btn.dataset.level, 10)));
+        });
+
+        document.getElementById('mob-mode').addEventListener('click', toggleFlightMode);
+        document.getElementById('mob-cam').addEventListener('click', toggleCameraMode);
+        document.getElementById('mob-reset').addEventListener('click', resetDrone);
+        document.getElementById('btn-gyro').addEventListener('click', toggleGyroscope);
+        document.getElementById('btn-fullscreen').addEventListener('click', toggleFullScreen);
+        document.getElementById('mob-gyro-cal').addEventListener('click', calibrateGyro);
+        setupTouchPads();
+        const mobFireBtn = document.getElementById('mob-fire');
+        mobFireBtn.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); state.keys['Space'] = true; });
+        mobFireBtn.addEventListener('touchend', (e) => { e.preventDefault(); state.keys['Space'] = false; });
+
+        document.getElementById('toggle-help').addEventListener('click', (e) => {
+            const content = document.getElementById('help-content');
+            const isHidden = content.classList.toggle('hidden');
+            e.target.textContent = isHidden ? 'Show' : 'Hide';
+        });
+
+        // Collapsible Top HUD Toggle (Starts hidden for clean unobstructed view)
+        document.getElementById('btn-toggle-hud').addEventListener('click', (e) => {
+            const statusPill = document.getElementById('controller-status-pill');
+            const area = document.getElementById('hud-collapsible-area');
+            const telem = document.getElementById('hud-telemetry-card');
+            const compass = document.getElementById('gate-compass');
+            const isHidden = area.classList.toggle('hidden');
+            statusPill.classList.toggle('hidden', isHidden);
+            telem.classList.toggle('hidden', isHidden);
+            e.target.textContent = isHidden ? 'Show HUD' : 'Hide HUD';
+            if (isHidden) {
+                compass.classList.remove('top-48', 'sm:top-28');
+                compass.classList.add('top-4', 'sm:top-4');
+            } else {
+                compass.classList.remove('top-4', 'sm:top-4');
+                compass.classList.add('top-48', 'sm:top-28');
+            }
+        });
+
+        // ==========================================
+        // 9. MAIN ANIMATION LOOP
+        // ==========================================
+        function initMatrixLanding() {
+            const landingEl = document.getElementById('matrix-landing');
+            const mCanvas = document.getElementById('matrix-canvas');
+            const launchBtn = document.getElementById('btn-matrix-launch');
+            if (!landingEl || !mCanvas || !launchBtn) return;
+
+            const ctx = mCanvas.getContext('2d');
+            let width = mCanvas.width = window.innerWidth;
+            let height = mCanvas.height = window.innerHeight;
+            const fontSize = 15;
+            let columns = Math.floor(width / fontSize);
+            let drops = Array.from({ length: columns }, () => Math.random() * -50);
+
+            const glyphs = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>/{}[]+=-*';
+            let matrixActive = true;
+
+            const onMatrixResize = () => {
+                if (!matrixActive) return;
+                width = mCanvas.width = window.innerWidth;
+                height = mCanvas.height = window.innerHeight;
+                columns = Math.floor(width / fontSize);
+                drops = Array.from({ length: columns }, (_, i) => drops[i] ?? Math.random() * -40);
+            };
+            window.addEventListener('resize', onMatrixResize);
+
+            let lastDraw = 0;
+            function drawMatrixRain(now) {
+                if (!matrixActive) return;
+                requestAnimationFrame(drawMatrixRain);
+                if (now - lastDraw < 38) return; // ~26 fps classic digital rain cadence
+                lastDraw = now;
+
+                ctx.fillStyle = 'rgba(5, 10, 20, 0.08)';
+                ctx.fillRect(0, 0, width, height);
+
+                ctx.font = `bold ${fontSize}px "JetBrains Mono", monospace`;
+
+                for (let i = 0; i < drops.length; i++) {
+                    const char = glyphs[Math.floor(Math.random() * glyphs.length)];
+                    const x = i * fontSize;
+                    const y = drops[i] * fontSize;
+
+                    // Bright white-cyan leading glyph, deep electric sky-blue trail
+                    const isHead = Math.random() > 0.78;
+                    ctx.fillStyle = isHead ? '#e0f2fe' : (Math.random() > 0.4 ? '#38bdf8' : '#0284c7');
+                    ctx.fillText(char, x, y);
+
+                    if (y > height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            requestAnimationFrame(drawMatrixRain);
+
+            const enterSimulator = (e) => {
+                if (e) e.preventDefault();
+                if (!matrixActive) return;
+                initAudio();
+                playGateChime(true);
+                triggerHapticPulse(0.45, 0.35, 120);
+                requestScreenWakeLock();
+
+                landingEl.classList.add('landing-fade-out');
+                setTimeout(() => {
+                    matrixActive = false;
+                    window.removeEventListener('resize', onMatrixResize);
+                    landingEl.remove();
+                }, 680);
+            };
+
+            launchBtn.addEventListener('click', enterSimulator);
+            launchBtn.addEventListener('touchstart', enterSimulator, { passive: false });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const dt = Math.min(clock.getDelta(), 0.05);
+            const elapsed = clock.getElapsedTime();
+
+            // Animate gates & environment props (wind turbines, drifting clouds)
+            gates.forEach((g, i) => {
+                if (!g.passed) {
+                    g.mat.emissiveIntensity = 0.75 + Math.sin(elapsed * 3.5 + i) * 0.25;
+                }
+            });
+
+            animatedProps.forEach(prop => {
+                if (prop.type === 'turbine') {
+                    prop.mesh.rotation.z += prop.speed * dt;
+                } else if (prop.type === 'cloud') {
+                    prop.mesh.position.x += prop.speed * dt;
+                    if (prop.mesh.position.x > 180) prop.mesh.position.x = -180;
+                }
+            });
+
+            pollInputs();
+            updatePhysics(dt, elapsed);
+            updateContinuousAudio();
+            updateCamera(dt);
+            updateHUD();
+
+            renderer.render(scene, camera);
+        }
+
+        window.onload = function () {
+            initMatrixLanding();
+            initScene();
+            animate();
+        };
+    </script>
 </body>
 </html>
